@@ -61,6 +61,13 @@
     position: sticky;
     top: 0;
   }
+  .caption{
+    position: absolute;
+    left: 13%;
+    padding-top: 7.5rem;
+    color: #212120;
+    text-align: left;
+    }
 
 }
 
@@ -90,16 +97,26 @@
       justify-content: center;
      
   }
-  p{
-    white-space: pre-line;
+  p span{
+    display: block;
   }
 
   .curve{
-    margin-top: -220px;
+    margin-top: -230px;
     margin-left: -60px;
   }
 
+  .caption{
+    position: absolute;
+    left: 40%;
+    padding-top: 7.5rem;
+    color: #212120;
+    text-align: left;
+    }
+
 }
+
+/* general styling */
 
 .header-text{
   margin: 0 0 0 0;
@@ -114,13 +131,7 @@ justify-content: center;
   background: #fcfcfc;
   /* z-index: 5; */
 }
-.caption{
-position: absolute;
-left: 10%;
-padding-top: 7.5rem;
-color: #212120;
-text-align: left;
-}
+
 .word{
   left: 50%;
 }
