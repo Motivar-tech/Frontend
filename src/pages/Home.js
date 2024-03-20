@@ -49,8 +49,8 @@ export default function AppHome() {
                    <Col className="offset-md-2 col-md-8">
                        <div>
                            
-                        <p className="lead display-4 fw-medium "><br /><br />
-                            The easiest way to <TypeAnimation
+                        <p className="h1 lead display-4 fw-medium "><br /><br />
+                            The easiest way to <span><TypeAnimation
                                 sequence={[
                                 "find",
                                 1000,
@@ -61,12 +61,12 @@ export default function AppHome() {
                                 ]}
                                 speed={50}
                                 repeat={Infinity}
-                            />  
+                            />  </span>
                             </p>
                             <p className="lead display-4 fw-medium">
                                 online courses
                             </p>
-                            <Image className="curve" fluid src={Curve} alt="highlight"/>
+                            <Image className="curve img-fluid" src={Curve} alt="highlight"/>
                        </div>
                         
                     </Col>
@@ -85,7 +85,7 @@ export default function AppHome() {
         {/* Partner start */}
             <Container fluid>
                 <Row className="partners align-content-center">
-                    <Col className="my-3 ms-5">
+                    <Col className="my-3">
                         <h3 className="">Partners:</h3>
                     </Col>
                     <Col>
@@ -105,9 +105,9 @@ export default function AppHome() {
                             <p class="h3 px-5 text-md-start fw-light">Whatever you want to learn online, wherever they are hosted. We
                             will help you make the most of the journey.
                             </p>
-                            <div className="px-5 pt-3 d-md-flex" >
+                            <div className="px-5 py-3 d-md-flex" >
                                 <Link to="/coming-soon">
-                                    <Button className="btn btn-lg btn-secondary text-white pt-2">Get Started <BsArrowLeftCircle className="spin"/></Button>
+                                    <Button className="btn btn-lg btn-secondary text-white">Get Started <BsArrowLeftCircle className="spin"/></Button>
                                 </Link>
                                 
                             </div>
@@ -138,7 +138,7 @@ export default function AppHome() {
                         </p>
                         <div className="px-5 py-4 d-md-flex" >
                             <Link to="/coming-soon">
-                                <Button className="btn btn-lg btn-secondary text-white pt-2 spin">Sponsor a learner <BsArrowLeftCircle/></Button>
+                                <Button className="btn btn-lg btn-secondary text-white spin">Sponsor a learner <BsArrowLeftCircle/></Button>
                             </Link>
                         </div>
                     </Col>
@@ -198,13 +198,13 @@ export default function AppHome() {
                     <Col className="col-sm-12 col-md-6 offset-md-3 bg-light" >
                         <Row className="p-2 shadow-sm text-white rounded">
                             <Carousel>
-                                <Carousel.Item className="p-3 d-md-flex">
-                                    <div className="col-md-4 col-sm-12 text-md-start">
+                                <Carousel.Item className="p-3 d-md-flex text-center">
+                                    <div className="col-md-4 col-sm-12">
                                         <div class="caption">Yemi, 19</div>
-                                        <Image fluid src={Test} alt="testimonial" style={{float: 'left'}}/>
+                                        <Image fluid src={Test} alt="testimonial" />
                                     </div>
-                                    <div className="col-md-8 col-sm-12 mt-3 ">
-                                        <div className="text-black text-start">
+                                    <div className="col-md-8 col-sm-12 text-md-start mt-3 ">
+                                        <div className="text-black d-sm-block">
                                            <p>
                                                 "Choosing a course to learn was almost overwhelming,
                                                 so many options to choose from, Motivar helped make the process seamless.
