@@ -1,0 +1,14 @@
+// custom colors from bootstrap
+$theme-colors: (
+  "primary":    #116653,
+  "secondary":  #00aa87,
+  "success":    #11d99a,
+  "info":       #f5fffd,
+  "warning":    #eefdf8,
+  "danger":     #f58824,
+  "light":      #ffffff,
+  "dark":       #fffcf9
+);
+
+// import bootstrap
+@import '../../../node_modules/bootstrap/scss/bootstrap.scss';
