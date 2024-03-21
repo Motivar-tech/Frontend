@@ -25,14 +25,14 @@ export default function AppNavbar() {
               navbarScroll
             >
               <Nav.Link href="/coming-soon">Explore</Nav.Link>
-              <Nav.Link href="coming-soon">Pricing</Nav.Link>
+              <Nav.Link href="/coming-soon">Pricing</Nav.Link>
               <NavDropdown title="Community" id="navbarScrollingDropdown">
-                <NavDropdown.Item href="#action3">Find learners near you</NavDropdown.Item>
-                <NavDropdown.Item href="#action4">
+                <NavDropdown.Item href="/coming-soon">Find learners near you</NavDropdown.Item>
+                <NavDropdown.Item href="/coming-soon">
                 Find mentors near you
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="#action5">
+                <NavDropdown.Item href="/coming-soon">
                 Join accountability group
                 </NavDropdown.Item>
               </NavDropdown>

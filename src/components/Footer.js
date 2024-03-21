@@ -27,7 +27,7 @@ import IN from '../assets/images/in.svg';
                         <ul className="nav flex-column">
                             <li className="nav-item mb-2"><Link to="/coming-soon" className="nav-link p-0 text-body-secondary">Blog</Link></li>
                             <li className="nav-item mb-2"><Link to="/coming-soon" className="nav-link p-0 text-body-secondary">Pricing</Link></li>
-                            <li className="nav-item mb-2"><Link to="/coming-soon" className="nav-link p-0 text-body-secondary">Team</Link></li>
+                            <li className="nav-item mb-2"><a href="mailto:contact@motivar.live" className="nav-link p-0 text-body-secondary">Contact</a></li>
                         </ul>
                     </div>
                 
@@ -38,8 +38,8 @@ import IN from '../assets/images/in.svg';
                                 <li className="nav-item mb-2"><Link to="/coming-soon" className="nav-link p-0 text-body-secondary">Terms &amp; Conditions</Link></li>
                                 <li className="nav-item mb-2"><Link to="/coming-soon" className="nav-link p-0 text-body-secondary">Privacy</Link></li>
                             </ul>
-                            <Link to="https://x.com/_motivar"><Image className="mx-auto image-fluid" src={X} alt="x" fluid/></Link>
-                            <Link to="/coming-soon" ><Image className="mx-auto image-fluid" src={IN} alt="linked-in" fluid/></Link>
+                            <a href="https://x.com/_motivar"><Image className="mx-auto image-fluid pe-1" src={X} alt="x" fluid/></a>
+                            <Link to="/coming-soon" ><Image className="mx-auto image-fluid px-1" src={IN} alt="linked-in" fluid/></Link>
                             <Link to="/coming-soon"><Image className="mx-auto image-fluid" src={FB} alt="facebook" fluid/></Link>
                     </div>
                     
