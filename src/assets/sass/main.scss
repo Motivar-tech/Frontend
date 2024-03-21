@@ -10,5 +10,9 @@ $theme-colors: (
   "dark":       #fffcf9
 );
 
+// scss-docs-start carousel-variables
+$carousel-control-color:             #116653;
+$carousel-control-width:             5%;
+// scss-docs-end carousel-variables
 // import bootstrap
 @import '../../../node_modules/bootstrap/scss/bootstrap.scss';
