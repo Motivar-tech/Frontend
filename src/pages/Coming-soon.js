@@ -31,7 +31,7 @@ export default function AppComing() {
               style={{maxHeight: '100px' }}
               navbarScroll
             >
-                <Nav.Link href="https://medium.com/@mayorjaid/announcing-motivar-b1d13d8ef6fa">About</Nav.Link>
+                <a style={{textDecoration: 'none', color: '#212529'}} href="https://medium.com/@mayorjaid/announcing-motivar-b1d13d8ef6fa">About</a>
               </Nav>
               
             </div>
@@ -66,9 +66,9 @@ export default function AppComing() {
                         <h6 class="px-3 pb-2">Take our survey to join the waitlist and we will let you know immediately we are live.</h6>
                        
                        <div className="pt-2">
-                            <Link to="https://forms.office.com/r/XU3YRXEV2C">
+                            <a href="https://forms.office.com/r/XU3YRXEV2C">
                                 <button className="btn btn-lg btn-secondary text-white">Take survey</button>
-                            </Link>
+                            </a>
                        </div>
                                              
                     </Col>

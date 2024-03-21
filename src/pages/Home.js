@@ -84,11 +84,11 @@ export default function AppHome() {
 
         {/* Partner start */}
             <Container fluid>
-                <Row className="partners align-content-center">
-                    <Col className="my-3">
-                        <h3 className="">Partners:</h3>
+                <Row className="partners">
+                    <Col className="col-sm-2 ">
+                        <h6 className="">Partners:</h6>
                     </Col>
-                    <Col>
+                    <Col className="col-sm-2 ">
                         <Image fluid src={Pardna} alt="partner"/>
                     </Col>
                 </Row>
@@ -99,18 +99,18 @@ export default function AppHome() {
             <Container fluid>
                 <Row className="p-5">
                     <Col md={7}>
-                        <p className=" h1 pt-5 px-5 text-md-start fw-normal" ><br /> <br />
+                        <p className=" h1 pt-5 px-4 text-md-start fw-normal" ><br /> <br />
                             <strong>Complete online courses you need to succeed</strong>
-                            </p>
-                            <p class="h3 px-5 text-md-start fw-light">Whatever you want to learn online, wherever they are hosted. We
+                        </p>
+                        <p class="h3 px-4 text-md-start fw-light">Whatever you want to learn online, wherever they are hosted. We
                             will help you make the most of the journey.
-                            </p>
-                            <div className="px-5 py-3 d-md-flex" >
-                                <Link to="/coming-soon">
-                                    <Button className="btn btn-lg btn-secondary text-white">Get Started <BsArrowLeftCircle className="spin"/></Button>
-                                </Link>
-                                
-                            </div>
+                        </p>
+                        <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
+                            <Link to="/coming-soon">
+                                <Button className="btn btn-lg btn-secondary text-white">Get Started</Button>
+                            </Link>
+                            <span className="shadow-sm pointer ms-3"> <BsArrowLeftCircle className="spin"/> </span>
+                        </div>
 
                     </Col>
                     <Col md={5}>
@@ -129,31 +129,32 @@ export default function AppHome() {
                     </Col>
 
                     <Col md={7}>
-                        <p className=" h1 pt-5 px-5 text-md-start fw-normal" ><br /> <br />
+                        <p className=" h1 pt-5 px-4 text-md-start fw-normal" ><br /> <br />
                             <strong>Help a learner pay for online courses they need and can't afford</strong>
                         </p>
-                        <p class="h3 px-5 text-md-start fw-light">
+                        <p class="h3 px-4 text-md-start fw-light">
                             Lots of young people want and need online courses to
                             upskill and improve their knowledge, but unfortunately cannot afford them.
                         </p>
-                        <div className="px-5 py-4 d-md-flex" >
+                        <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
                             <Link to="/coming-soon">
-                                <Button className="btn btn-lg btn-secondary text-white spin">Sponsor a learner <BsArrowLeftCircle/></Button>
+                                <Button className="btn btn-lg btn-secondary text-white">Sponsor a learner</Button>
                             </Link>
+                            <span className="shadow-sm pointer ms-3"> <BsArrowLeftCircle className="spin"/> </span>
                         </div>
                     </Col>
                 </Row>
 
                 <Row className="p-5 pt-5 text-center bg-alt-secondary">
                     <Col md={6}>
-                        <p className=" h1 pt-5 px-5 text-md-start fw-normal" ><br /> <br />
+                        <p className=" h1 pt-5 px-4 text-md-start fw-normal" ><br /> <br />
                         <strong>Ask for help to pay for courses you need but cannot afford</strong>
                         </p>
-                        <div className="px-5 pt-3 d-md-flex pb-3" >
+                        <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
                             <Link to="/coming-soon">
-                                <Button className="btn btn-lg btn-secondary text-white">Request for help </Button>
+                                <Button className="btn btn-lg btn-secondary text-white">Request for help</Button>
                             </Link>
-                            <div className="shadow-sm ms-3 pointer spin"> <BsArrowLeftCircle className="spin"/> </div>
+                            <span className="shadow-sm pointer ms-3"> <BsArrowLeftCircle className="spin"/> </span>
                         </div>
                     </Col>
                     <Col md={6}>
@@ -173,19 +174,21 @@ export default function AppHome() {
                     </Col>
 
                     <Col md={7}>
-                        <p className=" h1 pt-5 px-5 text-md-start fw-normal" ><br /> <br />
+                        <p className=" h1 pt-5 px-4 text-md-start fw-normal" ><br /> <br />
                             <strong>Participate in learner <br></br>communities and turbocharge your learning experience</strong>
                         </p>
-                        <p class="h3 px-5 text-md-start fw-light">
+                        <p class="h3 px-4 text-md-start fw-light">
                             Connect with learners like you in your location to share ideas,
                             insights, challenges, and wins
                         </p>
-                        <div className="px-5 py-4 d-md-flex" >
+                        
+                        <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
                             <Link to="/coming-soon">
                                 <Button className="btn btn-lg btn-secondary text-white">Get Started</Button>
                             </Link>
-                            <div className="shadow-sm ms-3 pointer"> <BsArrowLeftCircle className="spin"/> </div> 
+                            <span className="shadow-sm pointer ms-3"> <BsArrowLeftCircle className="spin"/> </span>
                         </div>
+                        
                     </Col>
                 </Row>
             </Container>
@@ -196,9 +199,9 @@ export default function AppHome() {
             <Container fluid>
                 <Row className="p-5 bg-info">
                     <Col className="col-sm-12 col-md-6 offset-md-3 bg-light" >
-                        <Row className="p-2 shadow-sm text-white rounded">
+                        <Row className="p-2 shadow-sm text-dark rounded">
                             <Carousel>
-                                <Carousel.Item className="p-3 d-md-flex text-center">
+                                {/* <Carousel.Item className="p-3 d-md-flex text-center">
                                     <div className="col-md-4 col-sm-12">
                                         <div class="caption">Yemi, 19</div>
                                         <Image fluid src={Test} alt="testimonial" />
@@ -213,7 +216,26 @@ export default function AppHome() {
                                             </p>
                                         </div>
                                     </div>
+                                </Carousel.Item> */}
+                                <Carousel.Item>
+                                    <Row className="p-2 align-items-center">
+                                        <div className="col-md-4 text-black ">
+                                            <div className="container">
+                                            <Image fluid src={Test} alt="testimonial" />
+                                                <p>Yemi, 19</p>
+                                            </div>
+                                            
+                                        </div>
+                                        <div className="col-md-8 text-black text-md-start mb-2">
+                                            <div className="container">
+                                            "Choosing a course to learn was almost overwhelming,
+                                                so many options to choose from, Motivar helped make the process seamless.
+                                                I totally love the course I'm currently taking."
+                                            </div>
+                                        </div>
+                                    </Row>
                                 </Carousel.Item>
+
                             </Carousel>
                         </Row>
                     </Col>
@@ -238,7 +260,9 @@ export default function AppHome() {
                                 </Form.Group>
                             </div>
                             <div className="col-md-3 col-sm-12 pt-3">
-                                <Button className="btn btn-md btn-secondary text-white" type="button">Join newsletter</Button>
+                                <Link to="/coming-soon">
+                                    <Button className="btn btn-md btn-secondary text-white" type="button">Join newsletter</Button>
+                                </Link>
                             </div>
                         </Form>
                     </Row>
