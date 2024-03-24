@@ -95,6 +95,10 @@
     margin-left: -60px;
   }
 
+  p span{
+    display: block;
+  }
+
   
 
 }
@@ -116,9 +120,6 @@ align-items: center;
   /* z-index: 5; */
 }
 
-p span{
-  display: block;
-}
 
 .word{
   left: 50%;
