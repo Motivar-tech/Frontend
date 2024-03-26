@@ -24,15 +24,15 @@ export default function AppNavbar() {
               style={{maxHeight: '100px' }}
               navbarScroll
             >
-              <Nav.Link href="/coming-soon">Explore</Nav.Link>
-              <Nav.Link href="/coming-soon">Pricing</Nav.Link>
+              <Nav.Link to="/coming-soon">Explore</Nav.Link>
+              <Nav.Link to="/coming-soon">Pricing</Nav.Link>
               <NavDropdown title="Community" id="navbarScrollingDropdown">
-                <NavDropdown.Item href="/coming-soon">Find learners near you</NavDropdown.Item>
-                <NavDropdown.Item href="/coming-soon">
+                <NavDropdown.Item to="/coming-soon">Find learners near you</NavDropdown.Item>
+                <NavDropdown.Item to="/coming-soon">
                 Find mentors near you
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="/coming-soon">
+                <NavDropdown.Item to="/coming-soon">
                 Join accountability group
                 </NavDropdown.Item>
               </NavDropdown>

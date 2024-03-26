@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import '../App.css';
 
 import Container from 'react-bootstrap/Container';
@@ -9,8 +7,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import AppFooter from '../components/Footer.js';
-import TextMorpher from '../components/Morph.js';
-
 import { Link } from 'react-router-dom';
 import Image from 'react-bootstrap/Image';
 import Logo from '../assets/images/Motivar.svg';
@@ -35,7 +31,7 @@ export default function AppComing() {
             >
                 <a style={{textDecoration: 'none', color: '#212529'}} href="https://medium.com/@mayorjaid/announcing-motivar-b1d13d8ef6fa">About</a>
               </Nav>
-
+              
             </div>
 
             <div className="container">
@@ -45,20 +41,20 @@ export default function AppComing() {
             </div>
 
             <div className="container d-flex justify-content-md-end">
-
+              
               <Link to="/">
                 <Button className="btn btn-pry btn-lg btn-secondary text-white me-2 d-inline-flex justify-content-center align-items-center">Go Home</Button>
               </Link>
             </div>
-
-
+              
+            
           </Navbar.Collapse>
         </Container>
       </Navbar>
         </header>
 
         <main>
-
+        
         <Container fluid>
                 <Row className=" text-center">
                    <Col className="offset-md-3 col-md-6 col-sm-12">
@@ -66,13 +62,13 @@ export default function AppComing() {
                            We are still building for you!
                         </p>
                         <h6 class="px-3 pb-2">Take our survey to join the waitlist and we will let you know immediately we are live.</h6>
-
+                       
                        <div className="pt-2">
                             <a href="https://forms.office.com/r/XU3YRXEV2C">
                                 <button className="btn btn-lg btn-secondary text-white">Take survey</button>
                             </a>
                        </div>
-
+                                             
                     </Col>
                 </Row>
                 <Row className=" text-center">
