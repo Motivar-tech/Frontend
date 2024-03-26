@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.css": "/static/css/main.f6514a79.css",
-    "main.js": "/static/js/main.38e7e6bb.js",
-    "static/media/stu.png": "/static/media/stu.531724b6019501470253.png",
-    "static/media/group.png": "/static/media/group.e275a0d06a0be71d50e1.png",
+    "main.css": "/static/css/main.94a6d6fd.css",
+    "main.js": "/static/js/main.93918386.js",
+    "static/media/group.png": "/static/media/group.9cb5ef7ae1bd829186d5.png",
+    "static/media/stu.png": "/static/media/stu.3d765c85dced1a1b98e6.png",
+    "static/media/persons.png": "/static/media/persons.9a7eb1cffe779c3333f0.png",
     "static/media/faces.png": "/static/media/faces.6f91c85e6ad3a956e919.png",
-    "static/media/persons.png": "/static/media/persons.015f08776093b203a54d.png",
     "static/media/sketch1.png": "/static/media/sketch1.3a32a9c65874e7d1fcf3.png",
     "static/media/sketch2.png": "/static/media/sketch2.6187d656dc39151a2437.png",
     "static/media/Character.svg": "/static/media/Character.89210993e8c07a4a6d096009500a6da3.svg",
@@ -15,11 +15,11 @@
     "static/media/Motivar.svg": "/static/media/Motivar.18579e0d2286f076865a4670f6a7c2b1.svg",
     "index.html": "/index.html",
     "static/media/x.svg": "/static/media/x.07b5b0dbb85eb1ecb39be6a465eafdc3.svg",
-    "main.f6514a79.css.map": "/static/css/main.f6514a79.css.map",
-    "main.38e7e6bb.js.map": "/static/js/main.38e7e6bb.js.map"
+    "main.94a6d6fd.css.map": "/static/css/main.94a6d6fd.css.map",
+    "main.93918386.js.map": "/static/js/main.93918386.js.map"
   },
   "entrypoints": [
-    "static/css/main.f6514a79.css",
-    "static/js/main.38e7e6bb.js"
+    "static/css/main.94a6d6fd.css",
+    "static/js/main.93918386.js"
   ]
 }
