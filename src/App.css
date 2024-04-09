@@ -58,6 +58,10 @@
     margin-top: -340px;
     margin-left: -70px;
   }
+  .sketch{
+    max-width: 100%;
+    height: auto;
+}
   
 
 }
@@ -66,37 +70,26 @@
   @media only screen and (max-width: 768px){
       .logo-2{
           display: none;
-          
       }
-  }
-
-  @media screen and (max-width: 768px){
-    .curve{
-      margin-top: -270px;
-      margin-left: -60px;
+      .sketch{
+        max-width: 100%;
+        height: auto;
     }
-  
   }
 
+ 
    /* small devices */
 @media screen and (max-width: 576px){
-     
-      #text1,
-  #text2{
-      position: absolute;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-     
-  }
+ 
   
   .curve{
     margin-top: -230px;
     margin-left: -60px;
   }
 
-  p span{
-    display: block;
+  div span{
+    display: inline-block;
+    /* white-space: pre-line; */
   }
 
   
@@ -107,7 +100,7 @@
 
 .header-text{
   margin: 0 0 0 0;
-  height: 500px;
+  height: 350px;
   z-index: 17;
 }
 .partners{
