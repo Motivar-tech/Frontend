@@ -12,6 +12,7 @@ import AppNavbar from "../components/Navbar.js";
 import AppFooter from "../components/Footer.js";
 
 import Image from "react-bootstrap/Image";
+
 import Sketch1 from "../assets/images/sketch1.png";
 import Sketch2 from "../assets/images/sketch2.png";
 import Pardna from "../assets/images/pardna.png";
@@ -47,7 +48,9 @@ export default function AppHome() {
                   The <em>easiest</em> way to{" "}
                   <span>
                     <TypeAnimation
+
                       sequence={["find", 3000, "start", 3000, "complete", 3000]}
+
                       speed={50}
                       repeat={Infinity}
                     />{" "}
@@ -70,7 +73,9 @@ export default function AppHome() {
         {/* Hero end  */}
 
         {/* Partner start */}
+
         {/* <Container fluid>
+
           <Row className="partners">
             <Col className="col-sm-2 ">
               <h6 className="">Partners:</h6>
@@ -79,18 +84,22 @@ export default function AppHome() {
               <Image fluid src={Pardna} alt="partner" />
             </Col>
           </Row>
+
         </Container> */}
+
         {/* Partner end */}
 
         {/* Complete start */}
         <Container fluid>
           <Row className="p-5">
             <Col md={7}>
+
               <p className=" h1 pt-5 px-md-4 text-md-start fw-normal">
                 <br /> <br />
                 <strong>Complete online courses you need to succeed</strong>
               </p>
               <p class="h3 px-md-4 text-md-start fw-light">
+
                 Whatever you want to learn online, wherever they are hosted. We
                 will help you make the most of the journey.
               </p>
@@ -122,7 +131,9 @@ export default function AppHome() {
             </Col>
 
             <Col md={7}>
+
               <p className=" h1 pt-5 px-md-4 text-md-start fw-normal">
+
                 <br /> <br />
                 <strong>
                   Help a learner pay for online courses they need and can't
@@ -133,7 +144,9 @@ export default function AppHome() {
                 Lots of young people want and need online courses to upskill and
                 improve their knowledge, but unfortunately cannot afford them.
               </p>
+
               <div className="px-md-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
+
                 <Link to="/coming-soon">
                   <Button className="btn btn-lg btn-secondary text-white">
                     Sponsor a learner
@@ -149,13 +162,17 @@ export default function AppHome() {
 
           <Row className="p-5 pt-5 text-center bg-alt-secondary">
             <Col md={6}>
+
               <p className=" h1 pt-5 px-md-4 text-md-start fw-normal">
+
                 <br /> <br />
                 <strong>
                   Ask for help to pay for courses you need but cannot afford
                 </strong>
               </p>
+
               <div className="px-md-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
+
                 <Link to="/coming-soon">
                   <Button className="btn btn-lg btn-secondary text-white">
                     Request for help
@@ -182,14 +199,18 @@ export default function AppHome() {
             </Col>
 
             <Col md={7}>
+
               <p className=" h1 pt-5 px-md-4 text-md-start fw-normal">
+
                 <br /> <br />
                 <strong>
                   Participate in learner <br></br>communities and turbocharge
                   your learning experience
                 </strong>
               </p>
+
               <p class="h3 px-md-4 text-md-start fw-light">
+
                 Connect with learners like you in your location to share ideas,
                 insights, challenges, and wins
               </p>
