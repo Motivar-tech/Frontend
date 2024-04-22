@@ -14,15 +14,15 @@ import IN from '../assets/images/in.svg';
         return (
             <>
 
-            <div className="container-fluid p-5 text-center ">
+            <div className="container-fluid p-5 text-start ">
                 <footer className="row p-3">
-                    <div className="col-md-4 mb-3">
+                    <div className="col-md-4 col-sm-12 mb-3">
                         <Link to="/" className="justify-content-sm-center justify-content-md-center d-flex mb-3 link-body-emphasis text-decoration-none">
                             <Image src={Logo} className="" alt="logo" fluid/>
                         </Link>
                     </div>
                     <div className="col-md-5"></div>
-                    <div className="col-md-1 mb-3 text-md-start">
+                    <div className="col-md-1 mb-3 text-start">
                         <h5>Company</h5>
                         <ul className="nav flex-column">
                             <li className="nav-item mb-2"><Link to="/coming-soon" className="nav-link p-0 text-body-secondary">Blog</Link></li>
