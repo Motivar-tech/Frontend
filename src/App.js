@@ -7,6 +7,8 @@ import AppComing from './pages/Coming-soon';
 import AppHelp from './pages/Help.js';
 import AppSuccess from './pages/Success.js';
 import AppAuth from './pages/User-auth.js';
+import AppFundLearner from './pages/Fund-learner.js';
+import AppHelpLearner from './pages/Help-learner.js';
 
 function App() {
   return (
@@ -27,6 +29,12 @@ function App() {
           </Route>
           <Route path="/user-auth">
             <AppAuth/>
+          </Route>
+          <Route path="/fund-learner">
+            <AppFundLearner/>
+          </Route>
+          <Route path="/help-learner">
+            <AppHelpLearner/>
           </Route>
         </Switch>
       </div>
