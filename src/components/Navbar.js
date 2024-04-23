@@ -12,7 +12,7 @@ import Logo from '../assets/images/Motivar.svg';
 export default function AppNavbar() {
     return (
       <>
-     
+
        <Navbar expand="lg" className="bg-body-alt-white">
          <Container className="py-3">
            <Navbar.Brand href="/"><Image className="logo" src={Logo} fluid/></Navbar.Brand>
@@ -56,12 +56,11 @@ export default function AppNavbar() {
                 <Button className="btn btn-secondary text-white btn-lg me-2 d-inline-flex justify-content-center align-items-center">Get App</Button>
               </Link>
             </div>
-              
-            
+
+
           </Navbar.Collapse>
         </Container>
       </Navbar>
       </>
     );
   }
-  
