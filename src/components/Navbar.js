@@ -16,7 +16,7 @@ export default function AppNavbar() {
        <Navbar expand="lg" className="bg-body-alt-white">
          <Container className="py-3">
            <Navbar.Brand href="/"><Image className="logo" src={Logo} fluid/></Navbar.Brand>
-           <Navbar.Toggle aria-controls="navbarScroll" />
+           <Navbar.Toggle aria-controls="navbarScroll"/>
            <Navbar.Collapse id="navbarScroll">
            <div className="container">
              <Nav
@@ -24,15 +24,15 @@ export default function AppNavbar() {
               style={{maxHeight: '100px' }}
               navbarScroll
             >
-              <Nav.Link to="/coming-soon">Explore</Nav.Link>
-              <Nav.Link to="/coming-soon">Pricing</Nav.Link>
+              <Nav.Link href="/coming-soon">Explore</Nav.Link>
+              <Nav.Link href="/coming-soon">Pricing</Nav.Link>
               <NavDropdown title="Community" id="navbarScrollingDropdown">
-                <NavDropdown.Item to="/coming-soon">Find learners near you</NavDropdown.Item>
-                <NavDropdown.Item to="/coming-soon">
+                <NavDropdown.Item href="/coming-soon">Find learners near you</NavDropdown.Item>
+                <NavDropdown.Item href="/coming-soon">
                 Find mentors near you
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item to="/coming-soon">
+                <NavDropdown.Item href="/coming-soon">
                 Join accountability group
                 </NavDropdown.Item>
               </NavDropdown>
@@ -49,7 +49,7 @@ export default function AppNavbar() {
             </div>
 
             <div className="container">
-              <Link to="/coming-soon">
+              <Link to="/user-auth">
                 <Button variant="outline-secondary" className="btn-lg me-2 d-inline-flex out-btn">Sign in</Button>
               </Link>
               <Link to="/coming-soon">
