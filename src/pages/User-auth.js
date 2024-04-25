@@ -487,5 +487,5 @@ export default function AppAuth() {
         </main>
       )}
     </>
-  );
+  )
 }
