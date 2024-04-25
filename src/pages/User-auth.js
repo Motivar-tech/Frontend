@@ -1,5 +1,16 @@
-import "../App.css";
-import "../assets/css/main.css";
+import '../App.css';
+import '../assets/css/main.css';
+
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import { useState } from 'react';
+import Form from 'react-bootstrap/Form';
+import Image from 'react-bootstrap/Image';
+import Logo from '../assets/images/Motivar.svg';
+import Headphone from '../assets/images/headphone.png';
+import Snapback from '../assets/images/snapback.png';
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
