@@ -187,7 +187,7 @@ export default function AppHelpLearner() {
             <div className="container d-flex align-items-center justify-content-end">
             <Link to="/coming-soon" className="pe-5" style={{textDecoration: 'none', color: '#212529'}}>Explore</Link>
             <Link to="/coming-soon" className="pe-5" style={{textDecoration: 'none', color: '#212529'}}>Pricing</Link>
-              <Link to="/coming-soon">
+              <Link to="/user-auth">
                 <Button variant="outline-secondary" className="btn-lg me-2 d-inline-flex out-btn">Sign in</Button>
               </Link>
               
