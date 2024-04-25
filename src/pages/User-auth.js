@@ -11,7 +11,6 @@ import Image from 'react-bootstrap/Image';
 import Logo from '../assets/images/Motivar.svg';
 import Headphone from '../assets/images/headphone.png';
 import Snapback from '../assets/images/snapback.png';
-import AppFooter from '../components/Footer.js';
 
 
 
@@ -25,16 +24,16 @@ export default function AppAuth() {
             tabIndex === 1 && (
               <main>
 
-              <Container fluid>
-                <Row className="text-start">
+              <Container fluid style={{overflow: 'hidden' }}>
+                <Row className="text-start" >
         
-                    <Col md={6} >
+                    <Col md={6}>
                         <Image fluid className="d-none d-md-block" src={Headphone} alt="man"/>
                     </Col>
         
                     <Col md={6} className="align-content-center p-sm-5">
                       
-                        <div className="row mb-5 pb-5">
+                        <div className="row ">
                             <Image src={Logo} style={{maxHeight: '50px' }}  fluid/>
                         </div>
         
@@ -74,12 +73,7 @@ export default function AppAuth() {
                             </div>
                           </div>
         
-                          <div className="row mb-3 justify-content-center">
-                            <div className="col-sm-12 col-md-10 d-grid">
-                                <Button className="btn btn-lg btn-secondary text-white ">Sign in with</Button>
-                            </div>
-                          </div>
-        
+                                  
         
                         </Form>
                         
@@ -100,7 +94,7 @@ export default function AppAuth() {
             tabIndex === 2 && (
               <main>
 
-              <Container fluid>
+              <Container fluid style={{overflow: 'hidden'}}>
                 <Row className="text-start">
         
                     <Col md={6} >
@@ -159,6 +153,22 @@ export default function AppAuth() {
                           </div>
 
                           <div className="row mb-3 justify-content-center">
+                            <div className="col-sm-6 col-md-5">
+                              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                              <Form.Label>Password </Form.Label>
+                                <Form.Control type="password"/>
+                              </Form.Group>
+                            </div>
+
+                            <div className="col-sm-6 col-md-5">
+                              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                              <Form.Label>Confirm password</Form.Label>
+                                <Form.Control type="password" />
+                              </Form.Group>
+                            </div>
+                          </div>
+
+                          <div className="row mb-3 justify-content-center">
                             <div className="col-sm-5 col-md-4">
                               <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                               <Form.Label>Date of birth </Form.Label>
@@ -168,8 +178,8 @@ export default function AppAuth() {
 
                             <div className="col-sm-7 col-md-6">
                               <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                              <Form.Label className="text-white">xx </Form.Label>
-                                <Form.Control type="text" placeholder="" />
+                              <Form.Label >Phone number </Form.Label>
+                                <Form.Control type="text" placeholder="+234 000 000 0000" />
                               </Form.Group>
                             </div>
                           </div>
@@ -189,24 +199,24 @@ export default function AppAuth() {
                             <Form.Label>What is your Goal </Form.Label>
                             <Form.Select aria-label="Default select example">
                               <option>-- select --</option>
-                              <option value="">Goal</option>
-                              <option value="">Goal II</option>
+                              <option value="">I want to ask for help to fund courses</option>
+                              <option value="">I want to sponsor a learner or a group of learners</option>
                             </Form.Select>
                             </div>
                           </div>
 
                           <div className="row mb-3 justify-content-center">
                             <div className="col-sm-12 col-md-10">
-                              <p>By clicking 'Submit', I acknowledge and understand
-                                 that my personal information may be collected and used as 
-                                 described in Motivar's privacy policy
+                              <p>By clicking 'Submit', I accept the terms of Use and understand
+                                 that my personal information may be collected and used as described
+                                  in Motivar's <a href="https://www.freeprivacypolicy.com/live/37127601-6492-48cd-b7d5-b2f521359753" style={{textDecoration: 'none', color: '#11d99a'}}> Privacy policy </a>
                               </p>
                             </div>
                           </div>
                           
                           <div className="row mb-3 mt-5 justify-content-center">
                             <div className="col-sm-12 col-md-10 d-grid">
-                                <Button className="btn btn-lg btn-secondary text-white ">Sign in</Button>
+                                <Button className="btn btn-lg btn-secondary text-white ">Submit</Button>
                             </div>
                           </div>
         
@@ -229,9 +239,9 @@ export default function AppAuth() {
 
 
 
-      <footer>
+      {/* <footer>
           <AppFooter />
-      </footer>
+      </footer> */}
       </>
   );
 }
