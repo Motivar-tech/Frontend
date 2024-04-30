@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import "../App.css";
 import "../assets/css/main.css";
 
@@ -155,7 +157,7 @@ export default function AppHome() {
                 </strong>
               </p>
               <div className="px-md-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-                <Link to="/fund-learner">
+                <Link to="/help">
                   <Button className="btn btn-lg btn-secondary text-white">
                     Request for help
                   </Button>

@@ -39,7 +39,18 @@ function App() {
         </Switch>
       </div>
     </Router>
-    
+
+    // <Router>
+    //   <Route exact path="/" element={<AppHome/>} />
+    //   <Route exact path="/coming-soon" element={<AppComing/>} />
+    //   <Route exact path="/help" element={ <AppHelp/>} />
+    //   <Route exact path="/success" element={    <AppSuccess/>} />
+    //   <Route exact path="/user-auth" element={<AppAuth/>} />
+    //   <Route exact path="/fund-learner" element={   <AppFundLearner/>} />
+    //   <Route exact path="/help-learner" element={    <AppHelpLearner/>} /
+
+    // </Router>
+
 
   );
 }
