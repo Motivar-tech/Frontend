@@ -56,7 +56,7 @@ export default function AppHelp() {
     const token = await localStorage.getItem("motivar-token");
     axios
       .post(
-        `http://localhost:8089/course/request`,
+        `https://motivar-sponsor-api-v1.onrender.com/course/request`,
         payload,
         {
           headers: {
