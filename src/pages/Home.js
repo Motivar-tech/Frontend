@@ -111,7 +111,6 @@ export default function AppHome() {
             </Col>
           </Row>
         </Container>
-
         {/* Complete end */}
 
         {/* Sponsor start */}
