@@ -13,8 +13,10 @@ import Headphone from "../assets/images/headphone.png";
 import Snapback from "../assets/images/snapback.png";
 
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function AppAuth() {
+
   const [tabIndex, setTabIndex] = useState(1);
 
   const [loginMail, setLoginMail] = useState();
@@ -29,23 +31,28 @@ export default function AppAuth() {
   const [gender, setGender] = useState();
   const [dateofbirth, setDOB] = useState();
   const [goal, setGoal] = useState();
+  const [phoneNumber, setPhoneNumber] = useState();
   const [loading, setLoading] = useState(false);
+
 
   const handleSignIn = () => {
     setLoginLoading(true);
     const payload = {
-      loginMail,
-      loginPassword,
+      email: loginMail,
+      password: loginPassword,
     };
     axios
-      .post(`https://motivar-sponsor-api-v1.onrender.com/user/auth`, payload)
+      .post(`http://localhost:8089/user/auth`, payload)
       .then((res) => {
         setLoginLoading(false);
-        console.log(res);
-        localStorage.setItem("motivar-token", res.token);
+        console.log(res.data.data);
+        toast.success(res.data.message);
+        window.location.pathname = "/"
+        localStorage.setItem("motivar-token", res.data.data);
       })
       .catch((error) => {
         console.log(error);
+        toast.error(error?.response?.data?.message);
         setLoginLoading(false);
       });
   };
@@ -60,17 +67,21 @@ export default function AppAuth() {
       gender,
       dateofbirth,
       goal,
+      phoneNumber
     };
+    console.log(payload);
     axios
-      .post(`https://motivar-sponsor-api-v1.onrender.com/user/onboard`, payload)
+      .post(`http://localhost:8089/user/onboard`, payload)
       .then((res) => {
-        setLoginLoading(false);
+        setLoading(false);
         setTabIndex(1);
+        toast.success(res.data.message)
         console.log(res);
       })
       .catch((error) => {
         console.log(error);
-        setLoginLoading(false);
+        toast.error(error.response.data.message);
+        setLoading(false);
       });
   };
 
@@ -298,9 +309,7 @@ export default function AppAuth() {
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
-                        <Form.Label className="text-white">
-                          Enter Password{" "}
-                        </Form.Label>
+                        <Form.Label>Enter Password</Form.Label>
                         <Form.Control
                           type="text"
                           placeholder="********"
@@ -325,7 +334,7 @@ export default function AppAuth() {
                       </Form.Select>
                     </div>
 
-                    <div className="col-sm-8 col-md-7">
+                    <div className="col-sm-8 col-md-7 mb-3">
                       <Form.Label>What is your Goal </Form.Label>
                       <Form.Select
                         aria-label="Default select example"
@@ -337,7 +346,21 @@ export default function AppAuth() {
                         <option value="Sponsor">Sponsor</option>
                       </Form.Select>
                     </div>
+                    <div className="col-sm-12 col-md-10">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="exampleForm.ControlInput1"
+                    >
+                      <Form.Label>Phone Number </Form.Label>
+                      <Form.Control
+                        aria-label="Default select example"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                      />
+                    </Form.Group>
                   </div>
+                  </div>
+
 
                   <div className="row mb-3 justify-content-center">
                     <div className="col-sm-12 col-md-10">

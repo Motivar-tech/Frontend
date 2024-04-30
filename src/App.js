@@ -1,40 +1,50 @@
-import './App.css';
-import './assets/css/main.css';
+import "./App.css";
+import "./assets/css/main.css";
 
-import AppHome from './pages/Home';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import AppComing from './pages/Coming-soon';
-import AppHelp from './pages/Help.js';
-import AppSuccess from './pages/Success.js';
-import AppAuth from './pages/User-auth.js';
-import AppFundLearner from './pages/Fund-learner.js';
-import AppHelpLearner from './pages/Help-learner.js';
+import AppHome from "./pages/Home";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import AppComing from "./pages/Coming-soon";
+import AppHelp from "./pages/Help.js";
+import AppSuccess from "./pages/Success.js";
+import AppAuth from "./pages/User-auth.js";
+import AppFundLearner from "./pages/Fund-learner.js";
+import AppHelpLearner from "./pages/Help-learner.js";
+
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <Router>
       <div className="App">
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "white",
+            color: "green",
+          },
+        }}
+      />
         <Switch>
           <Route exact path="/">
-            <AppHome/>
+            <AppHome />
           </Route>
           <Route path="/coming-soon">
-            <AppComing/>
+            <AppComing />
           </Route>
           <Route path="/help">
-            <AppHelp/>
+            <AppHelp />
           </Route>
           <Route path="/success">
-            <AppSuccess/>
+            <AppSuccess />
           </Route>
           <Route path="/user-auth">
-            <AppAuth/>
+            <AppAuth />
           </Route>
           <Route path="/fund-learner">
-            <AppFundLearner/>
+            <AppFundLearner />
           </Route>
           <Route path="/help-learner">
-            <AppHelpLearner/>
+            <AppHelpLearner />
           </Route>
         </Switch>
       </div>
@@ -50,8 +60,6 @@ function App() {
     //   <Route exact path="/help-learner" element={    <AppHelpLearner/>} /
 
     // </Router>
-
-
   );
 }
 

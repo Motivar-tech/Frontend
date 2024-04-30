@@ -3,6 +3,7 @@ import "../assets/css/main.css";
 
 import React, { useState } from "react";
 
+
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -15,6 +16,7 @@ import Logo from "../assets/images/Motivar.svg";
 import Man from "../assets/images/man.png";
 import { BsChevronLeft } from "react-icons/bs";
 import AppFooter from "../components/Footer.js";
+import { toast } from "react-hot-toast";
 import axios from "axios";
 
 export default function AppHelp() {
@@ -29,14 +31,17 @@ export default function AppHelp() {
   const [social, setSocial] = useState();
   const [isPrivate, setIsPrivate] = useState(Boolean);
 
+  const [loading, setLoading] = useState(Boolean);
+
   const handleSubmit = async () => {
+    setLoading(true);
     const payload = {
       email,
       link,
       course: {
-        price: price,
+        price: Number(price),
         courseTitle: courseTitle,
-        duration: duration,
+        duration: Number(duration),
         platform: platform,
       },
       motivation,
@@ -51,7 +56,7 @@ export default function AppHelp() {
     const token = await localStorage.getItem("motivar-token");
     axios
       .post(
-        `https://motivar-sponsor-api-v1.onrender.com/course/request`,
+        `http://localhost:8089/course/request`,
         payload,
         {
           headers: {
@@ -60,15 +65,20 @@ export default function AppHelp() {
         }
       )
       .then((res) => {
+        setLoading(false);
+        toast.success(res.data.message);
         console.log(res);
       })
       .catch((error) => {
-        console.log(error.response.data.message);
+        setLoading(false);
+        toast.error(error?.response?.data?.message);
+        console.log(error);
       });
   };
 
   return (
     <>
+
       <header>
         <Navbar expand="lg" className="bg-body-alt-white">
           <Container className="py-3">
@@ -313,7 +323,7 @@ export default function AppHelp() {
                       className="btn btn-lg btn-secondary text-white "
                       onClick={() => handleSubmit()}
                     >
-                      SUBMIT FORM
+                      {loading ? "Loading..." : "SUBMIT FORM"}
                     </Button>
                   </div>
                 </div>

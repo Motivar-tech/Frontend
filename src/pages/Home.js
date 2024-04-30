@@ -97,7 +97,7 @@ export default function AppHome() {
                 will help you make the most of the journey.
               </p>
               <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-                <Link to="/coming-soon">
+                <Link to="/user-auth">
                   <Button className="btn btn-lg btn-secondary text-white">
                     Get Started
                   </Button>
