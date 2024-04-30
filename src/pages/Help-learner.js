@@ -217,7 +217,7 @@ export default function AppHelpLearner() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8089/course/get`)
+      .get(`https://motivar-sponsor-api-v1.onrender.com/course/get`)
       .then((res) => {
         console.log(res.data.data);
         setRequests(res.data.data);
