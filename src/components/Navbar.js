@@ -76,9 +76,11 @@ export default function AppNavbar() {
                 </Button>
               </Link>
             </div>
+
+
           </Navbar.Collapse>
         </Container>
       </Navbar>
-    </>
-  );
-}
+      </>
+    );
+  }
