@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import "../App.css";
 import "../assets/css/main.css";
 
@@ -46,17 +44,25 @@ export default function AppHome() {
                 <p className="h1 lead display-4 fw-medium ">
                   <br />
                   <br />
-                  The <em>easiest</em> way to{" "}
+                  The <em>easiest</em> way to {" "}
                   <span>
                     <TypeAnimation
                       sequence={["find", 3000, "start", 3000, "complete", 3000]}
                       speed={50}
                       repeat={Infinity}
-                    />{" "}
+                    />
                   </span>
                 </p>
                 <p className="lead display-4 fw-medium">online courses</p>
                 {/* <Image className="curve img-fluid" src={Curve} alt="highlight"/> */}
+                <div className="container d-block d-md-none pt-2">
+                  <Link to="/user-auth">
+                    <Button variant="outline-secondary" className="btn-lg me-2 d-inline-flex out-btn">Sign in</Button>
+                  </Link>
+                  <Link to="/coming-soon">
+                    <Button className="btn btn-secondary text-white btn-lg me-2 d-inline-flex justify-content-center align-items-center">Get App</Button>
+                  </Link>
+                </div>
               </div>
             </Col>
           </Row>
@@ -64,7 +70,7 @@ export default function AppHome() {
             <Col className="">
               <Image fluid src={Sketch2} alt="sketch" />
             </Col>
-            <Col className="">
+            <Col className="d-none d-md-block">
               <Image fluid src={Sketch1} alt="sketch" />
             </Col>
           </Row>
@@ -92,12 +98,12 @@ export default function AppHome() {
                 <br /> <br />
                 <strong>Complete online courses you need to succeed</strong>
               </p>
-              <p class="h3 px-md-4 text-md-start fw-light">
+              <p class="h4 px-md-4 text-md-start fw-light">
                 Whatever you want to learn online, wherever they are hosted. We
                 will help you make the most of the journey.
               </p>
               <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-                <Link to="/user-auth">
+                <Link to="/coming-soon">
                   <Button className="btn btn-lg btn-secondary text-white">
                     Get Started
                   </Button>
@@ -113,6 +119,7 @@ export default function AppHome() {
             </Col>
           </Row>
         </Container>
+
         {/* Complete end */}
 
         {/* Sponsor start */}
@@ -130,7 +137,7 @@ export default function AppHome() {
                   afford
                 </strong>
               </p>
-              <p class="h3 px-4 text-md-start fw-light">
+              <p class="h4 px-4 text-md-start fw-light">
                 Lots of young people want and need online courses to upskill and
                 improve their knowledge, but unfortunately cannot afford them.
               </p>
@@ -190,7 +197,7 @@ export default function AppHome() {
                   your learning experience
                 </strong>
               </p>
-              <p class="h3 px-md-4 text-md-start fw-light">
+              <p class="h4 px-md-4 text-md-start fw-light">
                 Connect with learners like you in your location to share ideas,
                 insights, challenges, and wins
               </p>

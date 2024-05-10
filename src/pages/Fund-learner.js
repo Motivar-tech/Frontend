@@ -13,6 +13,7 @@ import Image from 'react-bootstrap/Image';
 import Logo from '../assets/images/Motivar.svg';
 import { BsChevronRight } from "react-icons/bs";
 import { BsArrowDown } from "react-icons/bs";
+import { TypeAnimation } from "react-type-animation";
 import Test from '../assets/images/test.png';
 import Subtract from '../assets/images/Subtract.png';
 import AppFooter from '../components/Footer.js';
@@ -26,7 +27,7 @@ export default function AppFundLearner() {
       <header>
       <Navbar expand="lg" className="bg-body-alt-white">
          <Container className="py-3">
-           <Navbar.Brand href="/"><Image className="" src={Logo} fluid/></Navbar.Brand>
+           <Navbar.Brand href="/"><Image className="" src={Logo} style={{maxHeight: '30px' }} fluid/></Navbar.Brand>
            <Navbar.Toggle aria-controls="navbarScroll"/>
            <Navbar.Collapse id="navbarScroll">
           
@@ -40,7 +41,7 @@ export default function AppFundLearner() {
             <div className="container d-flex align-items-center justify-content-end">
             <Link to="/coming-soon" className="pe-5" style={{textDecoration: 'none', color: '#212529'}}>Explore</Link>
             <Link to="/coming-soon" className="pe-5" style={{textDecoration: 'none', color: '#212529'}}>Pricing</Link>
-              <Link to="//user-auth">
+              <Link to="/user-auth">
                 <Button variant="outline-secondary" className="btn-lg me-2 d-inline-flex out-btn">Sign in</Button>
               </Link>
               
@@ -56,7 +57,16 @@ export default function AppFundLearner() {
 
       <div className="container-fluid bg-info" >
         <Image src={Subtract}  alt="headerImage" fluid />
-        <div className="subtract"><p className="h1 display-4 fw-semibold">Fund a Learner's Journey</p></div>
+        <div className="subtract">
+          <p className="display-6 fw-medium">
+            <TypeAnimation
+            sequence={["Support a Learner", 1000, "Fund a Learner's Journey", 1000]}
+            speed={50}
+            repeat={Infinity}
+          />
+          </p>
+        </div>
+        {/* <div className="subtract"><p className="h1 display-4 fw-semibold">Fund a Learner's Journey</p></div> */}
       </div>
 
       <Container fluid>
