@@ -1,4 +1,4 @@
-/* .App {
+.App {
   text-align: center;
 }
 
@@ -26,9 +26,7 @@
 
 .App-link {
   color: #61dafb;
-} */
-
-/* eslint-disable */
+}
 
 .blk {
   color: #61dafb;
@@ -67,12 +65,12 @@
 
 .subtract{
   position: absolute;
-  top: 35%;
+  top: 38%;
   left: 50%;
   transform: translate(-50%, -50%);
   white-space: nowrap;
 }
-
+  
 
 }
 
@@ -88,28 +86,30 @@
 
     .subtract{
       position: absolute;
-      top: 11.5%;
-      left: 8%;
+      top: 16%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
     }
-
+    
   }
 
-
+ 
    /* small devices */
 @media screen and (max-width: 576px){
-
-
+ 
+  
   .curve{
     margin-top: -230px;
     margin-left: -60px;
   }
 
   div span{
-    display: inline-block;
-    /* white-space: pre-line; */
+    display: block;
+    /* white-space: pre; */
   }
 
-
+  
 
 }
 
@@ -122,7 +122,7 @@
 }
 .partners{
 display: flex;
-justify-content: flex-start;
+justify-content: start;
 align-items: center;
 /* padding: 20px; */
   height: 100px;
@@ -145,8 +145,6 @@ align-items: center;
     justify-content: center;
     align-items: center;
 }
-
-
 
 
 
