@@ -70,7 +70,8 @@ function DonateRandomly(props) {
                 {props?.requests[props?.index]?.course?.courseTitle}{" "}
                 <BsArrowUpRightCircle
                   className="ps-1"
-                  style={{ color: "#11d99a" }}
+                  style={{ color: "#11d99a", cursor: "pointer"}}
+                  onClick={() => { window.location.href = props?.requests[props?.index]?.link; }}
                 />{" "}
               </p>
             </Col>
@@ -95,6 +96,7 @@ function DonateRandomly(props) {
               </p>
             </Col>
           </Row>
+          {/*
           <Row>
             <Col xs={6} md={8}>
               <p className="h6 fw-lighter text-secondary pt-3">
@@ -116,7 +118,7 @@ function DonateRandomly(props) {
                 {props?.requests[props?.index]?.account?.password}
               </p>
             </Col>
-          </Row>
+              </Row>*/}
 
           <Row>
             <Col xs={6} md={12}>
