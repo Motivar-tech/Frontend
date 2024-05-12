@@ -35,6 +35,17 @@ export default function AppAuth() {
   const [phoneNumber, setPhoneNumber] = useState();
   const [loading, setLoading] = useState(false);
 
+  const AfricanCountries = [
+    "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde", 
+    "Cameroon", "Central African Republic", "Chad", "Comoros", "Democratic Republic of the Congo", 
+    "Djibouti", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon", 
+    "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Ivory Coast", "Kenya", "Lesotho", "Liberia", 
+    "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", "Mozambique", 
+    "Namibia", "Niger", "Nigeria", "Republic of the Congo", "Rwanda", "São Tomé and Príncipe", 
+    "Senegal", "Seychelles", "Sierra Leone", "Somalia", "South Africa", "South Sudan", "Sudan", 
+    "Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe"
+  ];
+
 
   const handleSignIn = () => {
     setLoginLoading(true);
@@ -174,9 +185,6 @@ export default function AppAuth() {
 
                   <div className="row mb-3 justify-content-center">
                     <div className="col-sm-12 col-md-10 d-grid">
-                      <Button className="btn btn-lg btn-secondary text-white ">
-                        Sign in with
-                      </Button>
                     </div>
                   </div>
                 </Form>
@@ -270,6 +278,7 @@ export default function AppAuth() {
                         <option>-- select --</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
+                        <option value="nb">Prefer not to say</option>
                       </Form.Select>
                     </div>
 
@@ -281,7 +290,7 @@ export default function AppAuth() {
                         <Form.Label>Email Address</Form.Label>
                         <Form.Control
                           type="text"
-                          placeholder="patricksean@gmail.com"
+                          placeholder="patrickobi@gmail.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                         />
@@ -312,7 +321,7 @@ export default function AppAuth() {
                       >
                         <Form.Label>Enter Password</Form.Label>
                         <Form.Control
-                          type="text"
+                          type="password"
                           placeholder="********"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
@@ -330,8 +339,9 @@ export default function AppAuth() {
                         onChange={(e) => setCountry(e.target.value)}
                       >
                         <option>-- select --</option>
-                        <option value="Nigeria">Nigeria</option>
-                        <option value="Gambia">Gambia</option>
+                        {AfricanCountries.map((country, index) => (
+                          <option key={index} value={country}>{country}</option>
+                        ))}
                       </Form.Select>
                     </div>
 
