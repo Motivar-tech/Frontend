@@ -1,99 +1,141 @@
-import '../App.css';
-import '../assets/css/main.css';
+import "../App.css";
+import "../assets/css/main.css";
 
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Navbar from 'react-bootstrap/Navbar';
-import React, { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
-import { Link } from 'react-router-dom';
-import Image from 'react-bootstrap/Image';
-import Logo from '../assets/images/Motivar.svg';
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import Navbar from "react-bootstrap/Navbar";
+import React, { useEffect, useState } from "react";
+import Modal from "react-bootstrap/Modal";
+import { Link } from "react-router-dom";
+import Image from "react-bootstrap/Image";
+import Logo from "../assets/images/Motivar.svg";
 import { BsChevronRight } from "react-icons/bs";
 import { BsArrowDown } from "react-icons/bs";
 import { BsArrowUpRightCircle } from "react-icons/bs";
-import Test from '../assets/images/test.png';
-import Subtract from '../assets/images/Subtract.png';
-import AppFooter from '../components/Footer.js';
+import Test from "../assets/images/test.png";
+import Subtract from "../assets/images/Subtract.png";
+import AppFooter from "../components/Footer.js";
+import axios from "axios";
 
 // start donate modal
 function DonateRandomly(props) {
   return (
     <Modal {...props} aria-labelledby="contained-modal-title-vcenter">
-      <Modal.Header closeButton>
-        {/* <Modal.Title id="contained-modal-title-vcenter">
-          Using Grid in Modal
-        </Modal.Title> */}
-      </Modal.Header>
+      <Modal.Header closeButton></Modal.Header>
       <Modal.Body className="grid-example">
         <Container className="p-4">
           <Row className="justify-content-center align-items-center g-0">
             <Col xs={12} md={4}>
-            <Image src={Test}  alt="image"/>
+              <Image src={Test} alt="image" />
             </Col>
             <Col xs={6} md={4}>
-              <p className="h2">Michael Yewande</p>
+              <p className="h2">
+                {props?.requests[props?.index]?.user?.fullName}
+              </p>
             </Col>
             <Col xs={6} md={4} className="d-flex justify-content-md-end">
-              <p className=" h4 fw-lighter shadow-sm " style={{
-                borderColor: '#11d99a',
-                borderStyle: 'solid',
-                borderWidth: 'thin',
-                backgroundColor: '#ffffff',
-                borderRadius: '50%',
-                width: '55px',
-                height: '55px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'}}> $70 </p>
+              <p
+                className=" h4 fw-lighter shadow-sm "
+                style={{
+                  borderColor: "#11d99a",
+                  borderStyle: "solid",
+                  borderWidth: "thin",
+                  backgroundColor: "#ffffff",
+                  borderRadius: "50%",
+                  width: "55px",
+                  height: "55px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {" "}
+                ${props?.requests[props?.index]?.course?.price}{" "}
+              </p>
             </Col>
           </Row>
 
           <Row>
-            <Col xs={6} md={12} >
-              <p className="h6 fw-lighter text-secondary pt-5"> Course Title:</p>
-              <p className="h6 fw-normal"> Web Development <BsArrowUpRightCircle className="ps-1" style={{color: '#11d99a'}} /> </p>
+            <Col xs={6} md={12}>
+              <p className="h6 fw-lighter text-secondary pt-5">
+                {" "}
+                Course Title:
+              </p>
+              <p className="h6 fw-normal">
+                {" "}
+                {props?.requests[props?.index]?.course?.courseTitle}{" "}
+                <BsArrowUpRightCircle
+                  className="ps-1"
+                  style={{ color: "#11d99a", cursor: "pointer"}}
+                  onClick={() => { 
+                    const url = props?.requests[props?.index]?.link;
+                    //const fullUrl = url.startsWith('http') ? url : `https://www.${url}`;
+                    window.open(url, '_blank'); 
+                  }}
+                  />{" "}
+              </p>
             </Col>
           </Row>
           <Row>
             <Col xs={6} md={12}>
               <p className="h6 fw-lighter text-secondary pt-3"> Platform:</p>
-              <p className="h6 fw-normal "> Altschool Africa </p>
+              <p className="h6 fw-normal ">
+                {" "}
+                {props?.requests[props?.index]?.course?.platform}{" "}
+              </p>
             </Col>
           </Row>
           <Row>
             <Col xs={6} md={12}>
-              <p className="h6 fw-lighter text-secondary pt-3"> Motivation Message:</p>
+              <p className="h6 fw-lighter text-secondary pt-3">
+                {" "}
+                Motivation Message:
+              </p>
               <p className="h6 fw-normal ">
-                Altschool Africa Altschool Africa Altschool Africa Altschool Africa Altschool Africa Altschool Africa
-                Altschool Africa Altschool Africa Altschool Africa Altschool Africa Altschool Africa Altschool Africa
-               </p>
+                {props?.requests[props?.index]?.motivation}
+              </p>
             </Col>
           </Row>
+          {/*
           <Row>
             <Col xs={6} md={8}>
-              <p className="h6 fw-lighter text-secondary pt-3"> Course platform login details:</p>
-              <p className="h6 fw-normal"> Olusesan@gmail.com </p>
+              <p className="h6 fw-lighter text-secondary pt-3">
+                {" "}
+                Course platform login details:
+              </p>
+              <p className="h6 fw-normal">
+                {" "}
+                {props?.requests[props?.index]?.account?.email}{" "}
+              </p>
             </Col>
 
             <Col xs={6} md={4}>
-              <p className="h6 fw-lighter text-secondary pt-3 text-white">xxx</p>
-              <p className="h6 fw-normal"> ***********</p>
+              <p className="h6 fw-lighter text-secondary pt-3 text-white">
+                Password
+              </p>
+              <p className="h6 fw-normal">
+                {" "}
+                {props?.requests[props?.index]?.account?.password}
+              </p>
             </Col>
-
-          </Row>
+              </Row>*/}
 
           <Row>
             <Col xs={6} md={12}>
-              <p className="h6 fw-lighter text-secondary pt-3"> Social media:</p>
-              <p className="h6 fw-normal "> link</p>
+              <p className="h6 fw-lighter text-secondary pt-3">
+                {" "}
+                Social media:
+              </p>
+              <p className="h6 fw-normal ">
+                {" "}
+                {props?.requests[props?.index]?.socials}
+              </p>
             </Col>
           </Row>
-
         </Container>
       </Modal.Body>
       <Modal.Footer>
@@ -123,12 +165,21 @@ function MeetLearner(props) {
         </Modal.Title> */}
       </Modal.Header>
       <Modal.Body>
-        <p className="h4 text-center fw-medium">Would you like to <br/>meet the learner or be <br/>stay anonymous</p>
+        <p className="h4 text-center fw-medium">
+          Would you like to <br />
+          meet the learner or be <br />
+          stay anonymous
+        </p>
       </Modal.Body>
       <Modal.Footer className="justify-content-center">
-        <Button className="btn-secondary text-white" >Meet Learner</Button>
-        <Button onClick={() => setModalShowIII(true)} className="btn-secondary text-white">Anonymous</Button>
-        <Anonymous show={modalShowIII} onHide={() => setModalShowIII(false)} />      
+        <Button className="btn-secondary text-white">Meet Learner</Button>
+        <Button
+          onClick={() => setModalShowIII(true)}
+          className="btn-secondary text-white"
+        >
+          Anonymous
+        </Button>
+        <Anonymous show={modalShowIII} onHide={() => setModalShowIII(false)} />
       </Modal.Footer>
     </Modal>
   );
@@ -166,11 +217,23 @@ function Anonymous(props) {
 export default function AppHelpLearner() {
   const [modalShow, setModalShow] = useState(false);
   const [modalShowII, setModalShowII] = useState(false);
-  
 
-    return (
-      <>
-      <header>
+  const [requests, setRequests] = useState([]);
+  const [index, setIndex] = useState();
+
+  useEffect(() => {
+    axios
+      .get(`https://motivar-sponsor-api-v1.onrender.com/course/get`)
+      .then((res) => {
+        console.log(res.data.data);
+        setRequests(res.data.data);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  return (
+    <>
+ <header>
       <Navbar expand="lg" className="bg-body-alt-white">
          <Container className="py-3">
            <Navbar.Brand href="/"><Image className="" src={Logo} style={{maxHeight: '30px' }} fluid/></Navbar.Brand>
@@ -206,214 +269,114 @@ export default function AppHelpLearner() {
         <div className="subtract"><p className="display-6 fw-medium">Help a Learner's Journey</p></div>
         {/* <div className="subtract"><p className="h1 display-4 fw-semibold">Help a Learner's Journey</p></div> */}
       </div>
-      
 
-<Container fluid>
-        <Row className="p-md-5 pt-3 pb-4 text-start bg-info">
-          <Col md={7} >
+        <Container fluid>
+          <Row className="p-md-5 pt-3 pb-4 text-start bg-info">
+            <Col md={7}>
               <Form className="d-flex">
-                  <Form.Control
-                    type="search"
-                    placeholder="&#x1F50D;"
-                    className="me-2 justify-content-start"
-                    aria-label="Search"
-                  />
-                  <Button variant="outline-success" className="d-flex text-black fw-medium">Filter <BsArrowDown className="mt-1 ms-1 " /></Button>
-                </Form>
+                <Form.Control
+                  type="search"
+                  placeholder="&#x1F50D;"
+                  className="me-2 justify-content-start"
+                  aria-label="Search"
+                />
+                <Button
+                  variant="outline-success"
+                  className="d-flex text-black fw-medium"
+                >
+                  Filter <BsArrowDown className="mt-1 ms-1 " />
+                </Button>
+              </Form>
             </Col>
 
-            <Col md={5} className="d-flex pt-3 pt-md-0 justify-content-between justify-content-md-end">
+            <Col
+              md={5}
+              className="d-flex pt-3 pt-md-0 justify-content-between justify-content-md-end"
+            >
               <div className="pe-md-4">
-                <Button variant="outline-success" className="text-black" style={{whiteSpace: 'noWrap'}} onClick={() => setModalShow(true)}>Donate Randomly</Button>
-                <DonateRandomly show={modalShow} onHide={() => setModalShow(false)} />
+                <Button
+                  variant="outline-success"
+                  className="text-black"
+                  style={{ whiteSpace: "noWrap" }}
+                  onClick={() => setModalShow(true)}
+                >
+                  Donate Randomly
+                </Button>
+                <DonateRandomly
+                  show={modalShow}
+                  onHide={() => setModalShow(false)}
+                  index={index}
+                  requests={requests}
+                />
               </div>
               <div>
-                <Button variant="outline-success" className="text-black" style={{whiteSpace: 'noWrap'}} onClick={() => setModalShowII(true)}>Support a lot of learners</Button>
-                <MeetLearner show={modalShowII} onHide={() => setModalShowII(false)} />
+                <Button
+                  variant="outline-success"
+                  className="text-black"
+                  style={{ whiteSpace: "noWrap" }}
+                  onClick={() => setModalShowII(true)}
+                >
+                  Support a lot of learners
+                </Button>
+                <MeetLearner
+                  show={modalShowII}
+                  onHide={() => setModalShowII(false)}
+                />
               </div>
             </Col>
-        </Row>
-      </Container>
+          </Row>
+        </Container>
 
-      <Container fluid>
-
-        <Row className="px-md-5 pt-5 text-start justify-content-between bg-info pb-4">
-          <Col className="col-md-6 col-sm-12">
-            <Card className="bg-info">
-              {/* <Card.Img variant="top" src="../assets/images/test.png" /> */}
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between">
-                    <Image src={Test}  alt="image"/>
-                      <span className="shadow-sm pointer ms-3"> $70</span>
-                  </div>
+        <Container fluid>
+          <Row className="px-md-5 pt-5 text-start justify-content-between bg-info pb-4">
+            {requests.length > 0 &&
+              requests.map((item, index) => (
+                <Col key={index} className="col-md-6 col-sm-12">
+                  <Card className="bg-info">
+                    <Row className="p-3">
+                      <Col md={12}>
+                        <div className="d-flex justify-content-between">
+                          <Image src={Test} alt="image" />
+                          <span className="shadow-sm pointer ms-3">
+                            {" "}
+                            ${item?.course?.price}
+                          </span>
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row className="p-3">
+                      <Col md={12}>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <Card.Body>
+                            <Card.Title className="h4">
+                              {item?.user?.fullName}
+                            </Card.Title>
+                            <Card.Text className="h5 fw-normal">
+                              {item?.course?.courseTitle}
+                            </Card.Text>
+                          </Card.Body>
+                          <span
+                            className="shadow-sm pointer "
+                            onClick={() => {
+                              setModalShow(true);
+                              setIndex(index);
+                            }}
+                          >
+                            {" "}
+                            <BsChevronRight />{" "}
+                          </span>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Card>
                 </Col>
-              </Row>
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Card.Body>
-                      <Card.Title className="h4">Michael Yewande</Card.Title>
-                      <Card.Text className="h5 fw-normal">
-                      Web development - Alt School Africa
-                      </Card.Text>
-                    </Card.Body>
-                      <span className="shadow-sm pointer "> <BsChevronRight /> </span>
-                    </div>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-          
-          <Col className="col-md-6 col-sm-12">
-            <Card className="bg-info">
-              {/* <Card.Img variant="top" src="../assets/images/test.png" /> */}
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between">
-                    <Image src={Test}  alt="image"/>
-                      <span className="shadow-sm pointer ms-3"> $70</span>
-                  </div>
-                </Col>
-              </Row>
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Card.Body>
-                      <Card.Title className="h4">Michael Yewande</Card.Title>
-                      <Card.Text className="h5 fw-normal">
-                      Web development - Alt School Africa
-                      </Card.Text>
-                    </Card.Body>
-                      <span className="shadow-sm pointer "> <BsChevronRight /> </span>
-                    </div>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row className="px-md-5 text-start justify-content-between bg-info pb-4 ">
-          <Col className="col-md-6 col-sm-12">
-            <Card className="bg-info">
-              {/* <Card.Img variant="top" src="../assets/images/test.png" /> */}
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between">
-                    <Image src={Test}  alt="image"/>
-                      <span className="shadow-sm pointer ms-3"> $70</span>
-                  </div>
-                </Col>
-              </Row>
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Card.Body>
-                      <Card.Title className="h4">Michael Yewande</Card.Title>
-                      <Card.Text className="h5 fw-normal">
-                      Web development - Alt School Africa
-                      </Card.Text>
-                    </Card.Body>
-                      <span className="shadow-sm pointer "> <BsChevronRight /> </span>
-                    </div>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-          
-          <Col className="col-md-6 col-sm-12">
-            <Card className="bg-info">
-              {/* <Card.Img variant="top" src="../assets/images/test.png" /> */}
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between">
-                    <Image src={Test}  alt="image"/>
-                      <span className="shadow-sm pointer ms-3"> $70</span>
-                  </div>
-                </Col>
-              </Row>
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Card.Body>
-                      <Card.Title className="h4">Michael Yewande</Card.Title>
-                      <Card.Text className="h5 fw-normal">
-                      Web development - Alt School Africa
-                      </Card.Text>
-                    </Card.Body>
-                      <span className="shadow-sm pointer "> <BsChevronRight /> </span>
-                    </div>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row className="px-md-5 text-start justify-content-between bg-info pb-4 ">
-          <Col className="col-md-6 col-sm-12">
-            <Card className="bg-info">
-              {/* <Card.Img variant="top" src="../assets/images/test.png" /> */}
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between">
-                    <Image src={Test}  alt="image"/>
-                      <span className="shadow-sm pointer ms-3"> $70</span>
-                  </div>
-                </Col>
-              </Row>
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Card.Body>
-                      <Card.Title className="h4">Michael Yewande</Card.Title>
-                      <Card.Text className="h5 fw-normal">
-                      Web development - Alt School Africa
-                      </Card.Text>
-                    </Card.Body>
-                      <span className="shadow-sm pointer "> <BsChevronRight /> </span>
-                    </div>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-          
-          <Col className="col-md-6 col-sm-12">
-            <Card className="bg-info">
-              {/* <Card.Img variant="top" src="../assets/images/test.png" /> */}
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between">
-                    <Image src={Test}  alt="image"/>
-                      <span className="shadow-sm pointer ms-3"> $70</span>
-                  </div>
-                </Col>
-              </Row>
-              <Row className="p-3">
-                <Col md={12} >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Card.Body>
-                      <Card.Title className="h4">Michael Yewande</Card.Title>
-                      <Card.Text className="h5 fw-normal">
-                      Web development - Alt School Africa
-                      </Card.Text>
-                    </Card.Body>
-                      <span className="shadow-sm pointer "> <BsChevronRight /> </span>
-                    </div>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-        </Row>
-
-      </Container>
-
+              ))}
+          </Row>
+        </Container>
       </main>
       <footer>
-      
-      
-      
-          <AppFooter />
+        <AppFooter />
       </footer>
-      </>
+    </>
   );
 }
