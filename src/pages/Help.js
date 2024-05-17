@@ -16,6 +16,7 @@ import Logo from "../assets/images/Motivar.svg";
 import Man from "../assets/images/man.png";
 import { BsChevronLeft } from "react-icons/bs";
 import AppFooter from "../components/Footer.js";
+
 import { toast } from "react-hot-toast";
 import axios from "axios";
 
@@ -86,7 +87,7 @@ export default function AppHelp() {
               <Navbar.Brand href="/">
                 <Image
                   src={Logo}
-                  style={{ maxHeight: "100px" }}
+                  style={{ maxHeight: "30px" }}
                   className=""
                   fluid
                 />
@@ -113,7 +114,7 @@ export default function AppHelp() {
 
         <Container fluid>
           <Row className="ps-md-5 text-start">
-            <Col md={6}>
+            <Col md={6} className="p-4 p-md-0">
               <p className="h4 py-4 ps-4 fw-medium">
                 Tell us about your course
               </p>

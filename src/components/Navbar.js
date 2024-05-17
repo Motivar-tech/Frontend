@@ -18,7 +18,7 @@ export default function AppNavbar() {
       <Navbar expand="lg" className="bg-body-alt-white">
         <Container className="py-3">
           <Navbar.Brand href="/">
-            <Image className="logo" src={Logo} fluid />
+            <Image className="logo" src={Logo} style={{maxHeight: '30px' }} fluid />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
@@ -52,7 +52,7 @@ export default function AppNavbar() {
               <Navbar.Brand href="/">
                 <Image
                   src={Logo}
-                  style={{ maxHeight: "100px" }}
+                  style={{ maxHeight: "30px" }}
                   className="logo-2 "
                   fluid
                 />

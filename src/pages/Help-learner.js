@@ -233,56 +233,42 @@ export default function AppHelpLearner() {
 
   return (
     <>
-      <header>
-        <Navbar expand="lg" className="bg-body-alt-white">
-          <Container className="py-3">
-            <Navbar.Brand href="/">
-              <Image className="" src={Logo} fluid />
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="navbarScroll" />
-            <Navbar.Collapse id="navbarScroll">
-              {/* <div className="container">
+ <header>
+      <Navbar expand="lg" className="bg-body-alt-white">
+         <Container className="py-3">
+           <Navbar.Brand href="/"><Image className="" src={Logo} style={{maxHeight: '30px' }} fluid/></Navbar.Brand>
+           <Navbar.Toggle aria-controls="navbarScroll"/>
+           <Navbar.Collapse id="navbarScroll">
+          
+
+            {/* <div className="container">
               <Navbar.Brand href="/">
                 <Image src={Logo} style={{maxHeight: '100px' }} className="logo-2 " fluid/>
               </Navbar.Brand>
             </div> */}
 
-              <div className="container d-flex align-items-center justify-content-end">
-                <Link
-                  to="/coming-soon"
-                  className="pe-5"
-                  style={{ textDecoration: "none", color: "#212529" }}
-                >
-                  Explore
-                </Link>
-                <Link
-                  to="/coming-soon"
-                  className="pe-5"
-                  style={{ textDecoration: "none", color: "#212529" }}
-                >
-                  Pricing
-                </Link>
-                <Link to="/user-auth">
-                  <Button
-                    variant="outline-secondary"
-                    className="btn-lg me-2 d-inline-flex out-btn"
-                  >
-                    Sign in
-                  </Button>
-                </Link>
-              </div>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
+            <div className="container d-flex align-items-center justify-content-end">
+            <Link to="/coming-soon" className="pe-5" style={{textDecoration: 'none', color: '#212529'}}>Explore</Link>
+            <Link to="/coming-soon" className="pe-5" style={{textDecoration: 'none', color: '#212529'}}>Pricing</Link>
+              <Link to="/user-auth">
+                <Button variant="outline-secondary" className="btn-lg me-2 d-inline-flex out-btn">Sign in</Button>
+              </Link>
+              
+            </div>
+              
+            
+          </Navbar.Collapse>
+        </Container>
+      </Navbar> 
       </header>
 
       <main>
-        <div className="container-fluid bg-info">
-          <Image src={Subtract} alt="headerImage" fluid />
-          <div className="subtract">
-            <p className="h1 display-4 fw-semibold">Help a Learner's Journey</p>
-          </div>
-        </div>
+
+      <div className="container-fluid bg-info" >
+        <Image src={Subtract}  alt="headerImage" fluid />
+        <div className="subtract"><p className="display-6 fw-medium">Help a Learner's Journey</p></div>
+        {/* <div className="subtract"><p className="h1 display-4 fw-semibold">Help a Learner's Journey</p></div> */}
+      </div>
 
         <Container fluid>
           <Row className="p-md-5 pt-3 pb-4 text-start bg-info">

@@ -112,28 +112,19 @@ export default function AppAuth() {
                 />
               </Col>
 
-              <Col md={6} className="align-content-center p-sm-5">
-                <div className="row mb-5 pb-5">
-                  <Image src={Logo} style={{ maxHeight: "50px" }} fluid />
+              <Col md={6} className="align-content-center p-4">
+                <div className="row ">
+                    <Image src={Logo} style={{maxHeight: '30px' }}  fluid/>
                 </div>
-
+                
                 <div className="row mb-5 mt-5 pt-5 justify-content-center">
                   <div className="col-sm-6 col-md-5 d-grid">
-                    <Button
-                      className="btn btn-lg btn-success text-white "
-                      onClick={() => setTabIndex(1)}
-                    >
-                      Sign in
-                    </Button>
+                      <Button className="btn btn-lg btn-success text-white " 
+                      onClick={() => setTabIndex(1)}>Sign in</Button>
                   </div>
                   <div className="col-sm-6 col-md-5 d-grid">
-                    <Button
-                      variant="outline-success"
-                      className="btn btn-lg"
-                      onClick={() => setTabIndex(2)}
-                    >
-                      Sign up
-                    </Button>
+                      <Button variant="outline-success" className="btn btn-lg" 
+                      onClick={() => setTabIndex(2)}>Sign up</Button>
                   </div>
                 </div>
 
@@ -209,28 +200,27 @@ export default function AppAuth() {
                 />
               </Col>
 
-              <Col md={6} className="align-content-center p-sm-5">
+              <Col md={6} className="align-content-center p-4">
                 <div className="row mb-5 pb-5">
-                  <Image src={Logo} style={{ maxHeight: "50px" }} fluid />
+                    <Image src={Logo} style={{maxHeight: '30px' }}  fluid/>
                 </div>
 
                 <div className="row mb-5 mt-5 pt-5 justify-content-center">
                   <div className="col-sm-6 col-md-5 d-grid">
-                    <Button
-                      variant="outline-success"
-                      className="btn btn-lg"
-                      onClick={() => setTabIndex(1)}
-                    >
-                      Sign in
-                    </Button>
+                      <Button 
+                      variant="outline-success" 
+                      className="btn btn-lg"  
+                      onClick={() => setTabIndex(1)}>
+                        Sign in
+                        </Button>
                   </div>
+
                   <div className="col-sm-6 col-md-5 d-grid">
-                    <Button
-                      className="btn btn-lg btn-success text-white "
-                      onClick={() => setTabIndex(2)}
-                    >
-                      Sign up
-                    </Button>
+                      <Button 
+                        className="btn btn-lg btn-success text-white " 
+                        onClick={() => setTabIndex(2)}>
+                        Sign up
+                        </Button>
                   </div>
                 </div>
 
@@ -269,8 +259,8 @@ export default function AppAuth() {
 
                   <div className="row mb-3 justify-content-center">
                     <div className="col-sm-4 col-md-3">
-                      <Form.Label>Gender </Form.Label>
-                      <Form.Select
+                    <Form.Label>Gender </Form.Label>
+                    <Form.Select
                         aria-label="Default select example"
                         value={gender}
                         onChange={(e) => setGender(e.target.value)}
@@ -283,7 +273,7 @@ export default function AppAuth() {
                     </div>
 
                     <div className="col-sm-8 col-md-7">
-                      <Form.Group
+                    <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
@@ -293,6 +283,22 @@ export default function AppAuth() {
                           placeholder="patrickobi@gmail.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
+
+                  <div className="row mb-3 justify-content-center">
+                    <div className="col-sm-10 col-md-10">
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Phone Number </Form.Label>
+                        <Form.Control
+                          aria-label="Default select example"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
                         />
                       </Form.Group>
                     </div>
@@ -358,35 +364,30 @@ export default function AppAuth() {
                       </Form.Select>
                     </div>
                     <div className="col-sm-12 col-md-10">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                    >
-                      <Form.Label>Phone Number </Form.Label>
-                      <Form.Control
-                        aria-label="Default select example"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                      />
-                    </Form.Group>
+                    
                   </div>
                   </div>
 
 
                   <div className="row mb-3 justify-content-center">
                     <div className="col-sm-12 col-md-10">
-                      <p>
-                        By clicking 'Submit', I acknowledge and understand that
-                        my personal information may be collected and used as
-                        described in Motivar's privacy policy
+                      <p style={{fontSize: '9px'}}>
+                        By clicking 'Submit', 
+                        I accept the terms of Use and understand
+                        that my personal information may be collected
+                         and used as described in Motivar's 
+                        <a href="https://www.freeprivacypolicy.com/live/37127601-6492-48cd-b7d5-b2f521359753"
+                        style={{textDecoration: 'none', color: '#11d99a'}}>
+                          Privacy policy
+                          </a>
                       </p>
                     </div>
                   </div>
-
-                  <div className="row mb-3 mt-5 justify-content-center">
-                    <div className="col-sm-12 col-md-10 d-grid">
+                  
+                  <div className="row mb-3 ps-md-5 justify-content-md-start">
+                    <div className="col-sm-12 col-md-4 d-grid">
                       <Button
-                        className="btn btn-lg btn-secondary text-white "
+                        className="btn btn-lg btn-success"
                         onClick={() => {
                           handleSignUp();
                         }}
@@ -395,6 +396,7 @@ export default function AppAuth() {
                       </Button>
                     </div>
                   </div>
+
                 </Form>
               </Col>
             </Row>
