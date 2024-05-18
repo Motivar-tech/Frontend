@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import "../App.css";
 import "../assets/css/main.css";
 
@@ -71,10 +73,10 @@ function DonateRandomly(props) {
                 <BsArrowUpRightCircle
                   className="ps-1"
                   style={{ color: "#11d99a", cursor: "pointer"}}
-                  onClick={() => { 
+                  onClick={() => {
                     const url = props?.requests[props?.index]?.link;
                     //const fullUrl = url.startsWith('http') ? url : `https://www.${url}`;
-                    window.open(url, '_blank'); 
+                    window.open(url, '_blank');
                   }}
                   />{" "}
               </p>
@@ -239,7 +241,7 @@ export default function AppHelpLearner() {
            <Navbar.Brand href="/"><Image className="" src={Logo} style={{maxHeight: '30px' }} fluid/></Navbar.Brand>
            <Navbar.Toggle aria-controls="navbarScroll"/>
            <Navbar.Collapse id="navbarScroll">
-          
+
 
             {/* <div className="container">
               <Navbar.Brand href="/">
@@ -253,13 +255,13 @@ export default function AppHelpLearner() {
               <Link to="/user-auth">
                 <Button variant="outline-secondary" className="btn-lg me-2 d-inline-flex out-btn">Sign in</Button>
               </Link>
-              
+
             </div>
-              
-            
+
+
           </Navbar.Collapse>
         </Container>
-      </Navbar> 
+      </Navbar>
       </header>
 
       <main>

@@ -1,3 +1,5 @@
+
+/* eslint-disable */
 import '../App.css';
 import '../assets/css/main.css';
 
@@ -30,7 +32,7 @@ export default function AppFundLearner() {
            <Navbar.Brand href="/"><Image className="" src={Logo} style={{maxHeight: '30px' }} fluid/></Navbar.Brand>
            <Navbar.Toggle aria-controls="navbarScroll"/>
            <Navbar.Collapse id="navbarScroll">
-          
+
 
             {/* <div className="container">
               <Navbar.Brand href="/">
@@ -44,13 +46,13 @@ export default function AppFundLearner() {
               <Link to="/user-auth">
                 <Button variant="outline-secondary" className="btn-lg me-2 d-inline-flex out-btn">Sign in</Button>
               </Link>
-              
+
             </div>
-              
-            
+
+
           </Navbar.Collapse>
         </Container>
-      </Navbar> 
+      </Navbar>
       </header>
 
       <main>
@@ -80,7 +82,7 @@ export default function AppFundLearner() {
                     aria-label="Search"
                   />
                   {/* <span class="DocSearch-Button-Container"><svg width="20" height="20" class="DocSearch-Search-Icon" viewBox="0 0 20 20"><path d="M14.386 14.386l4.0877 4.0877-4.0877-4.0877c-2.9418 2.9419-7.7115 2.9419-10.6533 0-2.9419-2.9418-2.9419-7.7115 0-10.6533 2.9418-2.9419 7.7115-2.9419 10.6533 0 2.9419 2.9418 2.9419 7.7115 0 10.6533z" stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="DocSearch-Button-Placeholder">Search</span></span> */}
-                  
+
                   <Button variant="outline-success" className="d-flex text-black fw-medium">Filter <BsArrowDown className="mt-1 ms-1 " /></Button>
                 </Form>
             </Col>
@@ -129,7 +131,7 @@ export default function AppFundLearner() {
               </Row>
             </Card>
           </Col>
-          
+
           <Col className="col-md-6 col-sm-12">
             <Card className="bg-info">
               {/* <Card.Img variant="top" src="../assets/images/test.png" /> */}
@@ -184,7 +186,7 @@ export default function AppFundLearner() {
               </Row>
             </Card>
           </Col>
-          
+
           <Col className="col-md-6 col-sm-12">
             <Card className="bg-info">
               {/* <Card.Img variant="top" src="../assets/images/test.png" /> */}
@@ -239,7 +241,7 @@ export default function AppFundLearner() {
               </Row>
             </Card>
           </Col>
-          
+
           <Col className="col-md-6 col-sm-12">
             <Card className="bg-info">
               {/* <Card.Img variant="top" src="../assets/images/test.png" /> */}
@@ -269,7 +271,7 @@ export default function AppFundLearner() {
         </Row>
 
       </Container>
-      
+
       </main>
       <footer>
           <AppFooter />

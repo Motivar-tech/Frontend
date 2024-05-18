@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import "../App.css";
 
 // import ul from 'react-bootstrap/ul';

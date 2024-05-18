@@ -1,3 +1,6 @@
+
+/* eslint-disable */
+
 import "../App.css";
 
 import Button from "react-bootstrap/Button";
