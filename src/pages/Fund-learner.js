@@ -57,7 +57,7 @@ export default function AppFundLearner() {
 
       <main>
 
-       <div className="container-fluid bg-info" >
+      <div className="container-fluid bg-info" >
         <Image src={Subtract}  alt="headerImage" fluid />
         <div className="subtract">
           <p className="display-6 fw-medium">
