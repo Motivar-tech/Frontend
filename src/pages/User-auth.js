@@ -1,23 +1,23 @@
-import '../App.css';
-import '../assets/css/main.css';
+/* eslint-disable */
 
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import { useState } from 'react';
-import Form from 'react-bootstrap/Form';
-import Image from 'react-bootstrap/Image';
-import Logo from '../assets/images/Motivar.svg';
-import Headphone from '../assets/images/headphone.png';
-import Snapback from '../assets/images/snapback.png';
+import "../App.css";
+import "../assets/css/main.css";
 
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import { useState } from "react";
+import Form from "react-bootstrap/Form";
+import Image from "react-bootstrap/Image";
+import Logo from "../assets/images/Motivar.svg";
+import Headphone from "../assets/images/headphone.png";
+import Snapback from "../assets/images/snapback.png";
 
 import axios from "axios";
 import toast from "react-hot-toast";
 
 export default function AppAuth() {
-
   const [tabIndex, setTabIndex] = useState(1);
 
   const [loginMail, setLoginMail] = useState();
@@ -36,16 +36,61 @@ export default function AppAuth() {
   const [loading, setLoading] = useState(false);
 
   const AfricanCountries = [
-    "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde",
-    "Cameroon", "Central African Republic", "Chad", "Comoros", "Democratic Republic of the Congo",
-    "Djibouti", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon",
-    "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Ivory Coast", "Kenya", "Lesotho", "Liberia",
-    "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", "Mozambique",
-    "Namibia", "Niger", "Nigeria", "Republic of the Congo", "Rwanda", "São Tomé and Príncipe",
-    "Senegal", "Seychelles", "Sierra Leone", "Somalia", "South Africa", "South Sudan", "Sudan",
-    "Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe"
+    "Algeria",
+    "Angola",
+    "Benin",
+    "Botswana",
+    "Burkina Faso",
+    "Burundi",
+    "Cabo Verde",
+    "Cameroon",
+    "Central African Republic",
+    "Chad",
+    "Comoros",
+    "Democratic Republic of the Congo",
+    "Djibouti",
+    "Egypt",
+    "Equatorial Guinea",
+    "Eritrea",
+    "Eswatini",
+    "Ethiopia",
+    "Gabon",
+    "Gambia",
+    "Ghana",
+    "Guinea",
+    "Guinea-Bissau",
+    "Ivory Coast",
+    "Kenya",
+    "Lesotho",
+    "Liberia",
+    "Libya",
+    "Madagascar",
+    "Malawi",
+    "Mali",
+    "Mauritania",
+    "Mauritius",
+    "Morocco",
+    "Mozambique",
+    "Namibia",
+    "Niger",
+    "Nigeria",
+    "Republic of the Congo",
+    "Rwanda",
+    "São Tomé and Príncipe",
+    "Senegal",
+    "Seychelles",
+    "Sierra Leone",
+    "Somalia",
+    "South Africa",
+    "South Sudan",
+    "Sudan",
+    "Tanzania",
+    "Togo",
+    "Tunisia",
+    "Uganda",
+    "Zambia",
+    "Zimbabwe",
   ];
-
 
   const handleSignIn = () => {
     setLoginLoading(true);
@@ -59,7 +104,7 @@ export default function AppAuth() {
         setLoginLoading(false);
         console.log(res.data.data);
         toast.success(res.data.message);
-        window.location.pathname = "/"
+        window.location.pathname = "/";
         localStorage.setItem("motivar-token", res.data.data);
       })
       .catch((error) => {
@@ -79,7 +124,7 @@ export default function AppAuth() {
       gender,
       dateofbirth,
       goal,
-      phoneNumber
+      phoneNumber,
     };
     console.log(payload);
     axios
@@ -87,7 +132,7 @@ export default function AppAuth() {
       .then((res) => {
         setLoading(false);
         setTabIndex(1);
-        toast.success(res.data.message)
+        toast.success(res.data.message);
         console.log(res);
       })
       .catch((error) => {
@@ -114,17 +159,26 @@ export default function AppAuth() {
 
               <Col md={6} className="align-content-center p-4">
                 <div className="row ">
-                    <Image src={Logo} style={{maxHeight: '30px' }}  fluid/>
+                  <Image src={Logo} style={{ maxHeight: "30px" }} fluid />
                 </div>
-                
+
                 <div className="row mb-5 mt-5 pt-5 justify-content-center">
                   <div className="col-sm-6 col-md-5 d-grid">
-                      <Button className="btn btn-lg btn-success text-white " 
-                      onClick={() => setTabIndex(1)}>Sign in</Button>
+                    <Button
+                      className="btn btn-lg btn-success text-white "
+                      onClick={() => setTabIndex(1)}
+                    >
+                      Sign in
+                    </Button>
                   </div>
                   <div className="col-sm-6 col-md-5 d-grid">
-                      <Button variant="outline-success" className="btn btn-lg" 
-                      onClick={() => setTabIndex(2)}>Sign up</Button>
+                    <Button
+                      variant="outline-success"
+                      className="btn btn-lg"
+                      onClick={() => setTabIndex(2)}
+                    >
+                      Sign up
+                    </Button>
                   </div>
                 </div>
 
@@ -175,8 +229,7 @@ export default function AppAuth() {
                   </div>
 
                   <div className="row mb-3 justify-content-center">
-                    <div className="col-sm-12 col-md-10 d-grid">
-                    </div>
+                    <div className="col-sm-12 col-md-10 d-grid"></div>
                   </div>
                 </Form>
               </Col>
@@ -202,25 +255,27 @@ export default function AppAuth() {
 
               <Col md={6} className="align-content-center p-4">
                 <div className="row mb-5 pb-5">
-                    <Image src={Logo} style={{maxHeight: '30px' }}  fluid/>
+                  <Image src={Logo} style={{ maxHeight: "30px" }} fluid />
                 </div>
 
                 <div className="row mb-5 mt-5 pt-5 justify-content-center">
                   <div className="col-sm-6 col-md-5 d-grid">
-                      <Button 
-                      variant="outline-success" 
-                      className="btn btn-lg"  
-                      onClick={() => setTabIndex(1)}>
-                        Sign in
-                        </Button>
+                    <Button
+                      variant="outline-success"
+                      className="btn btn-lg"
+                      onClick={() => setTabIndex(1)}
+                    >
+                      Sign in
+                    </Button>
                   </div>
 
                   <div className="col-sm-6 col-md-5 d-grid">
-                      <Button 
-                        className="btn btn-lg btn-success text-white " 
-                        onClick={() => setTabIndex(2)}>
-                        Sign up
-                        </Button>
+                    <Button
+                      className="btn btn-lg btn-success text-white "
+                      onClick={() => setTabIndex(2)}
+                    >
+                      Sign up
+                    </Button>
                   </div>
                 </div>
 
@@ -259,8 +314,8 @@ export default function AppAuth() {
 
                   <div className="row mb-3 justify-content-center">
                     <div className="col-sm-4 col-md-3">
-                    <Form.Label>Gender </Form.Label>
-                    <Form.Select
+                      <Form.Label>Gender </Form.Label>
+                      <Form.Select
                         aria-label="Default select example"
                         value={gender}
                         onChange={(e) => setGender(e.target.value)}
@@ -273,7 +328,7 @@ export default function AppAuth() {
                     </div>
 
                     <div className="col-sm-8 col-md-7">
-                    <Form.Group
+                      <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
@@ -346,12 +401,14 @@ export default function AppAuth() {
                       >
                         <option>-- select --</option>
                         {AfricanCountries.map((country, index) => (
-                          <option key={index} value={country}>{country}</option>
+                          <option key={index} value={country}>
+                            {country}
+                          </option>
                         ))}
                       </Form.Select>
                     </div>
 
-                    <div className="col-sm-8 col-md-7 mb-3">
+                                    <div className="col-sm-8 col-md-7 mb-3">
                       <Form.Label>What is your Goal </Form.Label>
                       <Form.Select
                         aria-label="Default select example"
