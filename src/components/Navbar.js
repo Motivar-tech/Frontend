@@ -1,4 +1,8 @@
+
+/* eslint-disable */
+
 import "../App.css";
+
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -8,7 +12,8 @@ import { Link } from "react-router-dom";
 import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
 
-let token = localStorage.getItem("motivar-token");
+export default function AppNavbar() {
+  let token = localStorage.getItem("motivar-token");
   console.log(token);
 
   return (
@@ -43,12 +48,12 @@ let token = localStorage.getItem("motivar-token");
                 {/* <Nav.Link href="#" disabled>
                 Link
               </Nav.Link> */}
-            </Nav>
+              </Nav>
             </div>
 
-<div className="container d-none d-md-block">
+            <div className="container">
               <Navbar.Brand href="/">
-               <Image
+                <Image
                   src={Logo}
                   style={{ maxHeight: "30px" }}
                   className="logo-2 "
@@ -56,10 +61,11 @@ let token = localStorage.getItem("motivar-token");
                 />
               </Navbar.Brand>
             </div>
- <div className="container">
+
+            <div className="container d-none d-md-block">
               {token ? "" :(
                 <Link to="/user-auth">
-                  <Button
+                 <Button
                     variant="outline-secondary"
                     className="btn-lg me-2 d-inline-flex out-btn"
                   >
@@ -74,3 +80,10 @@ let token = localStorage.getItem("motivar-token");
               </Link>
             </div>
 
+
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      </>
+    );
+  }
