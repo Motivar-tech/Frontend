@@ -62,10 +62,10 @@ export default function AppNavbar() {
               </Navbar.Brand>
             </div>
 
-            <div className="container">
+            <div className="container d-none d-md-block">
               {token ? "" :(
                 <Link to="/user-auth">
-                  <Button
+                 <Button
                     variant="outline-secondary"
                     className="btn-lg me-2 d-inline-flex out-btn"
                   >

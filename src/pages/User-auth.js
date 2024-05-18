@@ -408,7 +408,7 @@ export default function AppAuth() {
                       </Form.Select>
                     </div>
 
-                    <div className="col-sm-8 col-md-7 mb-3">
+                                    <div className="col-sm-8 col-md-7 mb-3">
                       <Form.Label>What is your Goal </Form.Label>
                       <Form.Select
                         aria-label="Default select example"
