@@ -1,5 +1,4 @@
 import "../App.css";
-
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -9,8 +8,7 @@ import { Link } from "react-router-dom";
 import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
 
-export default function AppNavbar() {
-  let token = localStorage.getItem("motivar-token");
+let token = localStorage.getItem("motivar-token");
   console.log(token);
 
   return (
@@ -45,12 +43,12 @@ export default function AppNavbar() {
                 {/* <Nav.Link href="#" disabled>
                 Link
               </Nav.Link> */}
-              </Nav>
+            </Nav>
             </div>
 
-            <div className="container">
+<div className="container d-none d-md-block">
               <Navbar.Brand href="/">
-                <Image
+               <Image
                   src={Logo}
                   style={{ maxHeight: "30px" }}
                   className="logo-2 "
@@ -58,8 +56,7 @@ export default function AppNavbar() {
                 />
               </Navbar.Brand>
             </div>
-
-            <div className="container">
+ <div className="container">
               {token ? "" :(
                 <Link to="/user-auth">
                   <Button
@@ -77,10 +74,3 @@ export default function AppNavbar() {
               </Link>
             </div>
 
-
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-      </>
-    );
-  }
