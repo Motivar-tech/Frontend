@@ -10,6 +10,7 @@ import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
 
 export default function AppNavbar() {
+<<<<<<< HEAD
   let token = localStorage.getItem("motivar-token");
   console.log(token);
 
@@ -43,6 +44,35 @@ export default function AppNavbar() {
                   </NavDropdown.Item>
                 </NavDropdown>
                 {/* <Nav.Link href="#" disabled>
+=======
+    return (
+      <>
+
+       <Navbar expand="lg" className="bg-body-alt-white">
+         <Container className="py-3">
+           <Navbar.Brand href="/"><Image className="logo" src={Logo} fluid/></Navbar.Brand>
+           <Navbar.Toggle aria-controls="navbarScroll"/>
+           <Navbar.Collapse id="navbarScroll">
+           <div className="container">
+             <Nav
+              className="me-auto my-2 my-lg-0"
+              style={{maxHeight: '100px' }}
+              navbarScroll
+            >
+              <Nav.Link href="/coming-soon">Explore</Nav.Link>
+              <Nav.Link href="/coming-soon">Pricing</Nav.Link>
+              <NavDropdown title="Community" id="navbarScrollingDropdown">
+                <NavDropdown.Item href="/coming-soon">Find learners near you</NavDropdown.Item>
+                <NavDropdown.Item href="/coming-soon">
+                Find mentors near you
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item href="/coming-soon">
+                Join accountability group
+                </NavDropdown.Item>
+              </NavDropdown>
+              {/* <Nav.Link href="#" disabled>
+>>>>>>> preparing to pull new changes
                 Link
               </Nav.Link> */}
               </Nav>
