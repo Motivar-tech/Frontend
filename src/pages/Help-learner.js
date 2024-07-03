@@ -21,10 +21,32 @@ import { BsArrowUpRightCircle } from "react-icons/bs";
 import Test from "../assets/images/test.png";
 import Subtract from "../assets/images/Subtract.png";
 import AppFooter from "../components/Footer.js";
+import { storage } from "../firebase.js";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  getStorage,
+} from "firebase/storage";
+import { v4 } from "uuid";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 // start donate modal
 function DonateRandomly(props) {
+  const handlePaymentIntent = async () => {
+    let token = await localStorage.getItem("motivar-token");
+    axios
+      .post(
+        `https://motivar-sponsor-api-v1.onrender.com/course/initiate/payment/${
+          props?.requests[props?.index]._id
+        }`,
+        {},
+        { headers: { Authorization: token } }
+      )
+      .then((res) => toast.success(res.data.message))
+      .catch((error) => console.log(error));
+  };
   return (
     <Modal {...props} aria-labelledby="contained-modal-title-vcenter">
       <Modal.Header closeButton></Modal.Header>
@@ -56,7 +78,7 @@ function DonateRandomly(props) {
                 }}
               >
                 {" "}
-                ${props?.requests[props?.index]?.course?.price}{" "}
+                N{props?.requests[props?.index]?.course?.price}{" "}
               </p>
             </Col>
           </Row>
@@ -72,13 +94,14 @@ function DonateRandomly(props) {
                 {props?.requests[props?.index]?.course?.courseTitle}{" "}
                 <BsArrowUpRightCircle
                   className="ps-1"
-                  style={{ color: "#11d99a", cursor: "pointer"}}
+                  style={{ color: "#11d99a", cursor: "pointer" }}
                   onClick={() => {
                     const url = props?.requests[props?.index]?.link;
                     //const fullUrl = url.startsWith('http') ? url : `https://www.${url}`;
-                    window.open(url, '_blank');
+
+                    window.open(url, "_blank");
                   }}
-                  />{" "}
+                />{" "}
               </p>
             </Col>
           </Row>
@@ -102,30 +125,6 @@ function DonateRandomly(props) {
               </p>
             </Col>
           </Row>
-          {/*
-          <Row>
-            <Col xs={6} md={8}>
-              <p className="h6 fw-lighter text-secondary pt-3">
-                {" "}
-                Course platform login details:
-              </p>
-              <p className="h6 fw-normal">
-                {" "}
-                {props?.requests[props?.index]?.account?.email}{" "}
-              </p>
-            </Col>
-
-            <Col xs={6} md={4}>
-              <p className="h6 fw-lighter text-secondary pt-3 text-white">
-                Password
-              </p>
-              <p className="h6 fw-normal">
-                {" "}
-                {props?.requests[props?.index]?.account?.password}
-              </p>
-            </Col>
-              </Row>*/}
-
           <Row>
             <Col xs={6} md={12}>
               <p className="h6 fw-lighter text-secondary pt-3">
@@ -142,7 +141,17 @@ function DonateRandomly(props) {
       </Modal.Body>
       <Modal.Footer>
         {/* <Button onClick={props.onHide}>Close</Button> */}
-        <Button className="btn-secondary text-white">Sponsor</Button>
+        <Button
+          className="btn-secondary text-white"
+          onClick={() => {
+            props.showQuest();
+            const url = props?.requests[props?.index]?.link;
+            window.open(url, "_blank");
+            handlePaymentIntent();
+          }}
+        >
+          Sponsor
+        </Button>
       </Modal.Footer>
     </Modal>
   );
@@ -154,36 +163,188 @@ function DonateRandomly(props) {
 function MeetLearner(props) {
   // anonymous declaration
   const [modalShowIII, setModalShowIII] = useState(false);
+  const [meetLearner, setShowMeetLearner] = useState(Boolean);
+
+  const [link, setLink] = useState();
+  const [date, setDate] = useState();
+  const [time, setTime] = useState();
+
+  console.log(props.requests);
+
+  const handleMeetLearner = async (time, date, link) => {
+    console.log(time, date, link);
+    const token = await localStorage.getItem("motivar-token");
+    axios
+      .post(
+        `http://localhost:8089/course/meet/${props.requests._id}`,
+        { time: time, date: date, link: link },
+        { headers: { Authorization: token } }
+      )
+      .then((res) => toast.success(res.data.message))
+      .catch((error) => toast.error(error.response.data.message));
+  };
+
   return (
-    <Modal
-      {...props}
-      size="md"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header closeButton>
-        {/* <Modal.Title id="contained-modal-title-vcenter">
+    <>
+      {meetLearner === true ? (
+        <>
+          <Modal
+            {...props}
+            size="md"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+          >
+            <Modal.Header closeButton>
+              <p className="h2 text-center">Meet Learner</p>
+            </Modal.Header>
+            <Modal.Body>
+              <p className="text-left">
+                Create a meeting link, on google meet <br />
+                add the meeting link here and schedule a meeting time with the
+                learner
+              </p>
+              <p style={{ marginVertical: 10 }}>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <label style={{ width: "25%" }}>Meet Link</label>
+                  <input
+                    placeholder="Enter Meet Link..."
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
+                    style={{
+                      paddingHorizontal: 10,
+                      border: "1px solid grey",
+                      paddingVertical: 15,
+                      width: "70%",
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <label style={{ width: "25%" }}>
+                    Meeting Date (DD/MM/YYYY)
+                  </label>
+                  <input
+                    placeholder="What day do you want to meet?..."
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    style={{
+                      paddingHorizontal: 10,
+                      border: "1px solid grey",
+                      paddingVertical: 15,
+                      width: "70%",
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <label style={{ width: "25%" }}>Meeting Time (HH/MM)</label>
+                  <input
+                    placeholder="What time do you want to meet?..."
+                    value={time}
+                    onChange={(e) => setTime(e.target.value)}
+                    style={{
+                      paddingHorizontal: 10,
+                      border: "1px solid grey",
+                      paddingVertical: 15,
+                      width: "70%",
+                    }}
+                  />
+                </div>
+              </p>
+            </Modal.Body>
+            <Modal.Footer className="justify-content-center">
+              <Button
+                className="btn-secondary text-white"
+                onClick={() => {
+                  // setShowMeetLearner(false);
+                  handleMeetLearner(time, date, link);
+                  setModalShowIII(true);
+                }}
+              >
+                Done
+              </Button>
+              {/* <Button
+                onClick={() => setModalShowIII(true)}
+                className="btn-secondary text-white"
+              >
+                Anonymous
+              </Button> */}
+              <Anonymous
+                show={modalShowIII}
+                onHide={() => setModalShowIII(false)}
+                requestID={props?.requests?._id}
+              />
+            </Modal.Footer>
+          </Modal>
+        </>
+      ) : (
+        <>
+          {" "}
+          <Modal
+            {...props}
+            size="md"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+          >
+            <Modal.Header closeButton>
+              {/* <Modal.Title id="contained-modal-title-vcenter">
           Modal heading
         </Modal.Title> */}
-      </Modal.Header>
-      <Modal.Body>
-        <p className="h4 text-center fw-medium">
-          Would you like to <br />
-          meet the learner or be <br />
-          stay anonymous
-        </p>
-      </Modal.Body>
-      <Modal.Footer className="justify-content-center">
-        <Button className="btn-secondary text-white">Meet Learner</Button>
-        <Button
-          onClick={() => setModalShowIII(true)}
-          className="btn-secondary text-white"
-        >
-          Anonymous
-        </Button>
-        <Anonymous show={modalShowIII} onHide={() => setModalShowIII(false)} />
-      </Modal.Footer>
-    </Modal>
+            </Modal.Header>
+            <Modal.Body>
+              <p className="h4 text-center fw-medium">
+                Would you like to <br />
+                meet the learner or be <br />
+                stay anonymous
+              </p>
+            </Modal.Body>
+            <Modal.Footer className="justify-content-center">
+              <Button
+                className="btn-secondary text-white"
+                onClick={() => {
+                  setShowMeetLearner(true);
+                }}
+              >
+                Meet Learner
+              </Button>
+              <Button
+                onClick={() => setModalShowIII(true)}
+                className="btn-secondary text-white"
+              >
+                Anonymous
+              </Button>
+              <Anonymous
+                show={modalShowIII}
+                onHide={() => setModalShowIII(false)}
+                requestID={props?.requests?._id}
+              />
+            </Modal.Footer>
+          </Modal>
+        </>
+      )}
+    </>
   );
 }
 
@@ -191,6 +352,74 @@ function MeetLearner(props) {
 
 // start anonymous modal
 function Anonymous(props) {
+  const [pickFile, setPickFile] = useState(null);
+  const [picture, setPicture] = useState();
+  const [loading, setLoading] = useState(Boolean);
+
+  const uploadFile = () => {
+    setLoading(true);
+    if (pickFile == null) {
+      return null;
+    } else {
+      const imageRef = ref(
+        getStorage(),
+        `payment-proof/${pickFile.name + v4()}`
+      );
+      const uploadTask = uploadBytesResumable(imageRef, pickFile);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(Math.round(progress) + "% ");
+          switch (snapshot.state) {
+            case "paused":
+              // setUploadStatus("Paused");
+              break;
+            case "running":
+              // setUploadStatus("Uploading...");
+              break;
+          }
+        },
+        (error) => {
+          alert("Sorry, upload denied at the moment, Please try again later!");
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            setLoading(false);
+            setPicture(downloadURL);
+          });
+        }
+      );
+    }
+  };
+
+  const handlePictureChange = (e) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setPicture(reader.result);
+      }
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
+  const handleAddProofPayment = async () => {
+    const token = await localStorage.getItem("motivar-token");
+
+    axios
+      .post(
+        `https://motivar-sponsor-api-v1.onrender.com/course/add-proof/${props.requestID}`,
+        { link: picture },
+        { headers: { Authorization: token } }
+      )
+      .then((res) => {
+        toast.success(res.data.message);
+      })
+      .catch((error) => toast.error(error.response.data.message));
+  };
+
   return (
     <Modal
       {...props}
@@ -204,11 +433,33 @@ function Anonymous(props) {
         </Modal.Title> */}
       </Modal.Header>
       <Modal.Body className="text-center">
-        <p className="h4 text-center fw-medium">Add proof of payment</p>
-        <Button className="btn-secondary text-white">Meet Learner</Button>
+        <p className="h4 text-center fw-medium">Add Proof of Payment</p>
+        <input
+          onChange={(e) => {
+            handlePictureChange(e);
+            setPickFile(e.target.files[0]);
+          }}
+          // ref={pick}
+          type="file"
+          accept="image/*"
+        />
+        <br />
+        <Button
+          className="btn-secondary text-white"
+          onClick={() => uploadFile()}
+        >
+          Upload Proof
+        </Button>
       </Modal.Body>
       <Modal.Footer>
-        <Button className="btn-secondary text-white">Complete</Button>
+        {loading === false && picture && (
+          <Button
+            className="btn-secondary text-white"
+            onClick={() => handleAddProofPayment()}
+          >
+            Complete
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );
@@ -235,42 +486,56 @@ export default function AppHelpLearner() {
 
   return (
     <>
- <header>
-      <Navbar expand="lg" className="bg-body-alt-white">
-         <Container className="py-3">
-           <Navbar.Brand href="/"><Image className="" src={Logo} style={{maxHeight: '30px' }} fluid/></Navbar.Brand>
-           <Navbar.Toggle aria-controls="navbarScroll"/>
-           <Navbar.Collapse id="navbarScroll">
-
-
-            {/* <div className="container">
-              <Navbar.Brand href="/">
-                <Image src={Logo} style={{maxHeight: '100px' }} className="logo-2 " fluid/>
-              </Navbar.Brand>
-            </div> */}
-
-            <div className="container d-flex align-items-center justify-content-end">
-            <Link to="/coming-soon" className="pe-5" style={{textDecoration: 'none', color: '#212529'}}>Explore</Link>
-            <Link to="/coming-soon" className="pe-5" style={{textDecoration: 'none', color: '#212529'}}>Pricing</Link>
-              <Link to="/user-auth">
-                <Button variant="outline-secondary" className="btn-lg me-2 d-inline-flex out-btn">Sign in</Button>
-              </Link>
-
-            </div>
-
-
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+      <header>
+        <Navbar expand="lg" className="bg-body-alt-white">
+          <Container className="py-3">
+            <Navbar.Brand href="/">
+              <Image
+                className=""
+                src={Logo}
+                style={{ maxHeight: "30px" }}
+                fluid
+              />
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="navbarScroll" />
+            <Navbar.Collapse id="navbarScroll">
+              <div className="container d-flex align-items-center justify-content-end">
+                <Link
+                  to="/coming-soon"
+                  className="pe-5"
+                  style={{ textDecoration: "none", color: "#212529" }}
+                >
+                  Explore
+                </Link>
+                <Link
+                  to="/coming-soon"
+                  className="pe-5"
+                  style={{ textDecoration: "none", color: "#212529" }}
+                >
+                  Pricing
+                </Link>
+                <Link to="/user-auth">
+                  <Button
+                    variant="outline-secondary"
+                    className="btn-lg me-2 d-inline-flex out-btn"
+                  >
+                    Sign in
+                  </Button>
+                </Link>
+              </div>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
       </header>
 
       <main>
-
-      <div className="container-fluid bg-info" >
-        <Image src={Subtract}  alt="headerImage" fluid />
-        <div className="subtract"><p className="display-6 fw-medium">Help a Learner's Journey</p></div>
-        {/* <div className="subtract"><p className="h1 display-4 fw-semibold">Help a Learner's Journey</p></div> */}
-      </div>
+        <div className="container-fluid bg-info">
+          <Image src={Subtract} alt="headerImage" fluid />
+          <div className="subtract">
+            <p className="display-6 fw-medium">Help a Learner's Journey</p>
+          </div>
+          {/* <div className="subtract"><p className="h1 display-4 fw-semibold">Help a Learner's Journey</p></div> */}
+        </div>
 
         <Container fluid>
           <Row className="p-md-5 pt-3 pb-4 text-start bg-info">
@@ -309,6 +574,7 @@ export default function AppHelpLearner() {
                   onHide={() => setModalShow(false)}
                   index={index}
                   requests={requests}
+                  showQuest={() => setModalShowII(true)}
                 />
               </div>
               <div>
@@ -322,6 +588,8 @@ export default function AppHelpLearner() {
                 </Button>
                 <MeetLearner
                   show={modalShowII}
+                  // index={index}
+                  requests={requests[index]}
                   onHide={() => setModalShowII(false)}
                 />
               </div>
@@ -341,7 +609,7 @@ export default function AppHelpLearner() {
                           <Image src={Test} alt="image" />
                           <span className="shadow-sm pointer ms-3">
                             {" "}
-                            ${item?.course?.price}
+                            N{item?.course?.price}
                           </span>
                         </div>
                       </Col>
