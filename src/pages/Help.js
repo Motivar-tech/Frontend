@@ -3,7 +3,6 @@ import "../assets/css/main.css";
 
 import React, { useState } from "react";
 
-
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -78,7 +77,6 @@ export default function AppHelp() {
 
   return (
     <>
-
       <header>
         <Navbar expand="lg" className="bg-body-alt-white">
           <Container className="py-3">
@@ -177,7 +175,7 @@ export default function AppHelp() {
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
                     >
-                      <Form.Label>Price of the Course</Form.Label>
+                      <Form.Label>Price of the Course (in Naira)</Form.Label>
                       <Form.Control
                         type="number"
                         placeholder=""
@@ -192,7 +190,7 @@ export default function AppHelp() {
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
                     >
-                      <Form.Label>Duration</Form.Label>
+                      <Form.Label>Duration (in Months)</Form.Label>
                       <Form.Control
                         type="number"
                         placeholder=""
