@@ -180,7 +180,7 @@ export default function AppHelp() {
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
                     >
-                      <Form.Label>Price of the Course</Form.Label>
+                      <Form.Label>Price of the Course (in Naira)</Form.Label>
                       <Form.Control
                         type="number"
                         placeholder=""
@@ -195,7 +195,7 @@ export default function AppHelp() {
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
                     >
-                      <Form.Label>Duration</Form.Label>
+                      <Form.Label>Duration (in Months)</Form.Label>
                       <Form.Control
                         type="number"
                         placeholder=""
@@ -302,7 +302,7 @@ export default function AppHelp() {
                             name="group1"
                             type={type}
                             id={`inline-${type}-1`}
-                            value={isPrivate}
+                            value="private_request"
                             checked={() => setIsPrivate(true)}
                           />
                           <Form.Check
@@ -311,7 +311,7 @@ export default function AppHelp() {
                             name="group1"
                             type={type}
                             id={`inline-${type}-2`}
-                            value={isPrivate}
+                            value="public_request"
                             checked={() => setIsPrivate(false)}
                           />
                         </div>
