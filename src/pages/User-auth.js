@@ -35,6 +35,9 @@ export default function AppAuth() {
   const [phoneNumber, setPhoneNumber] = useState();
   const [loading, setLoading] = useState(false);
 
+  const [confirmPassword, setConfirmPassword] = useState();
+  const [passwordMatch, setPasswordMatch] = useState(true);
+
   const AfricanCountries = [
     "Algeria",
     "Angola",
@@ -91,6 +94,16 @@ export default function AppAuth() {
     "Zambia",
     "Zimbabwe",
   ];
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    setPasswordMatch(e.target.value === confirmPassword);
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+    setPasswordMatch(e.target.value === password);
+  };
 
   const handleSignIn = () => {
     setLoginLoading(true);
@@ -344,18 +357,40 @@ export default function AppAuth() {
                   </div>
 
                   <div className="row mb-3 justify-content-center">
-                    <div className="col-sm-10 col-md-10">
-                      <Form.Group
+                    <div className="col-sm-6 col-md-5">
+                    <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
-                        <Form.Label>Phone Number </Form.Label>
+                        <Form.Label>Enter Password</Form.Label>
                         <Form.Control
-                          aria-label="Default select example"
-                          value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          type="password"
+                          placeholder="********"
+                          value={password}
+                          onChange={handlePasswordChange}
                         />
                       </Form.Group>
+                    </div>
+                    <div className="col-sm-6 col-md-5">
+                    <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Confirm Password</Form.Label>
+                        <Form.Control
+                          type="password"
+                          placeholder="********"
+                          value={confirmPassword}
+                          onChange={handleConfirmPasswordChange}
+                          isInvalid={!passwordMatch}
+                        />
+                        {!passwordMatch && (
+                        <Form.Control.Feedback type="invalid">
+                          Passwords do not match.
+                        </Form.Control.Feedback>
+                        )}
+                      </Form.Group>
+
                     </div>
                   </div>
 
@@ -376,16 +411,15 @@ export default function AppAuth() {
                     </div>
 
                     <div className="col-sm-7 col-md-6">
-                      <Form.Group
+                    <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
-                        <Form.Label>Enter Password</Form.Label>
+                        <Form.Label>Phone Number </Form.Label>
                         <Form.Control
-                          type="password"
-                          placeholder="********"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
+                          aria-label="Default select example"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
                         />
                       </Form.Group>
                     </div>
@@ -408,7 +442,7 @@ export default function AppAuth() {
                       </Form.Select>
                     </div>
 
-                                    <div className="col-sm-8 col-md-7 mb-3">
+                    <div className="col-sm-8 col-md-7 mb-3">
                       <Form.Label>What is your Goal </Form.Label>
                       <Form.Select
                         aria-label="Default select example"
@@ -420,40 +454,32 @@ export default function AppAuth() {
                         <option value="Sponsor">Sponsor</option>
                       </Form.Select>
                     </div>
-                    <div className="col-sm-12 col-md-10">
-                    
-                  </div>
-                  </div>
+                    <div className="col-sm-12 col-md-10"></div>
 
-
-                  <div className="row mb-3 justify-content-center">
-                    <div className="col-sm-12 col-md-10">
-                      <p style={{fontSize: '9px'}}>
-                        By clicking 'Submit', 
-                        I accept the terms of Use and understand
-                        that my personal information may be collected
-                         and used as described in Motivar's 
-                        <a href="https://www.freeprivacypolicy.com/live/37127601-6492-48cd-b7d5-b2f521359753"
-                        style={{textDecoration: 'none', color: '#11d99a'}}>
-                          Privacy policy
-                          </a>
-                      </p>
-                    </div>
                   </div>
-                  
-                  <div className="row mb-3 ps-md-5 justify-content-md-start">
-                    <div className="col-sm-12 col-md-4 d-grid">
+                  <div className="row mb-3 mt-5 justify-content-center">
+                    <div className="col-sm-12 col-md-10 d-grid">
                       <Button
                         className="btn btn-lg btn-success"
                         onClick={() => {
                           handleSignUp();
                         }}
+                        disabled={!passwordMatch}
                       >
                         {loading ? "Loading... " : "Sign up"}
                       </Button>
                     </div>
                   </div>
-
+                  <div className="row mb-3 mt-5 justify-content-center">
+                    <div className="col-sm-12 col-md-10 d-grid">
+                      <Button
+                        className="btn btn-lg btn-secondary text-white "
+                        onClick={() => handleSignUp()}
+                      >
+                        {loading ? "Loading... " : "Sign up"}
+                      </Button>
+                    </div>
+                  </div>
                 </Form>
               </Col>
             </Row>
@@ -461,6 +487,5 @@ export default function AppAuth() {
         </main>
       )}
     </>
-
-  );
+  )
 }
