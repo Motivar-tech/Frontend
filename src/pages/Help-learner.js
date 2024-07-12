@@ -607,7 +607,7 @@ export default function AppHelpLearner() {
                       <Col md={12}>
                         <div className="d-flex justify-content-between">
                           <Image src={Test} alt="image" />
-                          <span className="shadow-sm pointer ms-3">
+                          <span className="">
                             {" "}
                             N{item?.course?.price}
                           </span>
