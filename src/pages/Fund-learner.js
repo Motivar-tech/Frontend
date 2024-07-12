@@ -112,8 +112,7 @@ export default function AppFundLearner() {
                 <Col md={12} >
                   <div className="d-flex justify-content-between">
                     <Image src={Test}  alt="image"/>
-                      {/* <span className=""> $70</span> */}
-                      <span className=""> $70</span>
+                      <span className="shadow-sm pointer ms-3"> $70</span>
                   </div>
                 </Col>
               </Row>
@@ -140,7 +139,7 @@ export default function AppFundLearner() {
                 <Col md={12} >
                   <div className="d-flex justify-content-between">
                     <Image src={Test}  alt="image"/>
-                      <span className=""> $70</span>
+                      <span className="shadow-sm pointer ms-3"> $70</span>
                   </div>
                 </Col>
               </Row>
@@ -168,7 +167,7 @@ export default function AppFundLearner() {
                 <Col md={12} >
                   <div className="d-flex justify-content-between">
                     <Image src={Test}  alt="image"/>
-                      <span className=""> $70</span>
+                      <span className="shadow-sm pointer ms-3"> $70</span>
                   </div>
                 </Col>
               </Row>
@@ -195,7 +194,7 @@ export default function AppFundLearner() {
                 <Col md={12} >
                   <div className="d-flex justify-content-between">
                     <Image src={Test}  alt="image"/>
-                      <span className=""> $70</span>
+                      <span className="shadow-sm pointer ms-3"> $70</span>
                   </div>
                 </Col>
               </Row>
@@ -223,7 +222,7 @@ export default function AppFundLearner() {
                 <Col md={12} >
                   <div className="d-flex justify-content-between">
                     <Image src={Test}  alt="image"/>
-                      <span className=""> $70</span>
+                      <span className="shadow-sm pointer ms-3"> $70</span>
                   </div>
                 </Col>
               </Row>
@@ -250,7 +249,7 @@ export default function AppFundLearner() {
                 <Col md={12} >
                   <div className="d-flex justify-content-between">
                     <Image src={Test}  alt="image"/>
-                      <span className=""> $70</span>
+                      <span className="shadow-sm pointer ms-3"> $70</span>
                   </div>
                 </Col>
               </Row>
