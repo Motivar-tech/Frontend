@@ -46,17 +46,18 @@ export default function AppHome() {
                 <p className="h1 lead display-4 fw-medium ">
                   <br />
                   <br />
-                  The <em>easiest</em> way to {" "}
+                  The <em>easiest</em> way to{" "}
                   <span>
                     <TypeAnimation
                       sequence={["find", 3000, "start", 3000, "complete", 3000]}
                       speed={50}
                       repeat={Infinity}
-                    />
+                    />{" "}
                   </span>
                 </p>
                 <p className="lead display-4 fw-medium">online courses</p>
                 {/* <Image className="curve img-fluid" src={Curve} alt="highlight"/> */}
+
                 <div className="container d-block d-md-none pt-2">
                   <Link to="/user-auth">
                     <Button variant="outline-secondary" className="btn-lg me-2 d-inline-flex out-btn">Sign in</Button>
@@ -65,10 +66,10 @@ export default function AppHome() {
                     <Button className="btn btn-secondary text-white btn-lg me-2 d-inline-flex justify-content-center align-items-center">Get App</Button>
                   </Link>
                 </div>
+
               </div>
             </Col>
           </Row>
-          
           <Row className="text-center gx-0">
             <Col className="">
               <Image fluid src={Sketch2} alt="sketch" />
@@ -106,7 +107,7 @@ export default function AppHome() {
                 will help you make the most of the journey.
               </p>
               <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-                <Link to="/coming-soon">
+                <Link to="/user-auth">
                   <Button className="btn btn-lg btn-secondary text-white">
                     Get Started
                   </Button>
@@ -122,7 +123,6 @@ export default function AppHome() {
             </Col>
           </Row>
         </Container>
-
         {/* Complete end */}
 
         {/* Sponsor start */}
