@@ -28,6 +28,9 @@ export default function AppHelp() {
   const [link, setLink] = useState();
   const [price, setPrice] = useState();
   const [duration, setDuration] = useState();
+  const [priceUnit, setPriceUnit] = useState('naira');
+  const [durationUnit, setDurationUnit] = useState('months');
+
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [motivation, setMotivation] = useState();
@@ -180,13 +183,25 @@ export default function AppHelp() {
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
                     >
-                      <Form.Label>Price of the Course (in Naira)</Form.Label>
-                      <Form.Control
-                        type="number"
-                        placeholder=""
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                      />
+                      <Form.Label>Price of the Course</Form.Label>
+                      <div className="d-flex">
+                        <Form.Control
+                          type="number"
+                          placeholder=""
+                          value={price}
+                          onChange={(e) => setPrice(e.target.value)}
+                        />
+                        <Form.Control
+                          as="select"
+                          value={priceUnit}
+                          onChange={(e) => setPriceUnit(e.target.value)}
+                          className="ms-2"
+                        >
+                          <option value="naira">Naira</option>
+                          <option value="dollars">Dollars</option>
+                          <option value="pounds">Pounds</option>
+                        </Form.Control>
+                      </div>
                     </Form.Group>
                   </div>
 
@@ -195,15 +210,24 @@ export default function AppHelp() {
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
                     >
-                      <Form.Label>Duration (in Months)</Form.Label>
-                      <Form.Control
-                        type="number"
-                        placeholder=""
-                        value={duration}
-                        onChange={(e) => {
-                          setDuration(e.target.value);
-                        }}
-                      />
+                      <Form.Label>Duration</Form.Label>
+                      <div className="d-flex">
+                        <Form.Control
+                          type="number"
+                          placeholder=""
+                          value={duration}
+                          onChange={(e) => setDuration(e.target.value)}
+                        />
+                        <Form.Control
+                          as="select"
+                          value={durationUnit}
+                          onChange={(e) => setDurationUnit(e.target.value)}
+                          className="ms-2"
+                        >
+                          <option value="months">Months</option>
+                          <option value="weeks">Weeks</option>
+                        </Form.Control>
+                      </div>
                     </Form.Group>
                   </div>
                 </div>

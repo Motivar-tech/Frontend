@@ -100,18 +100,18 @@ export default function AppHome() {
             <Col md={7}>
               <p className=" h1 pt-5 px-md-4 text-md-start fw-normal">
                 <br /> <br />
-                <strong>Complete online courses you need to succeed</strong>
+                <strong>Find the Perfect Online Course for You</strong>
               </p>
               <p class="h4 px-md-4 text-md-start fw-light">
-                Whatever you want to learn online, wherever they are hosted. We
-                will help you make the most of the journey.
+                Take our psychometric test to discover personalized course recommendations
+                that match your unique abilities, learning style and goals.
               </p>
               <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-                <Link to="/user-auth">
-                  <Button className="btn btn-lg btn-secondary text-white">
-                    Get Started
-                  </Button>
-                </Link>
+              <a href="https://motivar-recommender.onrender.com/test/personality/" target="_blank" rel="noopener noreferrer">
+                <Button className="btn btn-lg btn-secondary text-white">
+                  Get Started
+                </Button>
+              </a>
                 <span className="shadow-sm pointer ms-3">
                   {" "}
                   <BsArrowLeftCircle className="spin" />{" "}
