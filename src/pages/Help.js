@@ -302,7 +302,7 @@ export default function AppHelp() {
                             name="group1"
                             type={type}
                             id={`inline-${type}-1`}
-                            value={isPrivate}
+                            value="private_request"
                             checked={() => setIsPrivate(true)}
                           />
                           <Form.Check
@@ -311,7 +311,7 @@ export default function AppHelp() {
                             name="group1"
                             type={type}
                             id={`inline-${type}-2`}
-                            value={isPrivate}
+                            value="public_request"
                             checked={() => setIsPrivate(false)}
                           />
                         </div>
