@@ -13,99 +13,86 @@ import IN from "../assets/images/in.svg";
 
 export default function AppFooter() {
   return (
-    <>
-      <div className="container-fluid p-5 text-start ">
-        <footer className="row p-3">
-          <div className="col-md-4 col-sm-12 mb-3">
-            <Link
-              to="/"
-              className="justify-content-sm-center justify-content-md-center d-flex mb-3 link-body-emphasis text-decoration-none"
-            >
-              <Image src={Logo} className="" alt="logo" fluid />
-            </Link>
-          </div>
-          <div className="col-md-5"></div>
-          <div className="col-md-1 mb-3 text-start">
-            <h5>Company</h5>
-            <ul className="nav flex-column">
-              <li className="nav-item mb-2">
-                <Link
-                  to="/coming-soon"
-                  className="nav-link p-0 text-body-secondary"
-                >
-                  Blog
-                </Link>
-              </li>
-              <li className="nav-item mb-2">
-                <Link
-                  to="/coming-soon"
-                  className="nav-link p-0 text-body-secondary"
-                >
-                  Pricing
-                </Link>
-              </li>
-              <li className="nav-item mb-2">
-                <a
-                  href="mailto:contact@motivar.live"
-                  className="nav-link p-0 text-body-secondary"
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
+    <div style={{
+      backgroundColor: '#64d69f',
+          }} className="container-fluid p-5 text-white py-4">
+      <footer className="row text-center text-md-start">
+        <div className="col-md-4 col-sm-12 mb-3 mb-md-0">
+          <Link to="/" className="d-flex justify-content-center justify-content-md-start mb-2">
+            <Image src={Logo} alt="logo" fluid className="footer-logo" />
+          </Link>
+          <p className="text-muted small mb-0">Find | Start | Complete  Online Courses</p>
+        </div>
 
-          <div className="col-md-2 mb-3 text-md-start">
-            <h5>FAQs</h5>
-            <ul className="nav flex-column ">
-              <li className="nav-item mb-2">
-                <Link
-                  to="/coming-soon"
-                  className="nav-link p-0 text-body-secondary"
-                >
-                  Terms &amp; Conditions
-                </Link>
-              </li>
-              <li className="nav-item mb-2">
-                <Link
-                  to="/coming-soon"
-                  className="nav-link p-0 text-body-secondary"
-                >
-                  Privacy
-                </Link>
-              </li>
-            </ul>
-            <a href="https://x.com/_motivar">
-              <Image
-                className="mx-auto image-fluid pe-1"
-                src={X}
-                alt="x"
-                fluid
-              />
+        <div className="col-md-3 col-sm-6 mb-3 mb-md-0">
+          <h5 className="text-uppercase small">Company</h5>
+          <ul className="list-unstyled">
+            <li className="mb-2">
+              <Link to="/coming-soon" className="text-decoration-none text-muted small">
+                Blog
+              </Link>
+            </li>
+            <li className="mb-2">
+              <Link to="/coming-soon" className="text-decoration-none text-muted small">
+                Pricing
+              </Link>
+            </li>
+            <li className="mb-2">
+              <a href="mailto:contact@motivar.live" className="text-decoration-none text-muted small">
+                Contact
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div className="col-md-3 col-sm-6 mb-3 mb-md-0">
+          <h5 className="text-uppercase small">FAQs</h5>
+          <ul className="list-unstyled">
+            <li className="mb-2">
+              <Link to="/coming-soon" className="text-decoration-none text-muted small">
+                Terms &amp; Conditions
+              </Link>
+            </li>
+            <li className="mb-2">
+              <Link to="/coming-soon" className="text-decoration-none text-muted small">
+                Privacy
+              </Link>
+            </li>
+          </ul>
+          <div className="d-flex justify-content-center justify-content-md-start">
+            <a href="https://x.com/_motivar" className="me-2">
+              <Image src={X} alt="x" fluid className="footer-icon" />
             </a>
-            <Link to="/coming-soon">
-              <Image
-                className="mx-auto image-fluid px-1"
-                src={IN}
-                alt="linked-in"
-                fluid
-              />
+            <Link to="/coming-soon" className="me-2">
+              <Image src={IN} alt="LinkedIn" fluid className="footer-icon" />
             </Link>
             <Link to="/coming-soon">
-              <Image
-                className="mx-auto image-fluid"
-                src={FB}
-                alt="facebook"
-                fluid
-              />
+              <Image src={FB} alt="Facebook" fluid className="footer-icon" />
             </Link>
           </div>
-        </footer>
-      </div>
+        </div>
 
-      <div className="d-flex flex-column flex-sm-row justify-content-center p-4 my-4 border-top">
-        <p>Copyright &copy; 2024 Motivar</p>
+        <div className="col-md-2 col-sm-12 mb-3 mb-md-0">
+          <h5 className="text-uppercase small">Resources</h5>
+          <ul className="list-unstyled">
+            <li className="mb-2">
+              <Link to="/coming-soon" className="text-decoration-none text-muted small">
+                Help Center
+              </Link>
+            </li>
+            <li className="mb-2">
+              <Link to="/coming-soon" className="text-decoration-none text-muted small">
+                Tutorials
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </footer>
+
+      <div className="border-top py-2 mt-3 text-center">
+        <p className="small mb-0">© 2024 Motivar. All Rights Reserved.</p>
       </div>
-    </>
+    </div>
   );
 }
+

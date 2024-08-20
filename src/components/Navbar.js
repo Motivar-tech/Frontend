@@ -12,14 +12,21 @@ import { Link } from "react-router-dom";
 import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
 
+const handleLogout = () => {
+  localStorage.removeItem('motivar-token');  
+  window.location.href = '/';   
+};
+
 export default function AppNavbar() {
   let token = localStorage.getItem("motivar-token");
   console.log(token);
 
   return (
     <>
-      <Navbar expand="lg" className="bg-body-alt-white">
-        <Container className="py-3">
+      <Navbar style={{
+      backgroundColor: '#f1fdf8',
+          }} expand="lg" className="bg-body-alt-white">
+        <Container  className="py-3">
           <Navbar.Brand href="/">
             <Image className="logo" src={Logo} style={{maxHeight: '30px' }} fluid />
           </Navbar.Brand>
@@ -63,7 +70,15 @@ export default function AppNavbar() {
             </div>
 
             <div className="container">
-              {token ? "" :(
+              {token ? (
+                  <Button
+                    variant="outline-danger"
+                    className="btn-lg me-2 d-inline-flex out-btn"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                ) :(
                 <Link to="/user-auth">
                   <Button
                     variant="outline-secondary"

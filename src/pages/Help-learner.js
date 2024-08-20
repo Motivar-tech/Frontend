@@ -21,6 +21,7 @@ import { BsArrowUpRightCircle } from "react-icons/bs";
 import Test from "../assets/images/test.png";
 import Subtract from "../assets/images/Subtract.png";
 import AppFooter from "../components/Footer.js";
+
 import { storage } from "../firebase.js";
 import {
   ref,
@@ -31,6 +32,11 @@ import {
 import { v4 } from "uuid";
 import axios from "axios";
 import toast from "react-hot-toast";
+
+const handleLogout = () => {
+  localStorage.removeItem('motivar-token');  
+  window.location.href = '/';   
+};
 
 // start donate modal
 function DonateRandomly(props) {
@@ -514,12 +520,13 @@ export default function AppHelpLearner() {
                 >
                   Pricing
                 </Link>
-                <Link to="/user-auth">
+                <Link>
                   <Button
+                    onClick={handleLogout}
                     variant="outline-secondary"
                     className="btn-lg me-2 d-inline-flex out-btn"
                   >
-                    Sign in
+                    Log Out
                   </Button>
                 </Link>
               </div>

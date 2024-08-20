@@ -460,7 +460,7 @@ export default function AppAuth() {
                   <div className="row mb-3 mt-5 justify-content-center">
                     <div className="col-sm-12 col-md-10 d-grid">
                       <Button
-                        className="btn btn-lg btn-success"
+                        className="btn btn-lg btn-success text-white"
                         onClick={() => {
                           handleSignUp();
                         }}
@@ -470,16 +470,7 @@ export default function AppAuth() {
                       </Button>
                     </div>
                   </div>
-                  <div className="row mb-3 mt-5 justify-content-center">
-                    <div className="col-sm-12 col-md-10 d-grid">
-                      <Button
-                        className="btn btn-lg btn-secondary text-white "
-                        onClick={() => handleSignUp()}
-                      >
-                        {loading ? "Loading... " : "Sign up"}
-                      </Button>
-                    </div>
-                  </div>
+                  
                 </Form>
               </Col>
             </Row>
