@@ -9,6 +9,7 @@ import AppSuccess from "./pages/Success.js";
 import AppAuth from "./pages/User-auth.js";
 import AppFundLearner from "./pages/Fund-learner.js";
 import AppHelpLearner from "./pages/Help-learner.js";
+import PrivateRoute from "./components/PrivateRoute.js";
 
 import { Toaster } from "react-hot-toast";
 
@@ -31,21 +32,15 @@ function App() {
           <Route path="/coming-soon">
             <AppComing />
           </Route>
-          <Route path="/help">
-            <AppHelp />
-          </Route>
+          <PrivateRoute path="/help" component={AppHelp} />
           <Route path="/success">
             <AppSuccess />
           </Route>
           <Route path="/user-auth">
             <AppAuth />
           </Route>
-          <Route path="/fund-learner">
-            <AppFundLearner />
-          </Route>
-          <Route path="/help-learner">
-            <AppHelpLearner />
-          </Route>
+          <PrivateRoute path="/fund-learner" component={AppFundLearner} />
+          <PrivateRoute path="/help-learner" component={AppHelpLearner} />
         </Switch>
       </div>
     </Router>

@@ -25,6 +25,7 @@ import Test from "../assets/images/test.png";
 import { BsArrowLeftCircle } from "react-icons/bs";
 import { TypeAnimation } from "react-type-animation";
 
+let token = localStorage.getItem("motivar-token");
 export default function AppHome() {
   // text transition starts
 
@@ -59,12 +60,24 @@ export default function AppHome() {
                 {/* <Image className="curve img-fluid" src={Curve} alt="highlight"/> */}
 
                 <div className="container d-block d-md-none pt-2">
-                  <Link to="/user-auth">
-                    <Button variant="outline-secondary" className="btn-lg me-2 d-inline-flex out-btn">Sign in</Button>
-                  </Link>
-                  <Link to="/coming-soon">
-                    <Button className="btn btn-secondary text-white btn-lg me-2 d-inline-flex justify-content-center align-items-center">Get App</Button>
-                  </Link>
+                
+                {token ? "" :(
+                <Link to="/user-auth">
+                  <Button
+                    variant="outline-secondary"
+                    className="btn-lg me-2 d-inline-flex out-btn"
+                  >
+                    Sign in
+                  </Button>
+                </Link>
+              )}
+                {token ? "" :(
+                <Link to="/coming-soon">
+                <Button className="btn btn-secondary text-white btn-lg me-2 d-inline-flex justify-content-center align-items-center">
+                  Get App
+                </Button>
+              </Link>
+              )}
                 </div>
 
               </div>
@@ -258,6 +271,24 @@ export default function AppHome() {
                           so many options to choose from, Motivar helped make
                           the process seamless. I totally love the course I'm
                           currently taking."
+                        </div>
+                      </div>
+                    </Row>
+                  </Carousel.Item>
+                  <Carousel.Item>
+                    <Row className="p-2 align-items-center">
+                      <div className="col-md-4 text-black ">
+                        <div className="container">
+                          <Image fluid src={Test} alt="testimonial" />
+                          <p>Paul, 23</p>
+                        </div>
+                      </div>
+                      <div className="col-md-8 text-black text-md-start mb-2">
+                        <div className="container">
+                          "I was completely lost in a sea of courses when I stumbled upon Motivar.
+                           Their platform was a lifesaver! It helped me narrow down my options and 
+                           find the perfect course that aligned with my goals. I'm thrilled with my 
+                           choice and can't wait to see where this new skill takes me!"
                         </div>
                       </div>
                     </Row>
