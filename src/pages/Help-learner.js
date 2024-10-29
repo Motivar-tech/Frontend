@@ -32,35 +32,51 @@ import {
 import { v4 } from "uuid";
 import axios from "axios";
 import toast from "react-hot-toast";
+import GeneralDataServices from "../Services/GeneralDataServices.js";
 
 const handleLogout = () => {
-  localStorage.removeItem('motivar-token');  
-  window.location.href = '/';   
+  localStorage.removeItem("motivar-token");
+  window.location.href = "/";
 };
 
 // start donate modal
 function DonateRandomly(props) {
   const handlePaymentIntent = async () => {
     let token = await localStorage.getItem("motivar-token");
-    axios
-      .post(
-        `https://motivar-sponsor-api-v1.onrender.com/course/initiate/payment/${
-          props?.requests[props?.index]._id
-        }`,
-        {},
-        { headers: { Authorization: token } }
-      )
-      .then((res) => toast.success(res.data.message))
-      .catch((error) => console.log(error));
+    try {
+      const res = await GeneralDataServices.InitiatePayment(
+        props?.requests[props?.index]?._id,
+        token
+      );
+      if (res) {
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <Modal {...props} aria-labelledby="contained-modal-title-vcenter">
       <Modal.Header closeButton></Modal.Header>
       <Modal.Body className="grid-example">
+        {/* {console.log(props?.requests[props?.index]?.user?.profilePicture)} */}
         <Container className="p-4">
           <Row className="justify-content-center align-items-center g-0">
             <Col xs={12} md={4}>
-              <Image src={Test} alt="image" />
+              <Image
+                src={
+                  props?.requests[props?.index]?.user?.profilePicture
+                    ? props?.requests[props?.index]?.user?.profilePicture
+                    : Test
+                }
+                style={{
+                  width: 100,
+                  height: 100,
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }}
+                alt="image"
+              />
             </Col>
             <Col xs={6} md={4}>
               <p className="h2">
@@ -71,9 +87,9 @@ function DonateRandomly(props) {
               <p
                 className=" h4 fw-lighter shadow-sm "
                 style={{
-                  borderColor: "#11d99a",
-                  borderStyle: "solid",
-                  borderWidth: "thin",
+                  // borderColor: "#11d99a",
+                  // borderStyle: "solid",
+                  // borderWidth: "thin",
                   backgroundColor: "#ffffff",
                   borderRadius: "50%",
                   width: "55px",
@@ -84,7 +100,13 @@ function DonateRandomly(props) {
                 }}
               >
                 {" "}
-                N{props?.requests[props?.index]?.course?.price}{" "}
+                {props?.requests[props?.index]?.course?.priceUnit === "naira"
+                  ? "N"
+                  : props?.requests[props?.index]?.course?.priceUnit ===
+                    "dollars"
+                  ? "$"
+                  : "£"}
+                {props?.requests[props?.index]?.course?.price}{" "}
               </p>
             </Col>
           </Row>
@@ -175,19 +197,22 @@ function MeetLearner(props) {
   const [date, setDate] = useState();
   const [time, setTime] = useState();
 
-  console.log(props.requests);
-
   const handleMeetLearner = async (time, date, link) => {
-    console.log(time, date, link);
+    // console.log(time, date, link);
     const token = await localStorage.getItem("motivar-token");
-    axios
-      .post(
-        `http://localhost:8089/course/meet/${props.requests._id}`,
-        { time: time, date: date, link: link },
-        { headers: { Authorization: token } }
-      )
-      .then((res) => toast.success(res.data.message))
-      .catch((error) => toast.error(error.response.data.message));
+    const payload = { time: time, date: date, link: link };
+    try {
+      const response = await GeneralDataServices.MeetLearner(
+        props.requests._id,
+        payload,
+        token
+      );
+      if (response) {
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   };
 
   return (
@@ -413,17 +438,18 @@ function Anonymous(props) {
 
   const handleAddProofPayment = async () => {
     const token = await localStorage.getItem("motivar-token");
-
-    axios
-      .post(
-        `https://motivar-sponsor-api-v1.onrender.com/course/add-proof/${props.requestID}`,
+    try {
+      const res = await GeneralDataServices.AddProof(
+        props.requestID,
         { link: picture },
-        { headers: { Authorization: token } }
-      )
-      .then((res) => {
+        token
+      );
+      if (res) {
         toast.success(res.data.message);
-      })
-      .catch((error) => toast.error(error.response.data.message));
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   };
 
   return (
@@ -480,14 +506,19 @@ export default function AppHelpLearner() {
   const [requests, setRequests] = useState([]);
   const [index, setIndex] = useState();
 
-  useEffect(() => {
-    axios
-      .get(`https://motivar-sponsor-api-v1.onrender.com/course/get`)
-      .then((res) => {
-        console.log(res.data.data);
+  const fetchRequests = async () => {
+    try {
+      const res = await GeneralDataServices.GetRequests();
+      if (res) {
         setRequests(res.data.data);
-      })
-      .catch((error) => console.log(error));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequests();
   }, []);
 
   return (
@@ -613,11 +644,28 @@ export default function AppHelpLearner() {
                     <Row className="p-3">
                       <Col md={12}>
                         <div className="d-flex justify-content-between">
-                          <Image src={Test} alt="image" />
-                          <span className="shadow-sm pointer ms-3">
-                            {" "}
-                            N{item?.course?.price}
-                          </span>
+                          <Image
+                            src={
+                              item?.user?.profilePicture
+                                ? item?.user?.profilePicture
+                                : Test
+                            }
+                            style={{
+                              width: 100,
+                              height: 100,
+                              objectFit: "cover",
+                              borderRadius: "50%",
+                            }}
+                            alt="image"
+                          />
+                          {/* <span className="shadow-sm pointer ms-3"> */}{" "}
+                          {item?.course?.priceUnit === "naira"
+                            ? "N"
+                            : item?.course?.priceUnit === "dollars"
+                            ? "$"
+                            : "£"}
+                          {item?.course?.price}
+                          {/* </span> */}
                         </div>
                       </Col>
                     </Row>

@@ -5,7 +5,6 @@ import "../assets/css/main.css";
 
 import React, { useState } from "react";
 
-
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -21,6 +20,7 @@ import AppFooter from "../components/Footer.js";
 
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import GeneralDataServices from "../Services/GeneralDataServices.js";
 
 export default function AppHelp() {
   const [courseTitle, setCourseTitle] = useState();
@@ -28,8 +28,8 @@ export default function AppHelp() {
   const [link, setLink] = useState();
   const [price, setPrice] = useState();
   const [duration, setDuration] = useState();
-  const [priceUnit, setPriceUnit] = useState('naira');
-  const [durationUnit, setDurationUnit] = useState('months');
+  const [priceUnit, setPriceUnit] = useState("naira");
+  const [durationUnit, setDurationUnit] = useState("months");
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -46,8 +46,10 @@ export default function AppHelp() {
       link,
       course: {
         price: Number(price),
+        priceUnit: priceUnit,
         courseTitle: courseTitle,
         duration: Number(duration),
+        durationUnit: durationUnit,
         platform: platform,
       },
       motivation,
@@ -60,31 +62,20 @@ export default function AppHelp() {
     };
 
     const token = await localStorage.getItem("motivar-token");
-    axios
-      .post(
-        `https://motivar-sponsor-api-v1.onrender.com/course/request`,
-        payload,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
-      .then((res) => {
+    try {
+      const response = await GeneralDataServices.RequestHelp(payload, token);
+      if (response) {
         setLoading(false);
-        toast.success(res.data.message);
-        console.log(res);
-      })
-      .catch((error) => {
-        setLoading(false);
-        toast.error(error?.response?.data?.message);
-        console.log(error);
-      });
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error(error.response.data.message);
+    }
   };
 
   return (
     <>
-
       <header>
         <Navbar expand="lg" className="bg-body-alt-white">
           <Container className="py-3">

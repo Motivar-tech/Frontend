@@ -7,15 +7,27 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
+import CameraIcon from "../assets/Icons/camera.svg";
+import PlaneIcon from "../assets/Icons/paper_plane.svg";
 import Headphone from "../assets/images/headphone.png";
 import Snapback from "../assets/images/snapback.png";
+import { storage } from "../firebase.js";
+
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  getStorage,
+} from "firebase/storage";
+import { v4 } from "uuid";
 
 import axios from "axios";
 import toast from "react-hot-toast";
+import AuthDataServices from "../Services/AuthDataServices.js";
 
 export default function AppAuth() {
   const [tabIndex, setTabIndex] = useState(1);
@@ -34,6 +46,7 @@ export default function AppAuth() {
   const [goal, setGoal] = useState();
   const [phoneNumber, setPhoneNumber] = useState();
   const [loading, setLoading] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(null);
 
   const [confirmPassword, setConfirmPassword] = useState();
   const [passwordMatch, setPasswordMatch] = useState(true);
@@ -105,29 +118,27 @@ export default function AppAuth() {
     setPasswordMatch(e.target.value === password);
   };
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     setLoginLoading(true);
     const payload = {
       email: loginMail,
       password: loginPassword,
     };
-    axios
-      .post(`https://motivar-sponsor-api-v1.onrender.com/user/auth`, payload)
-      .then((res) => {
+
+    try {
+      const response = await AuthDataServices.signIn(payload);
+      if (response) {
         setLoginLoading(false);
-        console.log(res.data.data);
-        toast.success(res.data.message);
+        toast.success(response.data.message);
         window.location.pathname = "/";
-        localStorage.setItem("motivar-token", res.data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error(error?.response?.data?.message);
-        setLoginLoading(false);
-      });
+        localStorage.setItem("motivar-token", response.data.data);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     setLoading(true);
     const payload = {
       email,
@@ -138,21 +149,79 @@ export default function AppAuth() {
       dateofbirth,
       goal,
       phoneNumber,
+      profilePicture,
     };
     console.log(payload);
-    axios
-      .post(`https://motivar-sponsor-api-v1.onrender.com/user/onboard`, payload)
-      .then((res) => {
+
+    try {
+      const response = await AuthDataServices.signUp(payload);
+      if (response) {
         setLoading(false);
         setTabIndex(1);
-        toast.success(res.data.message);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error(error.response.data.message);
-        setLoading(false);
-      });
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+      setLoading(false);
+    }
+  };
+
+  const pickImage = useRef(null);
+  const [image, setImage] = useState(null);
+  const [pickedImage, setPickedImage] = useState(null);
+
+
+  const handlePickImage = () => {
+    pickImage.current.click();
+  };
+
+  const handleSelectImage = (event) => {
+    console.log(event.target.files[0]);
+    const file = event.target.files[0];
+    setPickedImage(event.target.files[0]);
+    if (file && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = () => setImage(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadImage = () => {
+    if (pickedImage == null) {
+      return null;
+    } else {
+      const imageRef = ref(
+        getStorage(),
+        `profile_image/${pickedImage.name + v4()}`
+      );
+      const uploadTask = uploadBytesResumable(imageRef, pickedImage);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(Math.round(progress) + "% ");
+          switch (snapshot.state) {
+            case "paused":
+              // setUploadStatus("Paused");
+              break;
+            case "running":
+              // setUploadStatus("Uploading...");
+              break;
+          }
+        },
+        (error) => {
+          alert("Sorry, upload denied at the moment, Please try again later!");
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            // setLoading(false);
+            setProfilePicture(downloadURL);
+          });
+        }
+      );
+    }
   };
 
   return (
@@ -294,6 +363,85 @@ export default function AppAuth() {
 
                 <Form>
                   <div className="row mb-3 justify-content-center">
+                    <div
+                      style={{
+                        width: "fit-content",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "12vh",
+                      }}
+                    >
+                      <div
+                        style={{
+                          backgroundColor: "gray",
+                          borderRadius: "50%",
+                          height: "150px",
+                          width: "150px",
+                          position: "relative",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {image === null ? (
+                          <div
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Image
+                              onClick={handlePickImage}
+                              src={CameraIcon}
+                              style={{ maxHeight: "50px" }}
+                            />
+                            <input
+                              ref={pickImage}
+                              type="file"
+                              accept="image/*"
+                              onChange={handleSelectImage}
+                              style={{ display: "none" }}
+                            />
+                          </div>
+                        ) : (
+                          <>
+                            <Image
+                              src={image}
+                              style={{
+                                height: "150px",
+                                objectFit: "cover",
+                                width: "150px",
+                                borderRadius: "50%",
+                              }}
+                            />
+                            <div
+                              style={{
+                                position: "relative",
+                              }}
+                            >
+                              {profilePicture === null && (
+                                <Image
+                                  src={PlaneIcon}
+                                  onClick={handleUploadImage}
+                                  style={{
+                                    maxHeight: "50px",
+                                    position: "absolute",
+                                    right: 0,
+                                    bottom: -10,
+                                  }}
+                                />
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row mb-3 justify-content-center">
                     <div className="col-sm-6 col-md-5">
                       <Form.Group
                         className="mb-3"
@@ -358,7 +506,7 @@ export default function AppAuth() {
 
                   <div className="row mb-3 justify-content-center">
                     <div className="col-sm-6 col-md-5">
-                    <Form.Group
+                      <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
@@ -372,7 +520,7 @@ export default function AppAuth() {
                       </Form.Group>
                     </div>
                     <div className="col-sm-6 col-md-5">
-                    <Form.Group
+                      <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
@@ -385,12 +533,11 @@ export default function AppAuth() {
                           isInvalid={!passwordMatch}
                         />
                         {!passwordMatch && (
-                        <Form.Control.Feedback type="invalid">
-                          Passwords do not match.
-                        </Form.Control.Feedback>
+                          <Form.Control.Feedback type="invalid">
+                            Passwords do not match.
+                          </Form.Control.Feedback>
                         )}
                       </Form.Group>
-
                     </div>
                   </div>
 
@@ -411,7 +558,7 @@ export default function AppAuth() {
                     </div>
 
                     <div className="col-sm-7 col-md-6">
-                    <Form.Group
+                      <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
@@ -455,7 +602,6 @@ export default function AppAuth() {
                       </Form.Select>
                     </div>
                     <div className="col-sm-12 col-md-10"></div>
-
                   </div>
                   <div className="row mb-3 mt-5 justify-content-center">
                     <div className="col-sm-12 col-md-10 d-grid">
@@ -470,7 +616,6 @@ export default function AppAuth() {
                       </Button>
                     </div>
                   </div>
-                  
                 </Form>
               </Col>
             </Row>
@@ -478,5 +623,5 @@ export default function AppAuth() {
         </main>
       )}
     </>
-  )
+  );
 }
