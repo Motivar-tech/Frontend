@@ -17,12 +17,12 @@ import Headphone from "../assets/images/headphone.png";
 import Snapback from "../assets/images/snapback.png";
 import { storage } from "../firebase.js";
 
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  getStorage,
-} from "firebase/storage";
+// import {
+//   ref,
+//   uploadBytesResumable,
+//   getDownloadURL,
+//   getStorage,
+// } from "firebase/storage";
 import { v4 } from "uuid";
 
 import axios from "axios";
@@ -597,8 +597,8 @@ export default function AppAuth() {
                         onChange={(e) => setGoal(e.target.value)}
                       >
                         <option>-- select --</option>
-                        <option value="Learner">Learner</option>
-                        <option value="Sponsor">Sponsor</option>
+                        <option value="learner">Learner</option>
+                        <option value="sponsor">Sponsor</option>
                       </Form.Select>
                     </div>
                     <div className="col-sm-12 col-md-10"></div>

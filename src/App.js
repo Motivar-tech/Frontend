@@ -9,7 +9,11 @@ import AppSuccess from "./pages/Success.js";
 import AppAuth from "./pages/User-auth.js";
 import AppFundLearner from "./pages/Fund-learner.js";
 import AppHelpLearner from "./pages/Help-learner.js";
+import AppDashboard from './pages/learnerDashboard.js';
+import Explore from './pages/Explore';
 import PrivateRoute from "./components/PrivateRoute.js";
+import DashboardRouter from "./pages/DashboardRouter";
+
 
 import { Toaster } from "react-hot-toast";
 
@@ -38,6 +42,12 @@ function App() {
           </Route>
           <Route path="/user-auth">
             <AppAuth />
+          </Route>
+          <Route path="/dashboard">
+            <DashboardRouter />
+          </Route>
+          <Route path="/explore">
+            <Explore />
           </Route>
           <PrivateRoute path="/fund-learner" component={AppFundLearner} />
           <PrivateRoute path="/help-learner" component={AppHelpLearner} />

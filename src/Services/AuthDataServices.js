@@ -1,8 +1,8 @@
 /* eslint-disable */
 
 import axios from "axios";
-const ENDPOINT = "https://motivar-sponsor-api-v1.onrender.com";
-
+//const ENDPOINT = "https://motivar-sponsor-api-v1.onrender.com";
+const ENDPOINT = "http://localhost:8089";
 
 class AuthDataServices {
   async signUp(payload) {
