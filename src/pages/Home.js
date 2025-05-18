@@ -25,6 +25,7 @@ import Test from "../assets/images/test.png";
 import { BsArrowLeftCircle } from "react-icons/bs";
 import { TypeAnimation } from "react-type-animation";
 
+let token = localStorage.getItem("motivar-token");
 export default function AppHome() {
   // text transition starts
 
@@ -57,6 +58,28 @@ export default function AppHome() {
                 </p>
                 <p className="lead display-4 fw-medium">online courses</p>
                 {/* <Image className="curve img-fluid" src={Curve} alt="highlight"/> */}
+
+                <div className="container d-block d-md-none pt-2">
+
+                {token ? "" :(
+                <Link to="/user-auth">
+                  <Button
+                    variant="outline-secondary"
+                    className="btn-lg me-2 d-inline-flex out-btn"
+                  >
+                    Sign in
+                  </Button>
+                </Link>
+              )}
+                {token ? "" :(
+                <Link to="/coming-soon">
+                <Button className="btn btn-secondary text-white btn-lg me-2 d-inline-flex justify-content-center align-items-center">
+                  Get App
+                </Button>
+              </Link>
+              )}
+                </div>
+
               </div>
             </Col>
           </Row>
@@ -64,7 +87,7 @@ export default function AppHome() {
             <Col className="">
               <Image fluid src={Sketch2} alt="sketch" />
             </Col>
-            <Col className="">
+            <Col className="d-none d-md-block">
               <Image fluid src={Sketch1} alt="sketch" />
             </Col>
           </Row>
@@ -90,18 +113,18 @@ export default function AppHome() {
             <Col md={7}>
               <p className=" h1 pt-5 px-md-4 text-md-start fw-normal">
                 <br /> <br />
-                <strong>Complete online courses you need to succeed</strong>
+                <strong>Find the Perfect Online Course for You</strong>
               </p>
-              <p class="h3 px-md-4 text-md-start fw-light">
-                Whatever you want to learn online, wherever they are hosted. We
-                will help you make the most of the journey.
+              <p class="h4 px-md-4 text-md-start fw-light">
+                Take our psychometric test to discover personalized course recommendations
+                that match your unique abilities, learning style and goals.
               </p>
               <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-                <Link to="/user-auth">
-                  <Button className="btn btn-lg btn-secondary text-white">
-                    Get Started
-                  </Button>
-                </Link>
+              <a href="https://motivar-recommender.onrender.com/test/personality/" target="_blank" rel="noopener noreferrer">
+                <Button className="btn btn-lg btn-secondary text-white">
+                  Get Started
+                </Button>
+              </a>
                 <span className="shadow-sm pointer ms-3">
                   {" "}
                   <BsArrowLeftCircle className="spin" />{" "}
@@ -130,7 +153,7 @@ export default function AppHome() {
                   afford
                 </strong>
               </p>
-              <p class="h3 px-4 text-md-start fw-light">
+              <p class="h4 px-4 text-md-start fw-light">
                 Lots of young people want and need online courses to upskill and
                 improve their knowledge, but unfortunately cannot afford them.
               </p>
@@ -190,7 +213,7 @@ export default function AppHome() {
                   your learning experience
                 </strong>
               </p>
-              <p class="h3 px-md-4 text-md-start fw-light">
+              <p class="h4 px-md-4 text-md-start fw-light">
                 Connect with learners like you in your location to share ideas,
                 insights, challenges, and wins
               </p>
@@ -248,6 +271,24 @@ export default function AppHome() {
                           so many options to choose from, Motivar helped make
                           the process seamless. I totally love the course I'm
                           currently taking."
+                        </div>
+                      </div>
+                    </Row>
+                  </Carousel.Item>
+                  <Carousel.Item>
+                    <Row className="p-2 align-items-center">
+                      <div className="col-md-4 text-black ">
+                        <div className="container">
+                          <Image fluid src={Test} alt="testimonial" />
+                          <p>Paul, 23</p>
+                        </div>
+                      </div>
+                      <div className="col-md-8 text-black text-md-start mb-2">
+                        <div className="container">
+                          "I was completely lost in a sea of courses when I stumbled upon Motivar.
+                           Their platform was a lifesaver! It helped me narrow down my options and
+                           find the perfect course that aligned with my goals. I'm thrilled with my
+                           choice and can't wait to see where this new skill takes me!"
                         </div>
                       </div>
                     </Row>
