@@ -67,7 +67,7 @@
 
 .subtract{
   position: absolute;
-  top: 35%;
+  top: 38%;
   left: 50%;
   transform: translate(-50%, -50%);
   white-space: nowrap;
@@ -88,8 +88,10 @@
 
     .subtract{
       position: absolute;
-      top: 11.5%;
-      left: 8%;
+      top: 16%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
     }
 
   }
@@ -105,8 +107,8 @@
   }
 
   div span{
-    display: inline-block;
-    /* white-space: pre-line; */
+    display: block;
+    /* white-space: pre; */
   }
 
 
@@ -145,8 +147,6 @@ align-items: center;
     justify-content: center;
     align-items: center;
 }
-
-
 
 
 

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import "../App.css";
 import "../assets/css/main.css";
 
@@ -12,25 +14,28 @@ import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
 import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
-import Man from "../assets/images/man.png";
 import { BsChevronLeft } from "react-icons/bs";
 import AppFooter from "../components/Footer.js";
+
 import { toast } from "react-hot-toast";
-import axios from "axios";
+import GeneralDataServices from "../Services/GeneralDataServices.js";
 
 export default function AppHelp() {
-  const [courseTitle, setCourseTitle] = useState();
-  const [platform, setPlatform] = useState();
-  const [link, setLink] = useState();
-  const [price, setPrice] = useState();
-  const [duration, setDuration] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [motivation, setMotivation] = useState();
-  const [social, setSocial] = useState();
-  const [isPrivate, setIsPrivate] = useState(Boolean);
+  const [courseTitle, setCourseTitle] = useState("");
+  const [platform, setPlatform] = useState("");
+  const [link, setLink] = useState("");
+  const [price, setPrice] = useState("");
+  const [duration, setDuration] = useState("");
+  const [priceUnit, setPriceUnit] = useState("naira");
+  const [durationUnit, setDurationUnit] = useState("months");
 
-  const [loading, setLoading] = useState(Boolean);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [motivation, setMotivation] = useState("");
+  const [social, setSocial] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -39,40 +44,32 @@ export default function AppHelp() {
       link,
       course: {
         price: Number(price),
-        courseTitle: courseTitle,
+        priceUnit,
+        courseTitle,
         duration: Number(duration),
-        platform: platform,
+        durationUnit,
+        platform,
       },
       motivation,
       account: {
-        email: email,
-        password: password,
+        email,
+        password,
       },
       socials: social,
       isPrivate,
     };
 
-    const token = await localStorage.getItem("motivar-token");
-    axios
-      .post(
-        `https://motivar-sponsor-api-v1.onrender.com/course/request`,
-        payload,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
-      .then((res) => {
+    const token = localStorage.getItem("motivar-token");
+    try {
+      const response = await GeneralDataServices.RequestHelp(payload, token);
+      if (response) {
         setLoading(false);
-        toast.success(res.data.message);
-        console.log(res);
-      })
-      .catch((error) => {
-        setLoading(false);
-        toast.error(error?.response?.data?.message);
-        console.log(error);
-      });
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error(error?.response?.data?.message || "Submission failed");
+    }
   };
 
   return (
@@ -80,16 +77,9 @@ export default function AppHelp() {
       <header>
         <Navbar expand="lg" className="bg-body-alt-white">
           <Container className="py-3">
-            <div className="container">
-              <Navbar.Brand href="/">
-                <Image
-                  src={Logo}
-                  style={{ maxHeight: "100px" }}
-                  className=""
-                  fluid
-                />
-              </Navbar.Brand>
-            </div>
+            <Navbar.Brand href="/">
+              <Image src={Logo} style={{ maxHeight: "30px" }} fluid />
+            </Navbar.Brand>
           </Container>
         </Navbar>
       </header>
@@ -100,8 +90,7 @@ export default function AppHelp() {
             <div className="ps-5 d-flex align-items-center">
               <Link to="/">
                 <span className="shadow-sm pointer">
-                  {" "}
-                  <BsChevronLeft />{" "}
+                  <BsChevronLeft />
                 </span>
               </Link>
               <span className="h6 mt-2 ms-3">Request for help</span>
@@ -111,232 +100,155 @@ export default function AppHelp() {
 
         <Container fluid>
           <Row className="ps-md-5 text-start">
-            <Col md={6}>
-              <p className="h4 py-4 ps-4 fw-medium">
-                Tell us about your course
-              </p>
+            <Col md={6} className="p-4 p-md-0">
+              <p className="h4 py-4 ps-4 fw-medium">Tell us about your course</p>
               <Form className="ps-md-4 p-sm-5">
-                <div className="row mb-3">
-                  <div className="col-sm-12 col-md-10">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                    >
-                      <Form.Label>Course Title</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Graphic design"
-                        value={courseTitle}
-                        onChange={(e) => {
-                          setCourseTitle(e.target.value);
-                        }}
-                      />
-                    </Form.Group>
-                  </div>
-                </div>
+                {/* Course Title */}
+                <Form.Group className="mb-3 col-md-10">
+                  <Form.Label>Course Title</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Graphic design"
+                    value={courseTitle}
+                    onChange={(e) => setCourseTitle(e.target.value)}
+                  />
+                </Form.Group>
 
-                <div className="row mb-3">
-                  <div className="col-sm-12 col-md-10">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                    >
-                      <Form.Label>Platform</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Name of the platform the course is on"
-                        value={platform}
-                        onChange={(e) => setPlatform(e.target.value)}
-                      />
-                    </Form.Group>
-                  </div>
-                </div>
+                {/* Platform */}
+                <Form.Group className="mb-3 col-md-10">
+                  <Form.Label>Platform</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Name of the platform the course is on"
+                    value={platform}
+                    onChange={(e) => setPlatform(e.target.value)}
+                  />
+                </Form.Group>
 
-                <div className="row mb-3">
-                  <div className="col-sm-12 col-md-10">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                    >
-                      <Form.Label>Link to Course</Form.Label>
-                      <Form.Control
-                        type="url"
-                        placeholder="Graphic design"
-                        value={link}
-                        onChange={(e) => setLink(e.target.value)}
-                      />
-                    </Form.Group>
-                  </div>
-                </div>
+                {/* Link */}
+                <Form.Group className="mb-3 col-md-10">
+                  <Form.Label>Link to Course</Form.Label>
+                  <Form.Control
+                    type="url"
+                    placeholder="https://example.com"
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
+                  />
+                </Form.Group>
 
-                <div className="row mb-3">
-                  <div className="col-sm-6 col-md-5">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
+                {/* Price */}
+                <Form.Group className="mb-3 col-md-5">
+                  <Form.Label>Price of the Course</Form.Label>
+                  <div className="d-flex">
+                    <Form.Control
+                      type="number"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                    />
+                    <Form.Select
+                      value={priceUnit}
+                      onChange={(e) => setPriceUnit(e.target.value)}
+                      className="ms-2"
                     >
-                      <Form.Label>Price of the Course (in Naira)</Form.Label>
-                      <Form.Control
-                        type="number"
-                        placeholder=""
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                      />
-                    </Form.Group>
+                      <option value="naira">Naira</option>
+                      <option value="dollars">Dollars</option>
+                      <option value="pounds">Pounds</option>
+                    </Form.Select>
                   </div>
+                </Form.Group>
 
-                  <div className="col-sm-6 col-md-5">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
+                {/* Duration */}
+                <Form.Group className="mb-3 col-md-5">
+                  <Form.Label>Duration</Form.Label>
+                  <div className="d-flex">
+                    <Form.Control
+                      type="number"
+                      value={duration}
+                      onChange={(e) => setDuration(e.target.value)}
+                    />
+                    <Form.Select
+                      value={durationUnit}
+                      onChange={(e) => setDurationUnit(e.target.value)}
+                      className="ms-2"
                     >
-                      <Form.Label>Duration (in Months)</Form.Label>
-                      <Form.Control
-                        type="number"
-                        placeholder=""
-                        value={duration}
-                        onChange={(e) => {
-                          setDuration(e.target.value);
-                        }}
-                      />
-                    </Form.Group>
+                      <option value="months">Months</option>
+                      <option value="weeks">Weeks</option>
+                    </Form.Select>
                   </div>
-                </div>
+                </Form.Group>
 
-                <div className="row mb-3">
-                  <div className="col-sm-12 col-md-10">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                    >
-                      <Form.Label>
-                        <strong>Platform login details</strong>
-                      </Form.Label>
-                      <br />
-                      <small className=""> *Email</small>
-                      <Form.Control
-                        type="text"
-                        placeholder=""
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </Form.Group>
-                  </div>
-                </div>
+                {/* Email */}
+                <Form.Group className="mb-3 col-md-10">
+                  <Form.Label>
+                    <strong>Platform login details</strong>
+                    <br />
+                    <small>*Email</small>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Form.Group>
 
-                <div className="row mb-3">
-                  <div className="col-sm-12 col-md-10">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    >
-                      <Form.Label>
-                        Password{" "}
-                        <small>
-                          (Edit your password on the platform to the specified
-                          format)
-                        </small>
-                      </Form.Label>
-                      <br />
-                      <Form.Control
-                        type="password"
-                        placeholder="Format: MotivarPay4(Add Fullname)"
-                      />
-                    </Form.Group>
-                  </div>
-                </div>
+                {/* Password */}
+                <Form.Group className="mb-3 col-md-10">
+                  <Form.Label>
+                    Password{" "}
+                    <small>
+                      (Edit your password on the platform to the specified
+                      format)
+                    </small>
+                  </Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Format: MotivarPay4(Add Fullname)"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </Form.Group>
 
-                <div className="row mb-3">
-                  <div className="col-sm-12 col-md-10">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlTextarea1"
-                    >
-                      <Form.Label>Short Motivation Message</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={4}
-                        value={motivation}
-                        onChange={(e) => setMotivation(e.target.value)}
-                      />
-                    </Form.Group>
-                  </div>
-                </div>
+                {/* Motivation */}
+                <Form.Group className="mb-3 col-md-10">
+                  <Form.Label>Short Motivation Message</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={4}
+                    value={motivation}
+                    onChange={(e) => setMotivation(e.target.value)}
+                  />
+                </Form.Group>
 
-                <div className="row mb-3">
-                  <div className="col-sm-12 col-md-10">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                    >
-                      <Form.Label>Link to any Social media</Form.Label>
-                      <br />
-                      <Form.Control
-                        type="url"
-                        placeholder=""
-                        value={social}
-                        onChange={(e) => setSocial(e.target.value)}
-                      />
-                    </Form.Group>
-                  </div>
-                </div>
+                {/* Social */}
+                <Form.Group className="mb-3 col-md-10">
+                  <Form.Label>Link to any Social media</Form.Label>
+                  <Form.Control
+                    type="url"
+                    value={social}
+                    onChange={(e) => setSocial(e.target.value)}
+                  />
+                </Form.Group>
 
-                <div className="row mb-3 align-items-center align-content-center">
-                  <div className="col-sm-12">
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                    >
-                      {["checkbox"].map((type) => (
-                        <div key={`inline-${type}`} className="mb-3">
-                          <Form.Check
-                            inline
-                            label="Private Request"
-                            name="group1"
-                            type={type}
-                            id={`inline-${type}-1`}
-                            value={isPrivate}
-                            checked={() => setIsPrivate(true)}
-                          />
-                          <Form.Check
-                            inline
-                            label="Public Request"
-                            name="group1"
-                            type={type}
-                            id={`inline-${type}-2`}
-                            value={isPrivate}
-                            checked={() => setIsPrivate(false)}
-                          />
-                        </div>
-                      ))}
-                    </Form.Group>
-                  </div>
-                </div>
+                {/* Private */}
+                <Form.Group className="mb-3 col-md-10">
+                  <Form.Check
+                    type="checkbox"
+                    label="Make this request private"
+                    checked={isPrivate}
+                    onChange={(e) => setIsPrivate(e.target.checked)}
+                  />
+                </Form.Group>
 
-                <div className="row mb-3">
-                  <div className="col-sm-12 col-md-10 d-grid">
-                    <Button
-                      className="btn btn-lg btn-secondary text-white "
-                      onClick={() => handleSubmit()}
-                    >
-                      {loading ? "Loading..." : "SUBMIT FORM"}
-                    </Button>
-                  </div>
-                </div>
+                <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+                  {loading ? "Submitting..." : "Submit"}
+                </Button>
               </Form>
-            </Col>
-
-            <Col md={6}>
-              <Image fluid className="d-none d-md-block" src={Man} alt="man" />
             </Col>
           </Row>
         </Container>
       </main>
-      <footer>
-        <AppFooter />
-      </footer>
+
+      <AppFooter />
     </>
   );
 }

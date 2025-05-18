@@ -1,3 +1,6 @@
+
+/* eslint-disable */
+
 import "../App.css";
 
 import Button from "react-bootstrap/Button";
@@ -9,16 +12,23 @@ import { Link } from "react-router-dom";
 import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
 
+const handleLogout = () => {
+  localStorage.removeItem('motivar-token');
+  window.location.href = '/';
+};
+
 export default function AppNavbar() {
   let token = localStorage.getItem("motivar-token");
-  console.log(token);
+  // console.log(token);
 
   return (
     <>
-      <Navbar expand="lg" className="bg-body-alt-white">
-        <Container className="py-3">
+      <Navbar style={{
+      backgroundColor: '#f1fdf8',
+          }} expand="lg" className="bg-body-alt-white">
+        <Container  className="py-3">
           <Navbar.Brand href="/">
-            <Image className="logo" src={Logo} fluid />
+            <Image className="logo" src={Logo} style={{maxHeight: '30px' }} fluid />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
@@ -52,7 +62,7 @@ export default function AppNavbar() {
               <Navbar.Brand href="/">
                 <Image
                   src={Logo}
-                  style={{ maxHeight: "100px" }}
+                  style={{ maxHeight: "30px" }}
                   className="logo-2 "
                   fluid
                 />
@@ -60,7 +70,15 @@ export default function AppNavbar() {
             </div>
 
             <div className="container">
-              {token ? "" :(
+              {token ? (
+                  <Button
+                    variant="outline-danger"
+                    className="btn-lg me-2 d-inline-flex out-btn"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                ) :(
                 <Link to="/user-auth">
                   <Button
                     variant="outline-secondary"
@@ -76,9 +94,11 @@ export default function AppNavbar() {
                 </Button>
               </Link>
             </div>
+
+
           </Navbar.Collapse>
         </Container>
       </Navbar>
-    </>
-  );
-}
+      </>
+    );
+  }

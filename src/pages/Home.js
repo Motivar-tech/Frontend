@@ -16,20 +16,110 @@ import AppFooter from "../components/Footer.js";
 import Image from "react-bootstrap/Image";
 import Sketch1 from "../assets/images/sketch1.png";
 import Sketch2 from "../assets/images/sketch2.png";
-import Pardna from "../assets/images/pardna.png";
-import Faces from "../assets/images/faces.png";
-import Persons from "../assets/images/persons.png";
+import Pardna from "../assets/images/padna.svg";
+import Padna from "../assets/images/pardna.svg";
+import Faces from "../assets/images/faces.svg";
+import Persons from "../assets/images/persons.svg";
 import Stu from "../assets/images/stu.png";
 import Group from "../assets/images/group.png";
 import Test from "../assets/images/test.png";
 import { BsArrowLeftCircle } from "react-icons/bs";
 import { TypeAnimation } from "react-type-animation";
 
-let token = localStorage.getItem("motivar-token");
-export default function AppHome() {
-  // text transition starts
+import styled from "styled-components";
+import { StyledImage } from "../components/images.js";
+import Accordion from "../components/accordion/accordion.js";
 
-  // text transition end
+let token = localStorage.getItem("motivar-token");
+
+export default function AppHome() {
+  const HeadText = styled.div`
+    width: 65%;
+    margin: auto;
+    font-weight: 900;
+    font-size: 3.5rem;
+    padding: 30px 0px 30px 0px;
+
+    @media (max-width: 900px) {
+      width: 85%;
+      font-size: 2rem;
+    }
+  `;
+
+  const BackgroundWrapper = styled.div`
+    position: relative;
+    width: 100%;
+    height: 50vh;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url(${Sketch1});
+      background-size: center;
+      background-position: center;
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+  `;
+
+  const SubHeadText = styled.div`
+    font-size: 1.5rem;
+    width: 60%;
+    margin: auto;
+    padding: 20px 0px 20px 0px;
+
+    @media (max-width: 900px) {
+      font-size: 0.8rem;
+      width: 90%;
+    }
+  `;
+
+  const SectionHeadText = styled.div`
+    font-family: Montserrat;
+    font-size: 2.3rem;
+    font-weight: 800;
+    padding: ${(props) => (props.invert ? "0px" : "0px 0px 0px 50px")};
+
+    @media (max-width: 900px) {
+      font-size: 1.7rem;
+      padding: 0px;
+      text-align: left;
+    }
+  `;
+
+  const SectionBodyText = styled.div`
+    font-family: Montserrat;
+    font-size: 1.3rem;
+    padding: ${(props) =>
+      props.invert ? "0px 0px 0px 25px" : "0px 0px 0px 75px"};
+    text-align: left;
+    width: 90%;
+
+    @media (max-width: 900px) {
+      font-size: 0.7rem;
+      padding: 0px;
+      width: 100%;
+    }
+  `;
+
+  const PaddedWrapper = styled.div`
+    width: 100%;
+    padding: 0px 0px 0px 50px;
+
+    @media (max-width: 900px) {
+      padding: 0px;
+    }
+  `;
 
   return (
     <>
@@ -41,98 +131,121 @@ export default function AppHome() {
       <main>
         {/* Hero start */}
         <Container fluid>
-          <Row className="header-text text-center">
-            <Col className="offset-md-2 col-md-8">
-              <div>
-                <p className="h1 lead display-4 fw-medium ">
-                  <br />
-                  <br />
-                  The <em>easiest</em> way to{" "}
-                  <span>
-                    <TypeAnimation
-                      sequence={["find", 3000, "start", 3000, "complete", 3000]}
-                      speed={50}
-                      repeat={Infinity}
-                    />{" "}
-                  </span>
-                </p>
-                <p className="lead display-4 fw-medium">online courses</p>
-                {/* <Image className="curve img-fluid" src={Curve} alt="highlight"/> */}
+          <BackgroundWrapper>
+            <Row className="header-text text-center">
+              <Col className="offset-md-2 col-md-8">
+                <div>
+                  <HeadText>
+                    Easily find
+                    <br /> online courses you need to succeed
+                  </HeadText>
+                  <div className="container d-block d-md-none pt-2">
+                    {token ? (
+                      ""
+                    ) : (
+                      <Link to="/user-auth">
+                        <Button
+                          variant="outline-secondary"
+                          className="btn-lg me-2 d-inline-flex out-btn"
+                        >
+                          Sign in
+                        </Button>
+                      </Link>
+                    )}
+                    {token ? (
+                      ""
+                    ) : (
+                      <Link to="/coming-soon">
+                        <Button className="btn btn-secondary text-white btn-lg me-2 d-inline-flex justify-content-center align-items-center">
+                          Get App
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
 
-                <div className="container d-block d-md-none pt-2">
+                  <SubHeadText>
+                    Whatever you want to learn online, wherever they are hosted.
+                    We will help you make the most of the journey
+                  </SubHeadText>
 
-                {token ? "" :(
-                <Link to="/user-auth">
-                  <Button
-                    variant="outline-secondary"
-                    className="btn-lg me-2 d-inline-flex out-btn"
-                  >
-                    Sign in
+                  <Button className="btn btn-secondary text-white btn-lg me-2 d-inline-flex justify-content-center align-items-center">
+                    Get Started
                   </Button>
-                </Link>
-              )}
-                {token ? "" :(
-                <Link to="/coming-soon">
-                <Button className="btn btn-secondary text-white btn-lg me-2 d-inline-flex justify-content-center align-items-center">
-                  Get App
-                </Button>
-              </Link>
-              )}
                 </div>
-
-              </div>
-            </Col>
-          </Row>
-          <Row className="text-center gx-0">
-            <Col className="">
-              <Image fluid src={Sketch2} alt="sketch" />
-            </Col>
-            <Col className="d-none d-md-block">
-              <Image fluid src={Sketch1} alt="sketch" />
-            </Col>
-          </Row>
+              </Col>
+            </Row>
+          </BackgroundWrapper>
         </Container>
         {/* Hero end  */}
 
         {/* Partner start */}
-        {/* <Container fluid>
+        <Container fluid>
           <Row className="partners">
-            <Col className="col-sm-2 ">
+            <Col className="col-sm-4 ">
               <h6 className="">Partners:</h6>
             </Col>
             <Col className="col-sm-2 ">
-              <Image fluid src={Pardna} alt="partner" />
+              <StyledImage
+                width={"40%"}
+                height={"40%"}
+                src={Pardna}
+                alt="partner"
+              />
+            </Col>
+            <Col className="col-sm-2 ">
+              <StyledImage
+                width={"40%"}
+                height={"40%"}
+                src={Padna}
+                alt="partner"
+              />
             </Col>
           </Row>
-        </Container> */}
+        </Container>
         {/* Partner end */}
 
         {/* Complete start */}
         <Container fluid>
           <Row className="p-5">
             <Col md={7}>
-              <p className=" h1 pt-5 px-md-4 text-md-start fw-normal">
-                <br /> <br />
-                <strong>Find the Perfect Online Course for You</strong>
+              <p className="h1 pt-5 px-md-4 text-md-start fw-normal">
+                <br />
+                <strong>
+                  <SectionHeadText>
+                    Find the Perfect Online Course for You
+                  </SectionHeadText>
+                </strong>
               </p>
-              <p class="h4 px-md-4 text-md-start fw-light">
-                Take our psychometric test to discover personalized course recommendations
-                that match your unique abilities, learning style and goals.
-              </p>
-              <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-              <a href="https://motivar-recommender.onrender.com/test/personality/" target="_blank" rel="noopener noreferrer">
-                <Button className="btn btn-lg btn-secondary text-white">
-                  Get Started
-                </Button>
-              </a>
-                <span className="shadow-sm pointer ms-3">
-                  {" "}
-                  <BsArrowLeftCircle className="spin" />{" "}
-                </span>
-              </div>
+              <SectionBodyText>
+                Take our psychometric test to discover personalized course
+                recommendations that match your unique abilities, learning style
+                and goals.
+              </SectionBodyText>
+
+              <PaddedWrapper>
+                <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
+                  <a
+                    href="https://motivar-recommender.onrender.com/test/personality/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button className="btn btn-lg btn-secondary text-white">
+                      Get Started
+                    </Button>
+                  </a>
+                  <span className="shadow-sm pointer ms-3">
+                    <BsArrowLeftCircle className="spin" />{" "}
+                  </span>
+                </div>
+              </PaddedWrapper>
             </Col>
             <Col md={5}>
-              <Image fluid src={Faces} alt="faces" />
+              <StyledImage
+                width={"80%"}
+                height={"100%"}
+                src={Faces}
+                alt="faces"
+              />
             </Col>
           </Row>
         </Container>
@@ -142,21 +255,28 @@ export default function AppHome() {
         <Container fluid className="bg-warning">
           <Row className="p-5 text-center">
             <Col md={5}>
-              <Image fluid src={Persons} alt="persons" />
+              <StyledImage
+                src={Persons}
+                width={"70%"}
+                height={"70%"}
+                alt="persons"
+              />
             </Col>
 
             <Col md={7}>
               <p className=" h1 pt-5 px-md-4 text-md-start fw-normal">
-                <br /> <br />
+                <br />
                 <strong>
-                  Help a learner pay for online courses they need and can't
-                  afford
+                  <SectionHeadText invert>
+                    Help a learner pay for online courses they need and can't
+                    afford
+                  </SectionHeadText>
                 </strong>
               </p>
-              <p class="h4 px-4 text-md-start fw-light">
+              {/* <SectionBodyText invert>
                 Lots of young people want and need online courses to upskill and
                 improve their knowledge, but unfortunately cannot afford them.
-              </p>
+              </SectionBodyText> */}
               <div className="px-md-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
                 <Link to="/help-learner">
                   <Button className="btn btn-lg btn-secondary text-white">
@@ -176,23 +296,32 @@ export default function AppHome() {
               <p className=" h1 pt-5 px-md-4 text-md-start fw-normal">
                 <br /> <br />
                 <strong>
-                  Ask for help to pay for courses you need but cannot afford
+                  <SectionHeadText>
+                    Ask for help to pay for courses you need but cannot afford
+                  </SectionHeadText>
                 </strong>
               </p>
-              <div className="px-md-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-                <Link to="/help">
-                  <Button className="btn btn-lg btn-secondary text-white">
-                    Request for help
-                  </Button>
-                </Link>
-                <span className="shadow-sm pointer ms-3">
-                  {" "}
-                  <BsArrowLeftCircle className="spin" />{" "}
-                </span>
-              </div>
+              <PaddedWrapper>
+                <div className="px-md-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
+                  <Link to="/help">
+                    <Button className="btn btn-lg btn-secondary text-white">
+                      Request for help
+                    </Button>
+                  </Link>
+                  <span className="shadow-sm pointer ms-3">
+                    {" "}
+                    <BsArrowLeftCircle className="spin" />{" "}
+                  </span>
+                </div>
+              </PaddedWrapper>
             </Col>
             <Col md={6}>
-              <Image fluid src={Stu} alt="persons" />
+              <StyledImage
+                width={"80%"}
+                height={"80%"}
+                src={Stu}
+                alt="persons"
+              />
             </Col>
           </Row>
         </Container>
@@ -285,10 +414,12 @@ export default function AppHome() {
                       </div>
                       <div className="col-md-8 text-black text-md-start mb-2">
                         <div className="container">
-                          "I was completely lost in a sea of courses when I stumbled upon Motivar.
-                           Their platform was a lifesaver! It helped me narrow down my options and
-                           find the perfect course that aligned with my goals. I'm thrilled with my
-                           choice and can't wait to see where this new skill takes me!"
+                          "I was completely lost in a sea of courses when I
+                          stumbled upon Motivar. Their platform was a lifesaver!
+                          It helped me narrow down my options and find the
+                          perfect course that aligned with my goals. I'm
+                          thrilled with my choice and can't wait to see where
+                          this new skill takes me!"
                         </div>
                       </div>
                     </Row>
@@ -301,6 +432,14 @@ export default function AppHome() {
 
         {/* Testimonial end */}
 
+        {/* FAQS start */}
+        <SectionBodyText style={{ width: "100%", textAlign: "center", fontWeight: 900, padding: '20px 0px 20px 0px' }}>
+          FAQs
+        </SectionBodyText>
+        <Accordion />
+
+        {/* FAQS end */}
+
         {/* Newsletter start */}
         <Container fluid>
           <Row className="p-5 text-white">
@@ -311,9 +450,9 @@ export default function AppHome() {
                     <h5>
                       <strong>Get updates</strong>
                     </h5>
-                    <p>
-                      Not ready to start learning? Get updates of news,
-                      releases, and amazing stuffs you would love
+                    <p style={{ width: "80%" }}>
+                      Recieve information, new releases and much more directly
+                      to your inbox
                     </p>
                   </div>
                   <div className="col-md-3 col-sm-12 pt-3">
