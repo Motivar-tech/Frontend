@@ -13,13 +13,13 @@ import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
 
 const handleLogout = () => {
-  localStorage.removeItem('motivar-token');  
-  window.location.href = '/';   
+  localStorage.removeItem('motivar-token');
+  window.location.href = '/';
 };
 
 export default function AppNavbar() {
   let token = localStorage.getItem("motivar-token");
-  console.log(token);
+  // console.log(token);
 
   return (
     <>
