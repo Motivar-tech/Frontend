@@ -23,12 +23,12 @@ import Subtract from "../assets/images/Subtract.png";
 import AppFooter from "../components/Footer.js";
 
 import { storage } from "../firebase.js";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  getStorage,
-} from "firebase/storage";
+// import {
+//   ref,
+//   uploadBytesResumable,
+//   getDownloadURL,
+//   getStorage,
+// } from "firebase/storage";
 import { v4 } from "uuid";
 import axios from "axios";
 import toast from "react-hot-toast";

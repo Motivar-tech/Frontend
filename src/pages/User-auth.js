@@ -160,72 +160,165 @@ export default function AppAuth() {
       {
             tabIndex === 1 && (
               <main>
-
-              <Container fluid>
-                <Row className="text-start">
-
-                    <Col md={6} >
-                        <Image fluid className="d-none d-md-block" src={Headphone} alt="man"/>
+                <Container
+                  fluid
+                  className="d-flex align-items-center justify-content-center"
+                  style={{
+                    background: "#fff",
+                    minHeight: "100vh",
+                    height: "100vh",
+                    overflow: "hidden",
+                    padding: 0,
+                  }}
+                >
+                  <Row className="w-100 h-100" style={{ minHeight: "100vh" }}>
+                    {/* Left: Image */}
+                    <Col
+                      md={6}
+                      className="d-none d-md-flex align-items-center justify-content-center"
+                      style={{ height: "100vh" }}
+                    >
+                      <div
+                        style={{
+                          height: "90vh",
+                          width: "75%",
+                          margin: "auto",
+                          borderRadius: "32px",
+                          overflow: "hidden",
+                          background: "#f8f8f8",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Image
+                          src={Headphone}
+                          alt="Sign in visual"
+                          fluid
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </div>
                     </Col>
 
-                    <Col md={6} className="align-content-center p-sm-5">
-
-                        <div className="row mb-5 pb-5">
-                            <Image src={Logo} style={{maxHeight: '50px' }}  fluid/>
+                    {/* Right: Form */}
+                    <Col
+                      md={6}
+                      className="d-flex align-items-center justify-content-center"
+                      style={{ height: "100vh" }}
+                    >
+                      <div className="w-100" style={{ maxWidth: 420 }}>
+                        {/* Logo */}
+                        <div className="text-center mb-4">
+                          <Image
+                            src={Logo}
+                            alt="Motivar Logo"
+                            style={{ maxHeight: 50 }}
+                            fluid
+                          />
                         </div>
 
-                        <div className="row mb-5 mt-5 pt-5 justify-content-center">
-                          <div className="col-sm-6 col-md-5 d-grid">
-                              <Button className="btn btn-lg btn-success text-white " onClick={() => setTabIndex(1)}>Sign in</Button>
-                          </div>
-                          <div className="col-sm-6 col-md-5 d-grid">
-                              <Button variant="outline-success" className="btn btn-lg" onClick={() => setTabIndex(2)}>Sign up</Button>
-                          </div>
+                        {/* Tab Buttons */}
+                        <div className="d-flex justify-content-center mb-4">
+                          <Button
+                            className="me-2"
+                            style={{
+                              background: "#59b49a",
+                              border: "1px solid #59b49a",
+                              color: "#fff",
+                              borderRadius: "8px 0 0 8px",
+                              fontWeight: 500,
+                              width: "140px",
+                            }}
+                            onClick={() => setTabIndex(1)}
+                          >
+                            Sign in
+                          </Button>
+                          <Button
+                            variant="outline-success"
+                            style={{
+                              border: "1px solid #59b49a",
+                              color: "#59b49a",
+                              background: "#fff",
+                              borderRadius: "0 8px 8px 0",
+                              fontWeight: 500,
+                              width: "140px",
+                            }}
+                            onClick={() => setTabIndex(2)}
+                          >
+                            Sign up
+                          </Button>
                         </div>
 
-                        <Form>
-
-                          <div className="row mb-3 justify-content-center">
-                            <div className="col-sm-12 col-md-10">
-                              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                              <Form.Label>Email/Username </Form.Label>
-                                <Form.Control type="text" placeholder="" />
-                              </Form.Group>
-                            </div>
-                          </div>
-
-                          <div className="row mb-5 justify-content-center">
-                            <div className="col-sm-12 col-md-10">
-                              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Label>Password </Form.Label>
-                                <Form.Control type="password" placeholder="" />
-                              </Form.Group>
-                            </div>
-                          </div>
-
-
-                          <div className="row mb-3 mt-5 justify-content-center">
-                            <div className="col-sm-12 col-md-10 d-grid">
-                                <Button className="btn btn-lg btn-secondary text-white ">Sign in</Button>
-                            </div>
-                          </div>
-
-                          <div className="row mb-3 justify-content-center">
-                            <div className="col-sm-12 col-md-10 d-grid">
-                                <Button className="btn btn-lg btn-secondary text-white ">Sign in with</Button>
-                            </div>
-                          </div>
-
-
+                        {/* Sign In Form */}
+                        <Form className="mb-4">
+                          <Form.Group className="mb-3" controlId="loginEmail">
+                            <Form.Label>Email/Username</Form.Label>
+                            <Form.Control
+                              type="text"
+                              placeholder="Email"
+                              value={loginMail}
+                              onChange={(e) => setLoginMail(e.target.value)}
+                              style={{ borderRadius: 8, padding: "0.9rem 1rem" }}
+                            />
+                          </Form.Group>
+                          <Form.Group className="mb-4" controlId="loginPassword">
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control
+                              type="password"
+                              placeholder="e.g patricksean@gmail.com"
+                              value={loginPassword}
+                              onChange={(e) => setLoginPassword(e.target.value)}
+                              style={{ borderRadius: 8, padding: "0.9rem 1rem" }}
+                            />
+                          </Form.Group>
+                          <Button
+                            className="w-100 mb-3"
+                            style={{
+                              background: "#59b49a",
+                              border: "none",
+                              borderRadius: 8,
+                              fontWeight: 500,
+                              fontSize: "1.1rem",
+                              padding: "0.9rem",
+                            }}
+                            onClick={handleSignIn}
+                            disabled={loginloading}
+                          >
+                            {loginloading ? "Signing in..." : "Sign in"}
+                          </Button>
                         </Form>
 
-
+                        {/* Or Continue With */}
+                        <div className="text-center mb-2" style={{ color: "#888" }}>
+                          Or Continue With
+                        </div>
+                        <div className="text-center">
+                          <Button
+                            variant="outline-secondary"
+                            style={{
+                              borderRadius: "50%",
+                              width: 48,
+                              height: 48,
+                              padding: 0,
+                              border: "1px solid #e0e0e0",
+                              background: "#fff",
+                            }}
+                          >
+                            <img
+                              src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"
+                              alt="Google"
+                              style={{ width: 28, height: 28 }}
+                            />
+                          </Button>
+                        </div>
+                      </div>
                     </Col>
-
-
-                </Row>
-              </Container>
-
+                  </Row>
+                </Container>
               </main>
             )
         }
@@ -393,9 +486,7 @@ export default function AppAuth() {
 
 
 
-      <footer>
-          <AppFooter />
-      </footer>
+      
       </>
   );
 }
