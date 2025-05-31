@@ -380,7 +380,7 @@ const SponsorDashboard = () => {
 
             {/* Footer */}
             <StyledFooter>
-                <p>© {new Date().getFullYear()} Motivar. All rights reserved.</p>
+                <p>Copyright © {new Date().getFullYear()} Motivar Learning Technologies</p>
             </StyledFooter>
         </DashboardWrapper>
     );

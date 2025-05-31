@@ -11,10 +11,13 @@ import Badge from 'react-bootstrap/Badge';
 import Pagination from 'react-bootstrap/Pagination';
 import styled, { createGlobalStyle, css } from 'styled-components';
 import {
-    FiSearch, FiFilter, FiTag, FiBarChart2, FiDollarSign, FiExternalLink,
+    FiSearch, FiFilter, FiTag, FiBarChart2, FiDollarSign, FiExternalLink, FiLogOut,
     FiImage, FiChevronLeft, FiChevronRight, FiStar, FiSmile, FiPlusCircle, FiCheckCircle
 } from 'react-icons/fi';
 import { getCourseImage } from '../utils/imgs.js';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import Logo from "../assets/images/Motivar.svg";
 
 // --- Brand Colors ---
 const brandColors = {
@@ -39,6 +42,42 @@ const GlobalStyle = createGlobalStyle`
     background-color: ${brandColors.backgroundLight}; // Light green is main background
     color: ${brandColors.textPrimary};
   }
+`;
+
+const StyledFooter = styled.footer`
+  background-color: ${brandColors.backgroundWhite}; // Light footer
+  color: ${brandColors.textSecondary};
+  text-align: center;
+  padding: 1.5rem 0;
+  font-size: 0.9rem;
+  border-top: 1px solid ${brandColors.greyLight};
+  margin-top: auto; // Push the footer to the bottom
+`;
+
+// --- Navbar ---
+const StyledNavbar = styled(Navbar)`
+    background-color: ${brandColors.backgroundWhite};
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+
+    .navbar-brand img {
+        height: 35px; // Slightly larger logo
+    }
+
+    .nav-link {
+        color: ${brandColors.textSecondary};
+        font-weight: 500;
+        margin: 0 0.5rem;
+        transition: color 0.2s ease;
+         &:hover, &:focus {
+             color: ${brandColors.primary};
+         }
+         &.active { // Add .active class in Nav.Link if needed for routing
+            color: ${brandColors.primary};
+            font-weight: 600;
+         }
+    }
 `;
 
 // --- Placeholder SearchAutocomplete Component ---
@@ -207,6 +246,18 @@ const StyledButton = styled(Button)`
             color: ${brandColors.primaryDark};
             border-color: ${brandColors.primaryDark};
        }
+  }
+
+  &.btn-outline-danger {
+    color: #dc3545; // Red color for text
+    border-color: #dc3545; // Red border
+    background-color: transparent; // Transparent background
+
+    &:hover, &:focus, &:active {
+        background-color: rgba(220, 53, 69, 0.1); // Light red on hover
+        color: #dc3545;
+        border-color: #dc3545;
+    }
   }
 `;
 
@@ -561,6 +612,10 @@ const Explore = () => {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("motivar-token");
+        window.location.href = "/user-auth";
+    };
      // --- Render Pagination Items (Function remains the same) ---
      const renderPaginationItems = () => {
         let items = [];
@@ -610,6 +665,32 @@ const Explore = () => {
     return (
         <>
             <GlobalStyle />
+            <StyledNavbar expand="lg">
+                            <Container>
+                                <Navbar.Brand href="/">
+                                    <img src={Logo} alt="Motivar Logo" />
+                                </Navbar.Brand>
+                                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                                <Navbar.Collapse id="basic-navbar-nav">
+                                    <Nav className="me-auto">
+                                        <Nav.Link href="/explore">Explore</Nav.Link>
+                                        <Nav.Link href="">Programs</Nav.Link>
+                                        <Nav.Link href="">Community</Nav.Link>
+                                    </Nav>
+                                    <StyledButton
+                                      variant="outline-danger" // Changed to "outline-danger" for a red outline
+                                      onClick={handleLogout}
+                                      style={{
+                                        color: "#dc3545", // Red color for text
+                                        borderColor: "#dc3545", // Red border
+                                        backgroundColor: "transparent", // Transparent background
+                                      }}
+                                    >
+                                      <FiLogOut /> Logout
+                                    </StyledButton>
+                                </Navbar.Collapse>
+                            </Container>
+                        </StyledNavbar>
              {/* New Header Section */}
             <ExploreHeader>
                  <h1>What do you want to learn today?</h1>
@@ -817,6 +898,10 @@ const Explore = () => {
                      </LoadingErrorWrapper>
                  )}
             </ExploreContainer>
+            {/* Footer */}
+            <StyledFooter>
+                <p>Copyright © {new Date().getFullYear()} Motivar Learning Technologies</p>
+            </StyledFooter>
         </>
     );
 };
