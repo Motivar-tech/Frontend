@@ -37,6 +37,9 @@ export default function AppAuth() {
   const [loginPassword, setLoginPassword] = useState();
   const [loginloading, setLoginLoading] = useState(false);
 
+  const [signUpLoading, setSignUpLoading] = useState(false);
+
+
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [firstName, setFirstName] = useState();
@@ -54,6 +57,8 @@ export default function AppAuth() {
 
   const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef();
+
+  const [formErrors, setFormErrors] = useState({}); // State to track form errors
 
   const AfricanCountries = [
     "Algeria",
@@ -135,38 +140,58 @@ export default function AppAuth() {
         setLoginLoading(false);
         toast.success(response.data.message);
         window.location.pathname = "/";
-        localStorage.setItem("motivar-token", response.data.data);
+        localStorage.setItem("motivar-token", response.data.data.token);
+        localStorage.setItem("motivar-user-role", response.data.data.role);
       }
     } catch (error) {
       toast.error(error.response.data.message);
     }
   };
 
+  const validateForm = () => {
+    const errors = {};
+    if (!firstName) errors.firstName = "First name is required.";
+    if (!lastName) errors.lastName = "Last name is required.";
+    if (!email) errors.email = "Email is required.";
+    if (!phoneNumber) errors.phoneNumber = "Phone number is required.";
+    if (!password) errors.password = "Password is required.";
+    if (!confirmPassword) errors.confirmPassword = "Confirm password is required.";
+    if (password !== confirmPassword) errors.confirmPassword = "Passwords do not match.";
+    if (!goal) errors.goal = "Please select a goal.";
+    if (!gender) errors.gender = "Please select your gender.";
+    if (!country) errors.country = "Please select your country.";
+    if (!fileInputRef.current.files[0]) errors.profilePicture = "Profile picture is required.";
+    return errors;
+  };
 
-  const handleSignUp = async () => {
-    setLoading(true);
-    const payload = {
-      email,
-      password,
-      fullName: `${firstName} ${lastName}`,
-      country,
-      gender,
-      dateofbirth,
-      goal,
-      phoneNumber,
-      profilePicture,
-    };
-    console.log(payload);
+  const handleSignUp = async (e) => {
+    setSignUpLoading(true);
+    e.preventDefault(); // Prevent form reload
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors); // Set errors if validation fails
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("fullName", `${firstName} ${lastName}`);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("country", country || "Nigeria");
+    formData.append("gender", gender);
+    formData.append("role", goal === "I want to ask for help to fund course" ? "learner" : "sponsor");
+    formData.append("profilePicture", fileInputRef.current.files[0]);
 
     try {
-      const response = await AuthDataServices.signUp(payload);
+      const response = await AuthDataServices.signUp(formData);
       if (response) {
-        setLoading(false);
+        setSignUpLoading(false);
         setTabIndex(1);
         toast.success(response.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Signup failed");
       setLoading(false);
     }
   };
@@ -382,13 +407,12 @@ export default function AppAuth() {
                 <Container
                   fluid
                   style={{
-                    minHeight: "100vh",
-                    padding: 0,
+                    minHeight: "120vh",
                     background: "#fff"
                   }}
                   className="d-flex align-items-center justify-content-center"
                 >
-                  <Row className="w-100 h-100" style={{ minHeight: "100vh" }}>
+                  <Row className="w-100 h-100" style={{ minHeight: "100vh" }}>                                                                                                                                                                                                                                                            
                     <Col
                       md={6}
                       className="d-none d-md-flex align-items-center justify-content-center"
@@ -541,7 +565,12 @@ export default function AppAuth() {
                                   height: 56,
                                   fontSize: 18
                                 }}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                isInvalid={!!formErrors.firstName}
                               />
+                              <Form.Control.Feedback type="invalid">
+                                {formErrors.firstName}
+                              </Form.Control.Feedback>
                             </Form.Group>
                           </Col>
                           <Col sm={6}>
@@ -563,12 +592,17 @@ export default function AppAuth() {
                                   height: 56,
                                   fontSize: 18
                                 }}
+                                onChange={(e) => setLastName(e.target.value)}
+                                isInvalid={!!formErrors.lastName}
                               />
+                              <Form.Control.Feedback type="invalid">
+                                {formErrors.lastName}
+                              </Form.Control.Feedback>
                             </Form.Group>
                           </Col>
                         </Row>
                         <Row className="mb-3 w-100">
-                          <Col sm={4}>
+                          <Col sm={5}>
                             <Form.Group>
                               <Form.Label style={{
                                 fontFamily: "Montserrat, sans-serif",
@@ -589,7 +623,11 @@ export default function AppAuth() {
                                   height: 56,
                                   fontSize: 18
                                 }}
+                                isInvalid={!!formErrors.phoneNumber}
                               />
+                              <Form.Control.Feedback type="invalid">
+                                {formErrors.phoneNumber}
+                              </Form.Control.Feedback>
                               {phoneError && (
                                 <div style={{ color: "red", fontSize: 13, marginTop: -8, marginBottom: 8 }}>
                                   {phoneError}
@@ -597,7 +635,7 @@ export default function AppAuth() {
                               )}
                             </Form.Group>
                           </Col>
-                          <Col sm={8}>
+                          <Col sm={7}>
                             <Form.Group>
                               <Form.Label style={{
                                 fontFamily: "Montserrat, sans-serif",
@@ -616,7 +654,78 @@ export default function AppAuth() {
                                   height: 56,
                                   fontSize: 18
                                 }}
+                                onChange={(e) => setEmail(e.target.value)}
+                                isInvalid={!!formErrors.email}
                               />
+                              <Form.Control.Feedback type="invalid">
+                                {formErrors.email}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                         <Row className="mb-3 w-100">
+                          <Col sm={6}>
+                            <Form.Group>
+                              <Form.Label
+                                style={{
+                                  fontFamily: "Montserrat, sans-serif",
+                                  fontSize: 20,
+                                  fontWeight: 500,
+                                  textAlign: "left",
+                                  width: "100%",
+                                }}
+                              >
+                                Password
+                              </Form.Label>
+                              <Form.Control
+                                type="password"
+                                placeholder="Enter password"
+                                value={password}
+                                onChange={handlePasswordChange}
+                                style={{
+                                  borderColor: passwordMatch ? "#00AA87" : "red",
+                                  borderRadius: 8,
+                                  marginBottom: 16,
+                                  height: 56,
+                                  fontSize: 18,
+                                }}
+                                isInvalid={!!formErrors.password}
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {formErrors.password}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                          <Col sm={6}>
+                            <Form.Group>
+                              <Form.Label
+                                style={{
+                                  fontFamily: "Montserrat, sans-serif",
+                                  fontSize: 20,
+                                  fontWeight: 500,
+                                  textAlign: "left",
+                                  width: "100%",
+                                }}
+                              >
+                                Confirm Password
+                              </Form.Label>
+                              <Form.Control
+                                type="password"
+                                placeholder="Confirm password"
+                                value={confirmPassword}
+                                onChange={handleConfirmPasswordChange}
+                                style={{
+                                  borderColor: passwordMatch ? "#00AA87" : "red",
+                                  borderRadius: 8,
+                                  marginBottom: 16,
+                                  height: 56,
+                                  fontSize: 18,
+                                }}
+                                isInvalid={!!formErrors.confirmPassword}
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {formErrors.confirmPassword}
+                              </Form.Control.Feedback>
                             </Form.Group>
                           </Col>
                         </Row>
@@ -638,12 +747,17 @@ export default function AppAuth() {
                                   height: 56,
                                   fontSize: 18
                                 }}
+                                onChange={(e) => setGender(e.target.value)}
+                                isInvalid={!!formErrors.gender}
                               >
                                 <option>Gender</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                                 <option value="nb">Prefer not to say</option>
                               </Form.Select>
+                              <Form.Control.Feedback type="invalid">
+                                {formErrors.gender}
+                              </Form.Control.Feedback>
                             </Form.Group>
                           </Col>
                           <Col sm={8}>
@@ -663,12 +777,17 @@ export default function AppAuth() {
                                   height: 56,
                                   fontSize: 18
                                 }}
+                                onChange={(e) => setCountry(e.target.value)}
+                                isInvalid={!!formErrors.country}
                               >
                                 <option>Country</option>
                                 {AfricanCountries.map((country, idx) => (
                                   <option key={idx} value={country}>{country}</option>
                                 ))}
                               </Form.Select>
+                              <Form.Control.Feedback type="invalid">
+                                {formErrors.country}
+                              </Form.Control.Feedback>
                             </Form.Group>
                           </Col>
                         </Row>
@@ -716,6 +835,7 @@ export default function AppAuth() {
                                   fontFamily: "Montserrat, sans-serif"
                                 }}
                                 className="custom-goal-select"
+                                isInvalid={!!formErrors.goal}
                               >
                                 <option value="" disabled hidden>Select an option</option>
                                 <option style={{ fontFamily: "Montserrat, sans-serif", fontSize: 14, }}>
@@ -725,6 +845,9 @@ export default function AppAuth() {
                                   I want to sponsor a learner/group of learners
                                 </option>
                               </Form.Select>
+                              <Form.Control.Feedback type="invalid">
+                                {formErrors.goal}
+                              </Form.Control.Feedback>
                             </Form.Group>
                           </Col>
                         </Row>
@@ -754,8 +877,10 @@ export default function AppAuth() {
                               fontSize: "1.2rem",
                               height: 56
                             }}
+                            onClick={handleSignUp}
+                            disabled={!passwordMatch || signUpLoading }
                           >
-                            Submit
+                            { signUpLoading? "Signing up..." : "Sign up" }
                           </Button>
                         </div>
                       </Form>

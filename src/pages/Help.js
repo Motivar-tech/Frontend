@@ -20,6 +20,8 @@ import { BsChevronLeft } from "react-icons/bs";
 import AppFooter from "../components/Footer.js";
 import { toast } from "react-hot-toast";
 import GeneralDataServices from "../Services/GeneralDataServices.js";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AppHelp() {
   const [courseTitle, setCourseTitle] = useState("");
@@ -37,9 +39,11 @@ export default function AppHelp() {
   const [showModal, setShowModal] = useState(false);
   const [privateEmails, setPrivateEmails] = useState([""]);
   const [loading, setLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false); // State to track form submission
-  const checkboxRef = useRef(null); // Reference to the checkbox
+  const [isSubmitted, setIsSubmitted] = useState(false );
+  const checkboxRef = useRef(null);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [userRole, setUserRole] = useState(null);
+  const navigate = useNavigate();
 
   const handleAddEmailField = () => {
     setPrivateEmails([...privateEmails, ""]);
@@ -103,6 +107,19 @@ export default function AppHelp() {
       toast.error(error?.response?.data?.message || "Submission failed");
     }
   };
+
+  useEffect(() => {
+    const role = localStorage.getItem("motivar-user-role");
+    setUserRole(role);
+
+    if (role === "sponsor") {
+      navigate("/restricted");
+    }
+  }, [navigate]);
+
+  if (userRole === "sponsor") {
+    return null;
+  }
 
   if (isSubmitted) {
     // Render the success screen

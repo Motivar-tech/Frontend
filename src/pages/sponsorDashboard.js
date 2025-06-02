@@ -10,6 +10,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Alert from 'react-bootstrap/Alert';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
+import { Buffer } from 'buffer';
 import styled, { createGlobalStyle } from 'styled-components';
 import Logo from "../assets/images/Motivar.svg";
 import { FiUser, FiList, FiLogOut, FiAlertCircle } from 'react-icons/fi';
@@ -271,6 +272,7 @@ const SponsorDashboard = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("motivar-token");
+        localStorage.removeItem("motivar-user-role");
         window.location.href = "/user-auth";
     };
 
@@ -322,8 +324,23 @@ const SponsorDashboard = () => {
                 {userDetails && (
                     <WelcomeHeader>
                         <div className="icon-wrapper">
-                            <FiUser size={30} color={brandColors.primary} />
-                        </div>
+                            {userDetails.profilePicture?.data ? (
+                                <img
+                                src={`data:${userDetails.profilePicture.contentType};base64,${Buffer.from(
+                                    userDetails.profilePicture.data.data
+                                ).toString("base64")}`}
+                                alt="Profile"
+                                style={{
+                                    width: "80px",
+                                    height: "80px",
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                }}
+                                />
+                            ) : (
+                                <FiUser size={30} color={brandColors.primary} />
+                            )}
+                            </div>
                         <div>
                             <h1>Welcome back, {userDetails.fullName}!</h1>
                             <p>View and manage your sponsored requests.</p>
