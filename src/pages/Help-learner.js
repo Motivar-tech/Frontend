@@ -15,7 +15,7 @@ import Modal from "react-bootstrap/Modal";
 import { Link } from "react-router-dom";
 import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
-import { BsChevronRight } from "react-icons/bs";
+import { BsChevronDown } from "react-icons/bs";
 import { BsArrowDown } from "react-icons/bs";
 import { BsArrowUpRightCircle } from "react-icons/bs";
 import Test from "../assets/images/test.png";
@@ -23,12 +23,12 @@ import Subtract from "../assets/images/Subtract.png";
 import AppFooter from "../components/Footer.js";
 
 import { storage } from "../firebase.js";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  getStorage,
-} from "firebase/storage";
+// import {
+//   ref,
+//   uploadBytesResumable,
+//   getDownloadURL,
+//   getStorage,
+// } from "firebase/storage";
 import { v4 } from "uuid";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -499,6 +499,135 @@ function Anonymous(props) {
 
 //end  anonymous modal
 
+function LearnerDetailsModal({ show, onHide, learner }) {
+  return (
+    <Modal show={show} onHide={onHide} centered>
+      <Modal.Header closeButton style={{ borderBottom: "none" }}></Modal.Header>
+      <Modal.Body style={{ backgroundColor: "#F4FFF8", borderRadius: "16px" }}>
+        <Container>
+          <Row className="text-center">
+            <Col>
+              <Image
+                src={learner?.user?.profilePicture || Test}
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                  marginBottom: "10px",
+                }}
+                alt="Profile"
+              />
+            </Col>
+          </Row>
+          <Row className="text-center">
+            <Col>
+              <h5
+                style={{
+                  fontFamily: "Montserrat, sans-serif",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                }}
+              >
+                {learner?.user?.fullName}
+              </h5>
+              <p
+                style={{
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "14px",
+                  color: "#6C757D",
+                }}
+              >
+                {learner?.socials || "N/A"}
+              </p>
+              <p
+                style={{
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "16px",
+                  color: "#6C757D",
+                }}
+              >
+                {learner?.course?.courseTitle} - {learner?.course?.platform}
+              </p>
+            </Col>
+          </Row>
+          <Row className="text-center">
+            <Col>
+              <p
+                style={{
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "14px",
+                  color: "#6C757D",
+                }}
+              >
+                {learner?.link || "N/A"}
+              </p>
+              <p
+                style={{
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "14px",
+                  color: "#6C757D",
+                }}
+              >
+                Duration: {learner?.course?.duration || "N/A"} {learner?.course?.durationUnit || ""}
+              </p>
+            </Col>
+          </Row>
+          <hr />
+          <Row>
+            <Col>
+              <p
+                style={{
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+              >
+                Why I need this course:
+              </p>
+              <textarea
+                readOnly
+                value={learner?.motivation || ""}
+                style={{
+                  width: "100%",
+                  height: "100px",
+                  border: "1px solid #11D99A",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  fontFamily: "Montserrat, sans-serif",
+                }}
+              />
+            </Col>
+          </Row>
+          <Row className="text-center mt-4">
+            <Col>
+              <Button
+                style={{
+                  backgroundColor: "#00AA87",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "0px 20px",
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  width: "133px",
+                  height: "37px",
+                }}
+                onClick={() => {
+                  // Add sponsor functionality here
+                  onHide();
+                }}
+              >
+                Sponsor
+              </Button>
+            </Col>
+          </Row>
+        </Container>
+      </Modal.Body>
+    </Modal>
+  );
+}
+
 export default function AppHelpLearner() {
   const [modalShow, setModalShow] = useState(false);
   const [modalShowII, setModalShowII] = useState(false);
@@ -519,6 +648,20 @@ export default function AppHelpLearner() {
 
   useEffect(() => {
     fetchRequests();
+  }, []);
+
+  const [currentText, setCurrentText] = useState("Fund a Learner's Journey");
+
+  useEffect(() => {
+    const textAlternator = setInterval(() => {
+      setCurrentText((prevText) =>
+        prevText === "Fund a Learner's Journey"
+          ? "Support a Learner Today"
+          : "Fund a Learner's Journey"
+      );
+    }, 3000);
+
+    return () => clearInterval(textAlternator);
   }, []);
 
   return (
@@ -549,7 +692,7 @@ export default function AppHelpLearner() {
                   className="pe-5"
                   style={{ textDecoration: "none", color: "#212529" }}
                 >
-                  Pricing
+                  Programs
                 </Link>
                 <Link>
                   <Button
@@ -567,29 +710,57 @@ export default function AppHelpLearner() {
       </header>
 
       <main>
-        <div className="container-fluid bg-info">
-          <Image src={Subtract} alt="headerImage" fluid />
-          <div className="subtract">
-            <p className="display-6 fw-medium">Help a Learner's Journey</p>
-          </div>
-          {/* <div className="subtract"><p className="h1 display-4 fw-semibold">Help a Learner's Journey</p></div> */}
+        <div
+          className="container-fluid d-flex justify-content-center align-items-center"
+          style={{
+            backgroundImage: `url(${Subtract})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            width: "90%",
+            height: "249px",
+            borderRadius: "16px",
+            margin: "0 auto",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "62px",
+              fontWeight: "bold",
+              color: "#000",
+              textAlign: "center",
+              margin: 0,
+            }}
+          >
+            {currentText}
+          </p>
         </div>
 
-        <Container fluid>
-          <Row className="p-md-5 pt-3 pb-4 text-start bg-info">
+        <Container fluid style={{ margin: "0 auto" }}>
+          <Row className="p-md-5 pt-3 pb-4 text-start">
             <Col md={7}>
               <Form className="d-flex">
                 <Form.Control
                   type="search"
-                  placeholder="&#x1F50D;"
-                  className="me-2 justify-content-start"
+                  placeholder="🔍"
+                  className="me-2"
                   aria-label="Search"
+                  style={{
+                    borderRadius: "10px",
+                    border: "1px solid #11D99A",
+                    fontFamily: "Montserrat, sans-serif",
+                  }}
                 />
                 <Button
                   variant="outline-success"
-                  className="d-flex text-black fw-medium"
+                  className="d-flex align-items-center text-black fw-medium"
+                  style={{
+                    borderRadius: "10px",
+                    border: "1px solid #11D99A",
+                    fontFamily: "Montserrat, sans-serif",
+                  }}
                 >
-                  Filter <BsArrowDown className="mt-1 ms-1 " />
+                  Filter <BsArrowDown className="ms-1" />
                 </Button>
               </Form>
             </Col>
@@ -598,106 +769,169 @@ export default function AppHelpLearner() {
               md={5}
               className="d-flex pt-3 pt-md-0 justify-content-between justify-content-md-end"
             >
-              <div className="pe-md-4">
-                <Button
-                  variant="outline-success"
-                  className="text-black"
-                  style={{ whiteSpace: "noWrap" }}
-                  onClick={() => setModalShow(true)}
-                >
-                  Donate Randomly
-                </Button>
-                <DonateRandomly
-                  show={modalShow}
-                  onHide={() => setModalShow(false)}
-                  index={index}
-                  requests={requests}
-                  showQuest={() => setModalShowII(true)}
-                />
-              </div>
-              <div>
-                <Button
-                  variant="outline-success"
-                  className="text-black"
-                  style={{ whiteSpace: "noWrap" }}
-                  onClick={() => setModalShowII(true)}
-                >
-                  Support a lot of learners
-                </Button>
-                <MeetLearner
-                  show={modalShowII}
-                  // index={index}
-                  requests={requests[index]}
-                  onHide={() => setModalShowII(false)}
-                />
-              </div>
+              <Button
+                variant="outline-success"
+                className="text-black fw-medium"
+                style={{
+                  borderRadius: "10px",
+                  border: "1px solid #11D99A",
+                  fontFamily: "Montserrat, sans-serif",
+                  whiteSpace: "nowrap",
+                  width: "40%",
+                }}
+                onClick={() => setModalShow(true)}
+              >
+                Sponsor randomly
+              </Button>
+              <Button
+                variant="outline-success"
+                className="text-black fw-medium ms-3"
+                style={{
+                  borderRadius: "10px",
+                  border: "1px solid #11D99A",
+                  fontFamily: "Montserrat, sans-serif",
+                  whiteSpace: "nowrap",
+                  width: "60%",
+                }}
+                onClick={() => setModalShowII(true)}
+              >
+                Sponsor a group
+              </Button>
             </Col>
           </Row>
         </Container>
 
         <Container fluid>
-          <Row className="px-md-5 pt-5 text-start justify-content-between bg-info pb-4">
-            {requests.length > 0 &&
-              requests.map((item, index) => (
-                <Col key={index} className="col-md-6 col-sm-12">
-                  <Card className="bg-info">
-                    <Row className="p-3">
-                      <Col md={12}>
-                        <div className="d-flex justify-content-between">
-                          <Image
-                            src={
-                              item?.user?.profilePicture
-                                ? item?.user?.profilePicture
-                                : Test
-                            }
-                            style={{
-                              width: 100,
-                              height: 100,
-                              objectFit: "cover",
-                              borderRadius: "50%",
-                            }}
-                            alt="image"
-                          />
-                          {/* <span className="shadow-sm pointer ms-3"> */}{" "}
-                          {item?.course?.priceUnit === "naira"
-                            ? "N"
-                            : item?.course?.priceUnit === "dollars"
-                            ? "$"
-                            : "£"}
-                          {item?.course?.price}
-                          {/* </span> */}
-                        </div>
-                      </Col>
-                    </Row>
-                    <Row className="p-3">
-                      <Col md={12}>
-                        <div className="d-flex justify-content-between align-items-center">
-                          <Card.Body>
-                            <Card.Title className="h4">
-                              {item?.user?.fullName}
-                            </Card.Title>
-                            <Card.Text className="h5 fw-normal">
-                              {item?.course?.courseTitle}
-                            </Card.Text>
-                          </Card.Body>
-                          <span
-                            className="shadow-sm pointer "
-                            onClick={() => {
-                              setModalShow(true);
-                              setIndex(index);
-                            }}
-                          >
-                            {" "}
-                            <BsChevronRight />{" "}
-                          </span>
-                        </div>
-                      </Col>
-                    </Row>
-                  </Card>
-                </Col>
-              ))}
-          </Row>
-        </Container>
+        <Row className="px-md-5 pt-5 justify-content-start">
+          {requests.length > 0 &&
+            requests.map((item, index) => (
+              <Col key={index} md={6} lg={5} xl={4} className="mb-4">
+                <Card
+                  className="shadow-sm"
+                  style={{
+                    border: "1px solid #11D99A",
+                    borderRadius: "6px",
+                    backgroundColor: "#F4FFF8",
+                    padding: "20px",
+                  }}
+                >
+                  <div style={{ display: "flex", width: "100%" }}>
+
+                    {/* Left Column: Image stacked ON TOP of User Info/Course */}
+                    <div style={{
+                      display: "flex",
+                      flexDirection: "column", // Stacks image and text block vertically
+                      flexGrow: 1, // Takes available horizontal space
+                      marginRight: "15px" // Space before the right column
+                    }}>
+                      <Image
+                        src={item?.user?.profilePicture || Test}
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                          borderRadius: "50%",
+                          marginBottom: "10px",
+                        }}
+                        alt="Profile"
+                      />
+                      {/* Text block (Name + Course) - directly under image */}
+                      <div>
+                        <Card.Title
+                          style={{
+                            fontFamily: "Montserrat, sans-serif",
+                            fontSize: "20px",
+                            fontWeight: "bold",
+                            marginBottom: "4px",
+                            textAlign: "left",
+                            color: "#333",
+                          }}
+                        >
+                          {item?.user?.fullName}
+                        </Card.Title>
+                        <Card.Text
+                          style={{
+                            fontFamily: "Montserrat, sans-serif",
+                            fontSize: "16px",
+                            color: "#555",
+                            textAlign: "left",
+                          }}
+                        >
+                          {item?.course?.courseTitle} - {item?.course?.platform}
+                        </Card.Text>
+                      </div>
+                    </div>
+
+                    {/* Right Column: Price (top) + Arrow (bottom) */}
+                    <div style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between", // Pushes price to its top, arrow to its bottom
+                      alignItems: "flex-end", // Aligns price/arrow to the right edge of this column
+                      minWidth: "60px", // Give it some minimum width
+                    }}>
+                      {/* Price */}
+                      <div
+                        style={{
+                          backgroundColor: "#FFFFFF",
+                          border: "1px solid #11D99A",
+                          borderRadius: "6px",
+                          padding: "5px 12px",
+                          fontFamily: "Montserrat, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: "bold",
+                          color: "#11D99A",
+                          display: "inline-block",
+                        }}
+                      >
+                        {item?.course?.priceUnit === "naira"
+                          ? "₦"
+                          : item?.course?.priceUnit === "dollars"
+                          ? "$"
+                          : "£"}
+                        {item?.course?.price}
+                      </div>
+
+                      {/* Downward Arrow */}
+                      <div
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          backgroundColor: "#FFFFFF",
+                          borderRadius: "50%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          cursor: "pointer",
+                          boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                        }}
+                        onClick={() => {
+                          setModalShow(true);
+                          setIndex(index);
+                        }}
+                      >
+                        <BsChevronDown
+                          style={{
+                            color: "#11D99A",
+                            fontSize: "20px",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </Col>
+            ))}
+        </Row>
+        {/* Modal */}
+        {index !== undefined && (
+          <LearnerDetailsModal
+            show={modalShow}
+            onHide={() => setModalShow(false)}
+            learner={requests[index]}
+          />
+        )}
+      </Container>
       </main>
       <footer>
         <AppFooter />

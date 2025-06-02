@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -26,7 +26,9 @@
 
 .App-link {
   color: #61dafb;
-}
+} */
+
+/* eslint-disable */
 
 .blk {
   color: #61dafb;
@@ -160,7 +162,6 @@ align-items: center;
     animation: spin 5s ease infinite;
   }
 }
-
 
 
 
