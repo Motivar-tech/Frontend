@@ -29,7 +29,7 @@ import { TypeAnimation } from "react-type-animation";
 import styled from "styled-components";
 import { StyledImage } from "../components/images.js";
 import Accordion from "../components/accordion/accordion.js";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 let token = localStorage.getItem("motivar-token");
 
@@ -64,6 +64,8 @@ const PartnerLogo = styled.img`
 `;
 
 export default function AppHome() {
+  const [activeTab, setActiveTab] = useState("learner"); // State to track active tab
+
   const HeadText = styled.div`
     width: 65%;
     margin: auto;
@@ -210,112 +212,154 @@ export default function AppHome() {
       </header>
 
       <main style={{ paddingTop: "109px", maxWidth: "100vw", overflowX: "hidden" }}>
-        {/* Hero start */}
+        {/* Tab Switch System */}
+        <Container
+          fluid
+          className="text-center py-2"
+          style={{
+            backgroundColor: "#fff",
+          }}
+        >
+          <Button
+            variant={activeTab === "learner" ? "success" : "outline-success"}
+            className="mx-2"
+            onClick={() => setActiveTab("learner")}
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontWeight: 600,
+              fontSize: "18px",
+              borderRadius: "8px",
+              padding: "8px 16px",
+              backgroundColor: activeTab === "learner" ? "#00AA87" : "#fff",
+              color: activeTab === "learner" ? "#fff" : "#00AA87", 
+              border: `2px solid #00AA87`, 
+            }}
+          >
+            Learner
+          </Button>
+          <Button
+            variant={activeTab === "sponsor" ? "success" : "outline-success"}
+            className="mx-2"
+            onClick={() => setActiveTab("sponsor")}
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontWeight: 600,
+              fontSize: "18px",
+              borderRadius: "8px",
+              padding: "8px 16px", 
+              backgroundColor: activeTab === "sponsor" ? "#00AA87" : "#fff",
+              color: activeTab === "sponsor" ? "#fff" : "#00AA87",
+              border: `2px solid #00AA87`, 
+            }}
+          >
+            Sponsor
+          </Button>
+        </Container>
+
+        {/* Hero Section */}
         <Container fluid style={{ padding: 0, maxWidth: "100vw", overflowX: "hidden" }}>
           <BackgroundWrapper>
-            
-                  <HeroContainer>
-                    {/* Desktop version: show on md and up */}
-                    <div className="d-none d-md-block">
-                      <HeroText>
-                        <TypeAnimation
-                          sequence={[
-                            // FIND
-                            "Easily find",
-                            2000,
-                            // START
-                            "Easily start",
-                            2000,
-                            // COMPLETE
-                            "Easily complete",
-                            2000,
-                          ]}
-                          wrapper="span"
-                          cursor={false}
-                          repeat={Infinity}
-                          style={{ color: "#222" }}
-                        />
-                        <br />
-                        online courses you need to&nbsp;
-                        <TypeAnimation
-                          sequence={[
-                            "succeed",
-                            2000,
-                            "upskill",
-                            2000,
-                          ]}
-                          wrapper="span"
-                          cursor={false}
-                          repeat={Infinity}
-                          style={{ color: "#222" }}
-                        />
-                      </HeroText>
-                    </div>
-
-                    {/* Mobile version: show below md */}
-                    <div className="d-block d-md-none">
-                      <HeroText>
-                        <TypeAnimation
-                          sequence={[
-                            // FIND
-                            "Easily find",
-                            2000,
-                            // START
-                            "Easily start",
-                            2000,
-                            // COMPLETE
-                            "Easily complete",
-                            2000,
-                          ]}
-                          wrapper="span"
-                          cursor={false}
-                          repeat={Infinity}
-                          style={{ color: "#222" }}
-                        />
-                        {" "}online courses you need to&nbsp;
-                        <TypeAnimation
-                          sequence={[
-                            "succeed",
-                            2000,
-                            "upskill",
-                            2000,
-                          ]}
-                          wrapper="span"
-                          cursor={false}
-                          repeat={Infinity}
-                          style={{ color: "#222" }}
-                        />
-                      </HeroText>
-                    </div>
-
-                    <SubHeadText>
-                      Whatever you want to learn online, wherever they are hosted.
-                      We will help you make the most of the journey
-                    </SubHeadText>
-                    <Button
-                      className="btn btn-secondary text-white btn-lg d-inline-flex justify-content-center align-items-center"
-                      style={{
-                        fontFamily: "Montserrat, sans-serif",
-                        fontWeight: 700,
-                        fontSize: "20px",
-                        width: "316px",
-                        height: "66px",
-                        borderRadius: "8px",
-                        boxShadow: "none",
-                        border: "none",
-                        letterSpacing: "0.5px",
-                        minWidth: "316px",
-                        minHeight: "66px",
-                        maxWidth: "100%",
-                      }}
-                    >
-                      Get Started
-                    </Button>
-                  </HeroContainer>
-                
+            <HeroContainer>
+              {activeTab === "learner" ? (
+                <>
+                  {/* Learner Copy */}
+                  <HeroText>
+                    <TypeAnimation
+                      sequence={[
+                        "Easily find",
+                        2000,
+                        "Easily start",
+                        2000,
+                        "Easily complete",
+                        2000,
+                      ]}
+                      wrapper="span"
+                      cursor={false}
+                      repeat={Infinity}
+                      style={{ color: "#222" }}
+                    />
+                    <br />
+                    online courses you need to&nbsp;
+                    <TypeAnimation
+                      sequence={["succeed", 2000, "upskill", 2000]}
+                      wrapper="span"
+                      cursor={false}
+                      repeat={Infinity}
+                      style={{ color: "#222" }}
+                    />
+                  </HeroText>
+                  <SubHeadText>
+                    Whatever you want to learn online, wherever they are hosted.
+                    We will help you make the most of the journey.
+                  </SubHeadText>
+                  <Button
+                    className="btn btn-secondary text-white btn-lg d-inline-flex justify-content-center align-items-center"
+                    style={{
+                      fontFamily: "Montserrat, sans-serif",
+                      fontWeight: 700,
+                      fontSize: "20px",
+                      width: "316px",
+                      height: "66px",
+                      borderRadius: "8px",
+                      boxShadow: "none",
+                      border: "none",
+                      letterSpacing: "0.5px",
+                      minWidth: "316px",
+                      minHeight: "66px",
+                      maxWidth: "100%",
+                    }}
+                  >
+                    Get Started
+                  </Button>
+                </>
+              ) : (
+                <>
+                  {/* Sponsor Copy */}
+                  <HeroText>
+                    <TypeAnimation
+                      sequence={[
+                        "Help ambitious youths",
+                        2000,
+                        "Support their dreams",
+                        2000,
+                        "Make a difference",
+                        2000,
+                      ]}
+                      wrapper="span"
+                      cursor={false}
+                      repeat={Infinity}
+                      style={{ color: "#222" }}
+                    />
+                  </HeroText>
+                  <SubHeadText>
+                    Sponsor ambitious, underprivileged youths to pay for online courses
+                    they need to succeed. Your support can change lives and create
+                    opportunities.
+                  </SubHeadText>
+                  <Button
+                    className="btn btn-secondary text-white btn-lg d-inline-flex justify-content-center align-items-center"
+                    style={{
+                      fontFamily: "Montserrat, sans-serif",
+                      fontWeight: 700,
+                      fontSize: "20px",
+                      width: "316px",
+                      height: "66px",
+                      borderRadius: "8px",
+                      boxShadow: "none",
+                      border: "none",
+                      letterSpacing: "0.5px",
+                      minWidth: "316px",
+                      minHeight: "66px",
+                      maxWidth: "100%",
+                    }}
+                  >
+                    Sponsor Now
+                  </Button>
+                </>
+              )}
+            </HeroContainer>
           </BackgroundWrapper>
         </Container>
-        {/* Hero end  */}
 
         {/* Partner start */}
         <PartnersSection>

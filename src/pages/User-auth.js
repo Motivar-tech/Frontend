@@ -139,7 +139,7 @@ export default function AppAuth() {
       if (response) {
         setLoginLoading(false);
         toast.success(response.data.message);
-        window.location.pathname = "/";
+        window.location.pathname = "/dashboard";
         localStorage.setItem("motivar-token", response.data.data.token);
         localStorage.setItem("motivar-user-role", response.data.data.role);
       }

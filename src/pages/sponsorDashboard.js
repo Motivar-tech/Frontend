@@ -348,6 +348,32 @@ const SponsorDashboard = () => {
                     </WelcomeHeader>
                 )}
 
+                {/* Copy Section */}
+                <Row className="mt-4 text-center">
+                <Col>
+                    <h5 style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 600, color: brandColors.textPrimary }}>
+                    Want to sponsor a learner? Check out learners' sponsorship requests here.
+                    </h5>
+                    <Button
+                    variant="success"
+                    style={{
+                        backgroundColor: brandColors.primary,
+                        border: "none",
+                        color: "#fff",
+                        borderRadius: "8px",
+                        fontWeight: 600,
+                        fontFamily: "Montserrat, sans-serif",
+                        padding: "0.6rem 1.5rem",
+                        marginTop: "1rem",
+                        marginBottom: "2rem",
+                    }}
+                    onClick={() => window.location.href = "/help-learner"}
+                    >
+                    View Sponsorship Requests
+                    </Button>
+                </Col>
+                </Row>
+
                 {/* Sponsored Requests Section */}
                 <Row className="g-4">
                     <Col lg={12}>

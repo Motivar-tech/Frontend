@@ -561,72 +561,92 @@ const LearnerDashboard = () => {
 
                 {/* Summary Cards */}
                 <Row className="g-4">
-                    <Col md={4}>
-                        <SummaryCard iconColor={brandColors.warning} valueColor={brandColors.warning}>
-                            <FiClock className="summary-icon" />
-                            <p className="summary-value">{pendingRequestsCount}</p>
-                            <h5>Pending Requests</h5>
-                        </SummaryCard>
-                    </Col>
-                    <Col md={4}>
-                         <SummaryCard iconColor={brandColors.success} valueColor={brandColors.success}>
-                            <FiCheckCircle className="summary-icon" />
-                            <p className="summary-value">{paidRequestsCount}</p>
-                             <h5>Paid Requests</h5>
-                        </SummaryCard>
-                    </Col>
-                    <Col md={4}>
-                         <SummaryCard iconColor={brandColors.primary} valueColor={brandColors.primary}>
-                            <FiBookOpen className="summary-icon" />
-                            <p className="summary-value">{coursesCount}</p>
-                             <h5>Enrolled Courses</h5>
-                        </SummaryCard>
-                    </Col>
+                  <Col md={4}>
+                    <SummaryCard iconColor={brandColors.warning} valueColor={brandColors.warning}>
+                      <FiClock className="summary-icon" />
+                      <p className="summary-value">{pendingRequestsCount}</p>
+                      <h5>Pending Requests</h5>
+                    </SummaryCard>
+                  </Col>
+                  <Col md={4}>
+                    <SummaryCard iconColor={brandColors.success} valueColor={brandColors.success}>
+                      <FiCheckCircle className="summary-icon" />
+                      <p className="summary-value">{paidRequestsCount}</p>
+                      <h5>Paid Requests</h5>
+                    </SummaryCard>
+                  </Col>
+                  <Col md={4}>
+                    <SummaryCard iconColor={brandColors.primary} valueColor={brandColors.primary}>
+                      <FiBookOpen className="summary-icon" />
+                      <p className="summary-value">{coursesCount}</p>
+                      <h5>Enrolled Courses</h5>
+                    </SummaryCard>
+                  </Col>
+                </Row>
+
+                {/* Copy Section */}
+                <Row className="mt-4 text-center">
+                  <Col>
+                    <h5 style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 600, color: brandColors.textPrimary }}>
+                      Need help funding a course? Request for help here.
+                    </h5>
+                    <Button
+                      variant="success"
+                      style={{
+                        backgroundColor: brandColors.primary,
+                        border: "none",
+                        color: "#fff",
+                        borderRadius: "8px",
+                        fontWeight: 600,
+                        fontFamily: "Montserrat, sans-serif",
+                        padding: "0.6rem 1.5rem",
+                        marginTop: "1rem",
+                      }}
+                      onClick={() => window.location.href = "/help"}
+                    >
+                      Request for Help
+                    </Button>
+                  </Col>
                 </Row>
 
                 {/* Detailed Sections */}
                 <Row className="mt-5 g-4">
-                    {/* Requests Section */}
-                    <Col lg={6}>
-                         <SectionCard>
-                            <Card.Header><FiList /> Your Course Requests</Card.Header>
-                            <ListGroup variant="flush">
-                                {requests.length > 0 ? (
-                                    requests.map((req) => (
-                                        <StyledListGroupItem key={req._id} iconColor={req.paid ? brandColors.success : brandColors.warning}>
-                                            <div className="item-icon-wrapper">
-                                                {req.paid ? <FiCheckCircle /> : <FiClock />}
-                                            </div>
-                                            <div className="item-content">
-                                                <h6>{req.course?.courseTitle || 'Course Title Missing'}</h6>
-                                                <div className="text-muted small">
-                                                     {/* Safely access nested properties */}
-                                                     <span>Platform: {req.course?.platform || 'N/A'}</span> |
-                                                     <span> Duration: {req.course?.duration || 'N/A'} {req.course?.durationUnit || ''}</span> |
-                                                     <span> Price: {req.course?.price || 'N/A'} {req.course?.priceUnit || ''}</span>
-                                                </div>
-                                                <div className="mt-2">
-                                                    <StyledBadge className={req.paid ? 'bg-paid' : 'bg-pending'}>
-                                                        {req.paid ? "Paid" : "Payment Pending"}
-                                                    </StyledBadge>
-                                                     {/* {req.socials && (
-                                                         <StyledBadge className="bg-socials ms-2">
-                                                             Social: {req.socials}
-                                                         </StyledBadge>
-                                                     )} */}
-                                                </div>
-                                                 {req.motivation && (
-                                                    <div className="mt-2">
-                                                        <small className="text-muted">Motivation: "{req.motivation}"</small>
-                                                     </div>
-                                                )}
-                                            </div>
-                                        </StyledListGroupItem>
-                                    ))
-                                ) : (
-                                     <ListGroup.Item className="text-center text-muted p-4">No requests found.</ListGroup.Item>
-                                )}
-                            </ListGroup>
+                  {/* Requests Section */}
+                  <Col lg={6}>
+                       <SectionCard>
+                          <Card.Header><FiList /> Your Course Requests</Card.Header>
+                          <ListGroup variant="flush">
+                            {requests.length > 0 ? (
+                              requests.map((req) => (
+                                <StyledListGroupItem key={req._id} iconColor={req.paid ? brandColors.success : brandColors.warning}>
+                                  <div className="item-icon-wrapper">
+                                    {req.paid ? <FiCheckCircle /> : <FiClock />}
+                                  </div>
+                                  <div className="item-content">
+                                    <h6>{req.course?.courseTitle || 'Course Title Missing'}</h6>
+                                    <div className="text-muted small">
+                                      {/* Safely access nested properties */}
+                                      <span>Platform: {req.course?.platform || 'N/A'}</span> |
+                                      <span> Duration: {req.course?.duration || 'N/A'} {req.course?.durationUnit || ''}</span> |
+                                      <span> Price: {req.course?.price || 'N/A'} {req.course?.priceUnit || ''}</span>
+                                    </div>
+                                    <div className="mt-2">
+                                      <StyledBadge className={req.paid ? 'bg-paid' : 'bg-pending'}>
+                                        {req.paid ? "Paid" : "Payment Pending"}
+                                      </StyledBadge>
+                                    </div>
+                                    {req.motivation && (
+                                      <div className="mt-2">
+                                        <small className="text-muted">Motivation: "{req.motivation}"</small>
+                                      </div>
+                                    )}
+                                  </div>
+                                </StyledListGroupItem>
+                              ))
+                            ) : (
+                              <ListGroup.Item className="text-center text-muted p-4">No requests found.</ListGroup.Item>
+                            )}
+                          </ListGroup>
                         </SectionCard>
                     </Col>
 

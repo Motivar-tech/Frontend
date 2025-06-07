@@ -161,24 +161,45 @@ export default function AppNavbar() {
                 Logout
               </Button>
             )}
-            <Link to="/coming-soon" className="w-100">
-              <Button
-                className="w-100"
-                style={{
-                  background: "#59b49a",
-                  border: "none",
-                  color: "#fff",
-                  borderRadius: "8px",
-                  fontWeight: 600,
-                  fontFamily: "Montserrat, sans-serif",
-                  minWidth: "110px",
-                  padding: "0.4rem 1.2rem",
-                  boxShadow: "none",
-                }}
-              >
-                Get App
-              </Button>
-            </Link>
+            {token ? (
+              <Link to="/dashboard" className="w-100">
+                <Button
+                  className="w-100"
+                  style={{
+                    background: "#59b49a",
+                    border: "none",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    fontWeight: 600,
+                    fontFamily: "Montserrat, sans-serif",
+                    minWidth: "110px",
+                    padding: "0.4rem 1.2rem",
+                    boxShadow: "none",
+                  }}
+                >
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/coming-soon" className="w-100">
+                <Button
+                  className="w-100"
+                  style={{
+                    background: "#59b49a",
+                    border: "none",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    fontWeight: 600,
+                    fontFamily: "Montserrat, sans-serif",
+                    minWidth: "110px",
+                    padding: "0.4rem 1.2rem",
+                    boxShadow: "none",
+                  }}
+                >
+                  Get App
+                </Button>
+              </Link>
+            )}
           </div>
         </Navbar.Collapse>
       </Container>

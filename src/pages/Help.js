@@ -36,6 +36,7 @@ export default function AppHelp() {
   const [motivation, setMotivation] = useState("");
   const [social, setSocial] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [privateEmails, setPrivateEmails] = useState([""]);
   const [loading, setLoading] = useState(false);
@@ -92,6 +93,8 @@ export default function AppHelp() {
       },
       socials: social,
       isPrivate,
+      isPublic,
+      recipientEmails: privateEmails, // Pass recipient emails
     };
 
     const token = localStorage.getItem("motivar-token");
@@ -536,6 +539,15 @@ export default function AppHelp() {
                   />
                 </Form.Group>
 
+                <Form.Group className="mb-3">
+                  <Form.Check
+                    type="checkbox"
+                    label="Make this request public"
+                    checked={isPublic}
+                    onChange={(e) => setIsPublic(e.target.checked)}
+                  />
+                </Form.Group>
+
                 <Button
                   className="w-100"
                   style={{
@@ -574,106 +586,106 @@ export default function AppHelp() {
       
       {/* Modal */}
       {showModal && (
-        <div
+  <div
+    style={{
+      position: "absolute",
+      top: modalPosition.top,
+      left: modalPosition.left,
+      width: "383px",
+      background: "#fff",
+      borderRadius: "16px",
+      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+      padding: "20px",
+      zIndex: 1050,
+    }}
+  >
+    <h6
+      style={{
+        fontFamily: "Montserrat, sans-serif",
+        fontSize: "14px",
+        fontWeight: 500,
+      }}
+    >
+      Send request privately
+    </h6>
+    <p
+      style={{
+        fontFamily: "Montserrat, sans-serif",
+        fontSize: "10px",
+        fontWeight: 400,
+      }}
+    >
+      Add email(s) below
+    </p>
+    {privateEmails.map((email, index) => (
+      <div
+        key={index}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginBottom: "10px",
+        }}
+      >
+        <Form.Control
+          type="email"
+          placeholder="Enter email"
+          value={email}
+          onChange={(e) => handleEmailChange(index, e.target.value)}
           style={{
-            position: "absolute",
-            top: modalPosition.top,
-            left: modalPosition.left,
-            width: "383px",
-            background: "#fff",
-            borderRadius: "16px",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            padding: "20px",
-            zIndex: 1050,
+            borderRadius: "8px",
+            borderColor: "#00AA87",
+            flex: 1,
+          }}
+        />
+        <Button
+          variant="outline-success"
+          style={{
+            marginLeft: "10px",
+            borderColor: "#00AA87",
+            color: "#00AA87",
+            borderRadius: "50%",
+            width: "36px",
+            height: "36px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <h6
-            style={{
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "14px",
-              fontWeight: 500,
-            }}
-          >
-            Send request privately
-          </h6>
-          <p
-            style={{
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "10px",
-              fontWeight: 400,
-            }}
-          >
-            Add email(s) below
-          </p>
-          {privateEmails.map((email, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "10px",
-              }}
-            >
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => handleEmailChange(index, e.target.value)}
-                style={{
-                  borderRadius: "8px",
-                  borderColor: "#00AA87",
-                  flex: 1,
-                }}
-              />
-              <Button
-                variant="outline-success"
-                style={{
-                  marginLeft: "10px",
-                  borderColor: "#00AA87",
-                  color: "#00AA87",
-                  borderRadius: "50%",
-                  width: "36px",
-                  height: "36px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                +
-              </Button>
-            </div>
-          ))}
-          <Button
-            variant="link"
-            onClick={handleAddEmailField}
-            style={{
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "14px",
-              color: "#00AA87",
-              textDecoration: "none",
-              marginBottom: "10px",
-            }}
-          >
-            + Send more
-          </Button>
-          <Button
-            variant="success"
-            className="w-100"
-            onClick={() => setShowModal(false)}
-            style={{
-              backgroundColor: "#00AA87",
-              border: "none",
-              color: "#fff",
-              borderRadius: "8px",
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "16px",
-              fontWeight: 600,
-            }}
-          >
-            DONE
-          </Button>
-        </div>
-      )}
+          +
+        </Button>
+      </div>
+    ))}
+    <Button
+      variant="link"
+      onClick={handleAddEmailField}
+      style={{
+        fontFamily: "Montserrat, sans-serif",
+        fontSize: "14px",
+        color: "#00AA87",
+        textDecoration: "none",
+        marginBottom: "10px",
+      }}
+    >
+      + Send more
+    </Button>
+    <Button
+      variant="success"
+      className="w-100"
+      onClick={() => setShowModal(false)}
+      style={{
+        backgroundColor: "#00AA87",
+        border: "none",
+        color: "#fff",
+        borderRadius: "8px",
+        fontFamily: "Montserrat, sans-serif",
+        fontSize: "16px",
+        fontWeight: 600,
+      }}
+    >
+      DONE
+    </Button>
+  </div>
+)}
     </>
   );
 }
