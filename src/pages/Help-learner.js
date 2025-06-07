@@ -21,6 +21,7 @@ import { BsArrowUpRightCircle } from "react-icons/bs";
 import Test from "../assets/images/test.png";
 import Subtract from "../assets/images/Subtract.png";
 import AppFooter from "../components/Footer.js";
+import { Buffer } from "buffer";
 
 import { storage } from "../firebase.js";
 // import {
@@ -508,7 +509,13 @@ function LearnerDetailsModal({ show, onHide, learner }) {
           <Row className="text-center">
             <Col>
               <Image
-                src={learner?.user?.profilePicture || Test}
+                src={
+                  learner?.learner?.userId?.profilePicture?.data
+                    ? `data:${learner?.learner?.userId?.profilePicture?.contentType};base64,${Buffer.from(
+                        learner?.learner?.userId?.profilePicture?.data.data
+                      ).toString("base64")}`
+                    : Test
+                }
                 style={{
                   width: "100px",
                   height: "100px",
@@ -529,7 +536,7 @@ function LearnerDetailsModal({ show, onHide, learner }) {
                   fontSize: "20px",
                 }}
               >
-                {learner?.user?.fullName}
+                {learner?.learner?.userId?.fullName}
               </h5>
               <p
                 style={{
@@ -779,7 +786,15 @@ export default function AppHelpLearner() {
                   whiteSpace: "nowrap",
                   width: "40%",
                 }}
-                onClick={() => setModalShow(true)}
+                onClick={() => {
+                  if (requests.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * requests.length); // Select a random index
+                    setIndex(randomIndex); // Set the index to the randomly selected card
+                    setModalShow(true); // Open the modal
+                  } else {
+                    toast.error("No learners available to sponsor.");
+                  }
+                }}
               >
                 Sponsor randomly
               </Button>
@@ -825,7 +840,13 @@ export default function AppHelpLearner() {
                       marginRight: "15px" // Space before the right column
                     }}>
                       <Image
-                        src={item?.user?.profilePicture || Test}
+                        src={
+                          item?.learner?.userId?.profilePicture?.data
+                            ? `data:${item?.learner?.userId?.profilePicture?.contentType};base64,${Buffer.from(
+                                item?.learner?.userId?.profilePicture?.data.data
+                              ).toString("base64")}`
+                            : Test
+                        }
                         style={{
                           width: "100px",
                           height: "100px",
@@ -847,7 +868,7 @@ export default function AppHelpLearner() {
                             color: "#333",
                           }}
                         >
-                          {item?.user?.fullName}
+                          {item?.learner?.userId?.fullName}
                         </Card.Title>
                         <Card.Text
                           style={{
@@ -884,11 +905,13 @@ export default function AppHelpLearner() {
                           display: "inline-block",
                         }}
                       >
-                        {item?.course?.priceUnit === "naira"
+                        {item?.course?.priceUnit === "NGN"
                           ? "₦"
-                          : item?.course?.priceUnit === "dollars"
+                          : item?.course?.priceUnit === "USD"
                           ? "$"
-                          : "£"}
+                          : item?.course?.priceUnit === "GBP"
+                          ? "£"
+                          : "#"}
                         {item?.course?.price}
                       </div>
 

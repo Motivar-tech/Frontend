@@ -14,11 +14,14 @@ import Modal from "react-bootstrap/Modal";
 import { Link } from "react-router-dom";
 import Image_help from "../assets/images/image_help.png";
 import Image from "react-bootstrap/Image";
+import SuccessTick from "../assets/images/successTick.png";  
 import Logo from "../assets/images/Motivar.svg";
 import { BsChevronLeft } from "react-icons/bs";
 import AppFooter from "../components/Footer.js";
 import { toast } from "react-hot-toast";
 import GeneralDataServices from "../Services/GeneralDataServices.js";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AppHelp() {
   const [courseTitle, setCourseTitle] = useState("");
@@ -33,11 +36,15 @@ export default function AppHelp() {
   const [motivation, setMotivation] = useState("");
   const [social, setSocial] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [privateEmails, setPrivateEmails] = useState([""]);
   const [loading, setLoading] = useState(false);
-  const checkboxRef = useRef(null); // Reference to the checkbox
+  const [isSubmitted, setIsSubmitted] = useState(false );
+  const checkboxRef = useRef(null);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [userRole, setUserRole] = useState(null);
+  const navigate = useNavigate();
 
   const handleAddEmailField = () => {
     setPrivateEmails([...privateEmails, ""]);
@@ -86,6 +93,8 @@ export default function AppHelp() {
       },
       socials: social,
       isPrivate,
+      isPublic,
+      recipientEmails: privateEmails, // Pass recipient emails
     };
 
     const token = localStorage.getItem("motivar-token");
@@ -94,12 +103,146 @@ export default function AppHelp() {
       if (response) {
         setLoading(false);
         toast.success(response.data.message);
+        setIsSubmitted(true); // Set the state to show the success screen
       }
     } catch (error) {
       setLoading(false);
       toast.error(error?.response?.data?.message || "Submission failed");
     }
   };
+
+  useEffect(() => {
+    const role = localStorage.getItem("motivar-user-role");
+    setUserRole(role);
+
+    if (role === "sponsor") {
+      navigate("/restricted");
+    }
+  }, [navigate]);
+
+  if (userRole === "sponsor") {
+    return null;
+  }
+
+  if (isSubmitted) {
+    // Render the success screen
+    
+    return (
+    <div>
+      <style>
+          {`
+            @media (min-width: 768px) {
+              .desktop-adjust {
+                margin-left: -800px; /* Apply negative margin only on desktop screens */
+              }
+            }
+          `}
+        </style>
+      <header>
+        <Navbar expand="lg" className="bg-body-alt-white" style={{
+      paddingTop: "20px",
+      paddingBottom: "10px",
+
+    }}>
+          <Container className="d-flex justify-content-between align-items-center">
+            <div className="d-flex align-items-center">
+              <Link to="/" className="shadow-sm pointer d-flex align-items-center">
+                <BsChevronLeft size={24} />
+                <span
+                  className="ms-2"
+                  style={{
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: "30px",
+                    fontWeight: 500,
+                  }}
+                >
+                </span>
+              </Link>
+              <span className="h6 mt-2 ms-3" style={{
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: "30px",
+                    fontWeight: 650,}}>Request for help</span>
+            </div>
+            <Image src={Logo} style={{ maxHeight: "30px" }} fluid />
+          </Container>
+        </Navbar>
+      </header>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "90vh",
+          flexDirection: "column", // Ensure proper stacking for mobile
+        }}
+      >
+        <div
+          className="desktop-adjust"
+          style={{
+            textAlign: "center",
+            maxWidth: "600px",
+          }}
+        >
+          <img
+            src={SuccessTick}
+            alt="Success Tick"
+            style={{
+              width: "150px",
+              height: "150px",
+              marginBottom: "20px",
+            }}
+          />
+          <h1
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "80px",
+              fontWeight: "bold",
+            }}
+          >
+            Success
+          </h1>
+          <button
+            style={{
+              backgroundColor: "#00AA87",
+              border: "none",
+              borderRadius: "5px",
+              padding: "10px 20px",
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "16px",
+              fontWeight: "bold",
+              color: "#fff",
+              width: "400px",
+              height: "50px",
+            }}
+            onClick={() => (window.location.href = "/")} // Redirects to home
+          >
+            GO HOME
+          </button>
+        </div>
+
+        {/* Conditionally render the image for larger screens */}
+        <div className="d-none d-md-block">
+          <Image
+            src={Image_help}
+            alt="Motivar"
+            fluid
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: "150px",
+              transform: "translateY(-50%)",
+              borderRadius: "16px",
+              objectFit: "cover",
+              width: "30%",
+              height: "80%",
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+  }
 
   return (
     <>
@@ -396,6 +539,15 @@ export default function AppHelp() {
                   />
                 </Form.Group>
 
+                <Form.Group className="mb-3">
+                  <Form.Check
+                    type="checkbox"
+                    label="Make this request public"
+                    checked={isPublic}
+                    onChange={(e) => setIsPublic(e.target.checked)}
+                  />
+                </Form.Group>
+
                 <Button
                   className="w-100"
                   style={{
@@ -434,106 +586,106 @@ export default function AppHelp() {
       
       {/* Modal */}
       {showModal && (
-        <div
+  <div
+    style={{
+      position: "absolute",
+      top: modalPosition.top,
+      left: modalPosition.left,
+      width: "383px",
+      background: "#fff",
+      borderRadius: "16px",
+      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+      padding: "20px",
+      zIndex: 1050,
+    }}
+  >
+    <h6
+      style={{
+        fontFamily: "Montserrat, sans-serif",
+        fontSize: "14px",
+        fontWeight: 500,
+      }}
+    >
+      Send request privately
+    </h6>
+    <p
+      style={{
+        fontFamily: "Montserrat, sans-serif",
+        fontSize: "10px",
+        fontWeight: 400,
+      }}
+    >
+      Add email(s) below
+    </p>
+    {privateEmails.map((email, index) => (
+      <div
+        key={index}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginBottom: "10px",
+        }}
+      >
+        <Form.Control
+          type="email"
+          placeholder="Enter email"
+          value={email}
+          onChange={(e) => handleEmailChange(index, e.target.value)}
           style={{
-            position: "absolute",
-            top: modalPosition.top,
-            left: modalPosition.left,
-            width: "383px",
-            background: "#fff",
-            borderRadius: "16px",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            padding: "20px",
-            zIndex: 1050,
+            borderRadius: "8px",
+            borderColor: "#00AA87",
+            flex: 1,
+          }}
+        />
+        <Button
+          variant="outline-success"
+          style={{
+            marginLeft: "10px",
+            borderColor: "#00AA87",
+            color: "#00AA87",
+            borderRadius: "50%",
+            width: "36px",
+            height: "36px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <h6
-            style={{
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "14px",
-              fontWeight: 500,
-            }}
-          >
-            Send request privately
-          </h6>
-          <p
-            style={{
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "10px",
-              fontWeight: 400,
-            }}
-          >
-            Add email(s) below
-          </p>
-          {privateEmails.map((email, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "10px",
-              }}
-            >
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => handleEmailChange(index, e.target.value)}
-                style={{
-                  borderRadius: "8px",
-                  borderColor: "#00AA87",
-                  flex: 1,
-                }}
-              />
-              <Button
-                variant="outline-success"
-                style={{
-                  marginLeft: "10px",
-                  borderColor: "#00AA87",
-                  color: "#00AA87",
-                  borderRadius: "50%",
-                  width: "36px",
-                  height: "36px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                +
-              </Button>
-            </div>
-          ))}
-          <Button
-            variant="link"
-            onClick={handleAddEmailField}
-            style={{
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "14px",
-              color: "#00AA87",
-              textDecoration: "none",
-              marginBottom: "10px",
-            }}
-          >
-            + Send more
-          </Button>
-          <Button
-            variant="success"
-            className="w-100"
-            onClick={() => setShowModal(false)}
-            style={{
-              backgroundColor: "#00AA87",
-              border: "none",
-              color: "#fff",
-              borderRadius: "8px",
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "16px",
-              fontWeight: 600,
-            }}
-          >
-            DONE
-          </Button>
-        </div>
-      )}
+          +
+        </Button>
+      </div>
+    ))}
+    <Button
+      variant="link"
+      onClick={handleAddEmailField}
+      style={{
+        fontFamily: "Montserrat, sans-serif",
+        fontSize: "14px",
+        color: "#00AA87",
+        textDecoration: "none",
+        marginBottom: "10px",
+      }}
+    >
+      + Send more
+    </Button>
+    <Button
+      variant="success"
+      className="w-100"
+      onClick={() => setShowModal(false)}
+      style={{
+        backgroundColor: "#00AA87",
+        border: "none",
+        color: "#fff",
+        borderRadius: "8px",
+        fontFamily: "Montserrat, sans-serif",
+        fontSize: "16px",
+        fontWeight: 600,
+      }}
+    >
+      DONE
+    </Button>
+  </div>
+)}
     </>
   );
 }

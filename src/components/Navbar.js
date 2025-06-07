@@ -12,6 +12,7 @@ import Logo from "../assets/images/Motivar.svg";
 
 const handleLogout = () => {
   localStorage.removeItem('motivar-token');
+  localStorage.removeItem('motivar-user-role');
   window.location.href = '/';
 };
 
@@ -41,7 +42,7 @@ export default function AppNavbar() {
             fontSize: "1.08rem",
           }}
         >
-          <Nav.Link as={Link} to="/coming-soon" style={{ color: "#222", padding: "0 0.5rem" }}>
+          <Nav.Link as={Link} to="/explore" style={{ color: "#222", padding: "0 0.5rem" }}>
             Explore
           </Nav.Link>
           <NavDropdown title="Programs" id="programs-dropdown" style={{ color: "#222" }}>
@@ -102,7 +103,7 @@ export default function AppNavbar() {
               marginBottom: "1rem",
             }}
           >
-            <Nav.Link as={Link} to="/coming-soon" style={{ color: "#222" }}>
+            <Nav.Link as={Link} to="/explore" style={{ color: "#222" }}>
               Explore
             </Nav.Link>
             <NavDropdown title="Programs" id="programs-dropdown-mobile" style={{ color: "#222" }}>
@@ -160,24 +161,45 @@ export default function AppNavbar() {
                 Logout
               </Button>
             )}
-            <Link to="/coming-soon" className="w-100">
-              <Button
-                className="w-100"
-                style={{
-                  background: "#59b49a",
-                  border: "none",
-                  color: "#fff",
-                  borderRadius: "8px",
-                  fontWeight: 600,
-                  fontFamily: "Montserrat, sans-serif",
-                  minWidth: "110px",
-                  padding: "0.4rem 1.2rem",
-                  boxShadow: "none",
-                }}
-              >
-                Get App
-              </Button>
-            </Link>
+            {token ? (
+              <Link to="/dashboard" className="w-100">
+                <Button
+                  className="w-100"
+                  style={{
+                    background: "#59b49a",
+                    border: "none",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    fontWeight: 600,
+                    fontFamily: "Montserrat, sans-serif",
+                    minWidth: "110px",
+                    padding: "0.4rem 1.2rem",
+                    boxShadow: "none",
+                  }}
+                >
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/coming-soon" className="w-100">
+                <Button
+                  className="w-100"
+                  style={{
+                    background: "#59b49a",
+                    border: "none",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    fontWeight: 600,
+                    fontFamily: "Montserrat, sans-serif",
+                    minWidth: "110px",
+                    padding: "0.4rem 1.2rem",
+                    boxShadow: "none",
+                  }}
+                >
+                  Get App
+                </Button>
+              </Link>
+            )}
           </div>
         </Navbar.Collapse>
       </Container>
