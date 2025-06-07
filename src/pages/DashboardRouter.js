@@ -18,7 +18,7 @@ const DashboardRouter = () => {
                 const token = localStorage.getItem("motivar-token");
                 if (!token) throw new Error("Authentication token is missing. Please log in again.");
 
-                const response = await axios.get("http://localhost:8089/dashboard", {
+                const response = await axios.get("https://motivar-sponsor-api-v1.onrender.com/dashboard", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
