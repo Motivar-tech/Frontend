@@ -11,8 +11,8 @@ import Badge from 'react-bootstrap/Badge';
 import Pagination from 'react-bootstrap/Pagination';
 import styled, { createGlobalStyle, css } from 'styled-components';
 import {
-    FiSearch, FiFilter, FiTag, FiBarChart2, FiDollarSign, FiExternalLink, FiLogOut,
-    FiImage, FiChevronLeft, FiChevronRight, FiStar, FiSmile, FiPlusCircle, FiCheckCircle
+    FiSearch, FiFilter, FiTag, FiBarChart2, FiExternalLink, FiLogOut,
+    FiImage, FiChevronLeft, FiChevronRight, FiStar, FiPlusCircle, FiCheckCircle
 } from 'react-icons/fi';
 import { getCourseImage } from '../utils/imgs.js';
 import Navbar from 'react-bootstrap/Navbar';
@@ -446,7 +446,7 @@ const LoadingErrorWrapper = styled.div`
 const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0; // Basic check, no half star icon used here yet
+    //const hasHalfStar = rating % 1 !== 0; // Basic check, no half star icon used here yet
 
     for (let i = 0; i < 5; i++) {
         if (i < fullStars) {

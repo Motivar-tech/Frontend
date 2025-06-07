@@ -14,11 +14,11 @@ import Alert from 'react-bootstrap/Alert';
 import Navbar from 'react-bootstrap/Navbar';
 import { Buffer } from 'buffer';
 import Nav from 'react-bootstrap/Nav';
-import styled, { createGlobalStyle, css } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import Logo from "../assets/images/Motivar.svg";
 import {
     FiUser, FiClock, FiCheckCircle, FiBookOpen, FiList,
-    FiExternalLink, FiUpload, FiLogOut, FiAlertCircle
+    FiUpload, FiLogOut, FiAlertCircle
 } from 'react-icons/fi';
 
 // --- Brand Colors ---
