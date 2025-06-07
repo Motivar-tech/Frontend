@@ -498,7 +498,7 @@ const Explore = () => {
 
         try {
             // --- === ACTUAL API CALL === ---
-            const response = await axios.get('http://localhost:8089/explore/filter', {
+            const response = await axios.get('https://motivar-sponsor-api-v1.onrender.com/explore/filter', {
                 params: {
                     ...filters, // Send all applied filters (level, status, platform, tags, search)
                     page,
@@ -591,7 +591,7 @@ const Explore = () => {
             if (!token) throw new Error("Authentication token is missing. Please log in again.");
 
             const response = await axios.post(
-                "http://localhost:8089/dashboard/add", // Backend endpoint
+                "https://motivar-sponsor-api-v1.onrender.com/dashboard/add", // Backend endpoint
                 {
                     title: course.title,
                     description: course.description,
