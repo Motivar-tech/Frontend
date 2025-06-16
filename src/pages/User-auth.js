@@ -9,6 +9,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Image from "react-bootstrap/Image";
+import { GoogleLogin } from '@react-oauth/google';
 
 import { useRef, useState } from "react";
 import Logo from "../assets/images/Motivar.svg";
@@ -129,47 +130,101 @@ export default function AppAuth() {
 
   const handleSignIn = async () => {
     setLoginLoading(true);
+
+    // Basic validation
+    if (!loginMail || !loginPassword) {
+      toast.error("Please enter both email and password");
+      setLoginLoading(false);
+      return;
+    }
+
     const payload = {
       email: loginMail,
       password: loginPassword,
     };
 
+    // Timeout helper
+    const timeoutPromise = (ms) =>
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out. Please try again.")), ms)
+      );
+
     try {
-      const response = await AuthDataServices.signIn(payload);
+      // 10 seconds timeout for sign in
+      const response = await Promise.race([
+        AuthDataServices.signIn(payload),
+        timeoutPromise(20000),
+      ]);
       if (response) {
-        setLoginLoading(false);
         toast.success(response.data.message);
-        window.location.pathname = "/dashboard";
         localStorage.setItem("motivar-token", response.data.data.token);
         localStorage.setItem("motivar-user-role", response.data.data.role);
+        window.location.pathname = "/dashboard";
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Sign in failed. Please try again.";
+      toast.error(errorMessage);
+      setLoginLoading(false);
     }
   };
 
-  const validateForm = () => {
-    const errors = {};
-    if (!firstName) errors.firstName = "First name is required.";
-    if (!lastName) errors.lastName = "Last name is required.";
-    if (!email) errors.email = "Email is required.";
-    if (!phoneNumber) errors.phoneNumber = "Phone number is required.";
-    if (!password) errors.password = "Password is required.";
-    if (!confirmPassword) errors.confirmPassword = "Confirm password is required.";
-    if (password !== confirmPassword) errors.confirmPassword = "Passwords do not match.";
-    if (!goal) errors.goal = "Please select a goal.";
-    if (!gender) errors.gender = "Please select your gender.";
-    if (!country) errors.country = "Please select your country.";
-    if (!fileInputRef.current.files[0]) errors.profilePicture = "Profile picture is required.";
-    return errors;
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoginLoading(true);
+    try {
+      const response = await AuthDataServices.googleLogin({ 
+        token: credentialResponse.credential 
+      });
+
+      if (response) {
+        if (response.data.message === 'Complete registration') {
+          toast.success("Authentication successful! Please complete your profile.");
+          // Store temp data and redirect to complete profile
+          localStorage.setItem("temp-google-data", JSON.stringify(response.data));
+          window.location.pathname = `/complete-profile`;
+        } else {
+          toast.success(response.data.message);
+          localStorage.setItem("motivar-token", response.data.data.token);
+          localStorage.setItem("motivar-user-role", response.data.data.role);
+          window.location.pathname = "/dashboard";
+        }
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Google Sign-In failed.";
+      toast.error(errorMessage);
+    } finally {
+      setLoginLoading(false);
+    }
   };
 
+  // const validateForm = () => {
+  //   const errors = {};
+  //   if (!firstName) errors.firstName = "First name is required.";
+  //   if (!lastName) errors.lastName = "Last name is required.";
+  //   if (!email) errors.email = "Email is required.";
+  //   if (!phoneNumber) errors.phoneNumber = "Phone number is required.";
+  //   if (!password) errors.password = "Password is required.";
+  //   if (!confirmPassword) errors.confirmPassword = "Confirm password is required.";
+  //   if (password !== confirmPassword) errors.confirmPassword = "Passwords do not match.";
+  //   if (!goal) errors.goal = "Please select a goal.";
+  //   if (!gender) errors.gender = "Please select your gender.";
+  //   if (!country) errors.country = "Please select your country.";
+  //   if (!fileInputRef.current.files[0]) errors.profilePicture = "Profile picture is required.";
+  //   return errors;
+  // };
+
   const handleSignUp = async (e) => {
+    e.preventDefault();
     setSignUpLoading(true);
-    e.preventDefault(); // Prevent form reload
+
+    // Validate form
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
-      setFormErrors(errors); // Set errors if validation fails
+      setFormErrors(errors);
+      setSignUpLoading(false);
+      toast.error("Please fill in all required fields correctly");
       return;
     }
 
@@ -180,23 +235,113 @@ export default function AppAuth() {
     formData.append("phoneNumber", phoneNumber);
     formData.append("country", country || "Nigeria");
     formData.append("gender", gender);
-    formData.append("role", goal === "I want to ask for help to fund course" ? "learner" : "sponsor");
-    formData.append("profilePicture", fileInputRef.current.files[0]);
+    formData.append(
+      "role",
+      goal === "I want to ask for help to fund course" ? "learner" : "sponsor"
+    );
+
+    // Check if profile picture is selected
+    const profilePicture = fileInputRef.current?.files[0];
+    if (profilePicture) {
+      formData.append("profilePicture", profilePicture);
+    }
+
+    // Timeout helper
+    const timeoutPromise = (ms) =>
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out. Please try again.")), ms)
+      );
 
     try {
-      const response = await AuthDataServices.signUp(formData);
+      // 15 seconds timeout for sign up
+      const response = await Promise.race([
+        AuthDataServices.signUp(formData),
+        timeoutPromise(30000),
+      ]);
       if (response) {
-        setSignUpLoading(false);
-        setTabIndex(1);
         toast.success(response.data.message);
+        setTabIndex(1); // Switch to sign in tab
+        // Reset form
+        resetForm();
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Signup failed");
-      setLoading(false);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Sign up failed. Please try again.";
+      toast.error(errorMessage);
+    } finally {
+      setSignUpLoading(false);
     }
   };
 
-  // Profile image upload handler
+  // Helper function to reset form
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setFirstName("");
+    setLastName("");
+    setPhoneNumber("");
+    setCountry("");
+    setGender("");
+    setGoal("");
+    setConfirmPassword("");
+    setProfileImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setFormErrors({});
+  };
+
+  // Enhance form validation
+  const validateForm = () => {
+    const errors = {};
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      errors.email = "Email is required.";
+    } else if (!emailRegex.test(email)) {
+      errors.email = "Please enter a valid email address.";
+    }
+
+    // Password validation
+    if (!password) {
+      errors.password = "Password is required.";
+    } else if (password.length < 8) {
+      errors.password = "Password must be at least 8 characters long.";
+    }
+
+    // Name validation
+    if (!firstName?.trim()) errors.firstName = "First name is required.";
+    if (!lastName?.trim()) errors.lastName = "Last name is required.";
+    
+    // Phone number validation
+    if (!phoneNumber) {
+      errors.phoneNumber = "Phone number is required.";
+    } else if (!/^\+?\d[\d\s\-]{7,}$/.test(phoneNumber)) {
+      errors.phoneNumber = "Please enter a valid phone number.";
+    }
+
+    // Other validations
+    if (!confirmPassword) {
+      errors.confirmPassword = "Please confirm your password.";
+    } else if (password !== confirmPassword) {
+      errors.confirmPassword = "Passwords do not match.";
+    }
+
+    if (!goal) errors.goal = "Please select your goal.";
+    if (!gender) errors.gender = "Please select your gender.";
+    if (!country) errors.country = "Please select your country.";
+    
+    // Profile picture validation
+    if (!fileInputRef.current?.files[0]) {
+      errors.profilePicture = "Profile picture is required.";
+    }
+
+    return errors;
+  };
+
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.size <= 500 * 1024) {
@@ -370,26 +515,24 @@ export default function AppAuth() {
 
                         {/* Or Continue With */}
                         <div className="text-center mb-2" style={{ color: "#888" }}>
-                          Or Continue With
+                          Or
                         </div>
-                        <div className="text-center">
-                          <Button
-                            variant="outline-secondary"
-                            style={{
-                              borderRadius: "50%",
-                              width: 36,
-                              height: 36,
-                              padding: 0,
-                              border: "1px solid #e0e0e0",
-                              background: "#fff",
+                        <div className="d-flex justify-content-center mb-4">
+                          <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => {
+                              console.log('Login Failed');
+                              toast.error("Google Sign-In failed. Please try again.");
                             }}
-                          >
-                            <img
-                              src={G_icon}
-                              alt="Google"
-                              style={{ width: 32, height: 32 }}
-                            />
-                          </Button>
+                            useOneTap
+                            type="standard"
+                            theme="outline"
+                            size="large"
+                            logo_alignment="center"
+                            shape="circle"
+                            text="continue_with"
+                            width="300"
+                          />
                         </div>
                       </div>
                     </Col>

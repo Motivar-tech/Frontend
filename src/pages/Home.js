@@ -292,25 +292,27 @@ export default function AppHome() {
                     Whatever you want to learn online, wherever they are hosted.
                     We will help you make the most of the journey.
                   </SubHeadText>
-                  <Button
-                    className="btn btn-secondary text-white btn-lg d-inline-flex justify-content-center align-items-center"
-                    style={{
-                      fontFamily: "Montserrat, sans-serif",
-                      fontWeight: 700,
-                      fontSize: "20px",
-                      width: "316px",
-                      height: "66px",
-                      borderRadius: "8px",
-                      boxShadow: "none",
-                      border: "none",
-                      letterSpacing: "0.5px",
-                      minWidth: "316px",
-                      minHeight: "66px",
-                      maxWidth: "100%",
-                    }}
-                  >
-                    Get Started
-                  </Button>
+                  <Link to="/user-auth">
+                    <Button
+                      className="btn btn-secondary text-white btn-lg d-inline-flex justify-content-center align-items-center"
+                      style={{
+                        fontFamily: "Montserrat, sans-serif",
+                        fontWeight: 700,
+                        fontSize: "20px",
+                        width: "316px",
+                        height: "66px",
+                        borderRadius: "8px",
+                        boxShadow: "none",
+                        border: "none",
+                        letterSpacing: "0.5px",
+                        minWidth: "316px",
+                        minHeight: "66px",
+                        maxWidth: "100%",
+                      }}
+                    >
+                      Get Started
+                    </Button>
+                  </Link>
                 </>
               ) : (
                 <>

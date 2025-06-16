@@ -21,6 +21,40 @@ class AuthDataServices {
     const response = await axios.post(`${ENDPOINT}/user/auth`, payload);
     return response;
   }
+
+  async googleLogin(payload) {
+    try {
+      const response = await axios.post(
+        `${ENDPOINT}/user/auth/google`,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async finalizeGoogleRegistration(userData) {
+    try {
+      const response = await axios.post(
+        `${ENDPOINT}/user/auth/google-finalize`,
+        userData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new AuthDataServices();

@@ -13,35 +13,41 @@ import Explore from './pages/Explore';
 import PrivateRoute from "./components/PrivateRoute.js";
 import DashboardRouter from "./pages/DashboardRouter";
 import Restricted from "./pages/Restricted.js";
+import CompleteProfile from "./pages/CompleteProfile.js";
+
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Toaster
-          toastOptions={{
-            style: {
-              background: "white",
-              color: "green",
-            },
-          }}
-        />
-        <Routes>
-          <Route path="/" element={<AppHome />} />
-          <Route path="/coming-soon" element={<AppComing />} />
-          <Route path="/help" element={<PrivateRoute component={AppHelp} />} />
-          <Route path="/success" element={<AppSuccess />} />
-          <Route path="/user-auth" element={<AppAuth />} />
-          <Route path="/dashboard" element={<DashboardRouter />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/fund-learner" element={<PrivateRoute component={AppFundLearner} />} />
-          <Route path="/help-learner" element={<PrivateRoute component={AppHelpLearner} />} />
-          <Route path="/restricted" element={<Restricted />} />
-        </Routes>
-      </div>
-    </Router>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+      <Router>
+        <div className="App">
+          <Toaster
+            toastOptions={{
+              style: {
+                background: "white",
+                color: "green",
+              },
+            }}
+          />
+          <Routes>
+            <Route path="/" element={<AppHome />} />
+            <Route path="/coming-soon" element={<AppComing />} />
+            <Route path="/help" element={<PrivateRoute component={AppHelp} />} />
+            <Route path="/success" element={<AppSuccess />} />
+            <Route path="/user-auth" element={<AppAuth />} />
+            <Route path="/dashboard" element={<DashboardRouter />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/fund-learner" element={<PrivateRoute component={AppFundLearner} />} />
+            <Route path="/help-learner" element={<PrivateRoute component={AppHelpLearner} />} />
+            <Route path="/restricted" element={<Restricted />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
+          </Routes>
+        </div>
+      </Router>
+    </GoogleOAuthProvider>
   );
 }
 
