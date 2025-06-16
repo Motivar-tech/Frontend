@@ -438,7 +438,7 @@ const LearnerDashboard = () => {
     const handleLogout = () => {
         localStorage.removeItem("motivar-token");
         localStorage.removeItem("motivar-user-role");   
-        window.location.href = "/user-auth";
+        window.location.href = "/";
     };
 
     // --- Upload Certificate Handler ---
