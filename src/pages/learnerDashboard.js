@@ -14,6 +14,8 @@ import Alert from 'react-bootstrap/Alert';
 import Navbar from 'react-bootstrap/Navbar';
 import { Buffer } from 'buffer';
 import Nav from 'react-bootstrap/Nav';
+import NavDropdown from "react-bootstrap/NavDropdown";
+import { Link } from "react-router-dom";
 import styled, { createGlobalStyle } from 'styled-components';
 import Logo from "../assets/images/Motivar.svg";
 import {
@@ -520,8 +522,15 @@ const LearnerDashboard = () => {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link href="/explore">Explore</Nav.Link>
-                            <Nav.Link href="">Programs</Nav.Link>
-                            <Nav.Link href="">Community</Nav.Link>
+                            <NavDropdown title="Programs" id="programs-dropdown" style={{ color: "#222" }}>
+                                <NavDropdown.Item as={Link} to="/coming-soon">DAP</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/coming-soon">DigiAccess</NavDropdown.Item>
+                            </NavDropdown>
+                            <NavDropdown title="Community" id="community-dropdown" style={{ color: "#222" }}>
+                                <NavDropdown.Item as={Link} to="/coming-soon">Find learners near you</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/coming-soon">Find mentors near you</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/coming-soon">Join accountability group</NavDropdown.Item>
+                            </NavDropdown>
                         </Nav>
                         <StyledButton variant="outline-danger" onClick={handleLogout}>
                             <FiLogOut /> Logout

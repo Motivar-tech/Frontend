@@ -13,6 +13,7 @@ import Navbar from "react-bootstrap/Navbar";
 import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { Link } from "react-router-dom";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
 import { BsChevronDown } from "react-icons/bs";
@@ -672,7 +673,11 @@ export default function AppHelpLearner() {
   }, []);
 
   return (
-    <>
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column"
+    }}>
       <header>
         <Navbar expand="lg" className="bg-body-alt-white">
           <Container className="py-3">
@@ -687,21 +692,24 @@ export default function AppHelpLearner() {
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Collapse id="navbarScroll">
               <div className="container d-flex align-items-center justify-content-end">
-                <Link
-                  to="/coming-soon"
-                  className="pe-5"
-                  style={{ textDecoration: "none", color: "#212529" }}
+                <NavDropdown
+                  title="Programs"
+                  id="programs-dropdown"
+                  style={{ color: "#222", marginRight: "24px" }} // Add margin here
                 >
-                  Explore
-                </Link>
-                <Link
-                  to="/coming-soon"
-                  className="pe-5"
-                  style={{ textDecoration: "none", color: "#212529" }}
+                  <NavDropdown.Item as={Link} to="/coming-soon">DAP</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/coming-soon">DigiAccess</NavDropdown.Item>
+                </NavDropdown>
+                <NavDropdown
+                  title="Community"
+                  id="community-dropdown"
+                  style={{ color: "#222" }}
                 >
-                  Programs
-                </Link>
-                <Link>
+                  <NavDropdown.Item as={Link} to="/coming-soon">Find learners near you</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/coming-soon">Find mentors near you</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/coming-soon">Join accountability group</NavDropdown.Item>
+                </NavDropdown>
+                {/* <Link>
                   <Button
                     onClick={handleLogout}
                     variant="outline-secondary"
@@ -709,14 +717,14 @@ export default function AppHelpLearner() {
                   >
                     Log Out
                   </Button>
-                </Link>
+                </Link> */}
               </div>
             </Navbar.Collapse>
           </Container>
         </Navbar>
       </header>
 
-      <main>
+      <main style={{ flex: 1 }}>
         <div
           className="container-fluid d-flex justify-content-center align-items-center"
           style={{
@@ -956,9 +964,7 @@ export default function AppHelpLearner() {
         )}
       </Container>
       </main>
-      <footer>
-        <AppFooter />
-      </footer>
-    </>
+      <AppFooter />
+    </div>
   );
 }
