@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Container from 'react-bootstrap/Container';
+import AppFooter from "../components/Footer.js";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
@@ -12,11 +13,13 @@ import Pagination from 'react-bootstrap/Pagination';
 import styled, { createGlobalStyle, css } from 'styled-components';
 import {
     FiSearch, FiFilter, FiTag, FiBarChart2, FiExternalLink, FiLogOut,
-    FiImage, FiChevronLeft, FiChevronRight, FiStar, FiPlusCircle, FiCheckCircle
+    FiImage, FiChevronLeft, FiChevronRight, FiStar, FiPlusCircle, FiCheckCircle, FiUser, FiGrid
 } from 'react-icons/fi';
 import { getCourseImage } from '../utils/imgs.js';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
+import NavDropdown from "react-bootstrap/NavDropdown";
+import { Link } from "react-router-dom";
 import Logo from "../assets/images/Motivar.svg";
 
 // --- Brand Colors ---
@@ -44,15 +47,15 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const StyledFooter = styled.footer`
-  background-color: ${brandColors.backgroundWhite}; // Light footer
-  color: ${brandColors.textSecondary};
-  text-align: center;
-  padding: 1.5rem 0;
-  font-size: 0.9rem;
-  border-top: 1px solid ${brandColors.greyLight};
-  margin-top: auto; // Push the footer to the bottom
-`;
+// const StyledFooter = styled.footer`
+//   background-color: ${brandColors.backgroundWhite}; // Light footer
+//   color: ${brandColors.textSecondary};
+//   text-align: center;
+//   padding: 1.5rem 0;
+//   font-size: 0.9rem;
+//   border-top: 1px solid ${brandColors.greyLight};
+//   margin-top: auto; // Push the footer to the bottom
+// `;
 
 // --- Navbar ---
 const StyledNavbar = styled(Navbar)`
@@ -612,11 +615,20 @@ const Explore = () => {
         }
     };
 
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        // Check if the user is logged in by verifying the token in localStorage
+        const token = localStorage.getItem("motivar-token");
+        setIsLoggedIn(!!token); // Set to true if token exists, false otherwise
+    }, []);
+
     const handleLogout = () => {
         localStorage.removeItem("motivar-token");
         localStorage.removeItem("motivar-user-role");
         window.location.href = "/user-auth";
     };
+
      // --- Render Pagination Items (Function remains the same) ---
      const renderPaginationItems = () => {
         let items = [];
@@ -667,31 +679,81 @@ const Explore = () => {
         <>
             <GlobalStyle />
             <StyledNavbar expand="lg">
-                            <Container>
-                                <Navbar.Brand href="/">
-                                    <img src={Logo} alt="Motivar Logo" />
-                                </Navbar.Brand>
-                                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                                <Navbar.Collapse id="basic-navbar-nav">
-                                    <Nav className="me-auto">
-                                        <Nav.Link href="/explore">Explore</Nav.Link>
-                                        <Nav.Link href="">Programs</Nav.Link>
-                                        <Nav.Link href="">Community</Nav.Link>
-                                    </Nav>
-                                    <StyledButton
-                                      variant="outline-danger" // Changed to "outline-danger" for a red outline
-                                      onClick={handleLogout}
-                                      style={{
-                                        color: "#dc3545", // Red color for text
-                                        borderColor: "#dc3545", // Red border
-                                        backgroundColor: "transparent", // Transparent background
-                                      }}
-                                    >
-                                      <FiLogOut /> Logout
-                                    </StyledButton>
-                                </Navbar.Collapse>
-                            </Container>
-                        </StyledNavbar>
+                <Container>
+                    <Navbar.Brand href="/">
+                        <img src={Logo} alt="Motivar Logo" />
+                    </Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="me-auto">
+                            <NavDropdown title="Programs" id="programs-dropdown" style={{ color: "#222" }}>
+                            <NavDropdown.Item as={Link} to="/coming-soon">DAP</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/coming-soon">DigiAccess</NavDropdown.Item>
+                            </NavDropdown>
+                            <NavDropdown title="Community" id="community-dropdown" style={{ color: "#222" }}>
+                            <NavDropdown.Item as={Link} to="/coming-soon">Find learners near you</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/coming-soon">Find mentors near you</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/coming-soon">Join accountability group</NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
+
+                        {/* Dashboard Link */}
+                        {isLoggedIn && (
+                            <StyledButton
+                            as={Link}
+                            to="/dashboard"
+                            variant="outline-primary"
+                            style={{
+                                border: "1px solid #59b49a",
+                                color: "#59b49a",
+                                background: "#fff",
+                                borderRadius: "16px",
+                                fontWeight: 600,
+                                fontFamily: "Montserrat, sans-serif",
+                                minWidth: "100px",
+                                padding: "0.4rem 1.2rem",
+                                marginRight: "1rem",
+                            }}
+                            >
+                            <FiGrid /> Dashboard
+                            </StyledButton>
+                        )}
+
+                        {/* Dynamic Button: Logout or Sign In */}
+                        {isLoggedIn ? (
+                            <StyledButton
+                            variant="outline-danger"
+                            onClick={handleLogout}
+                            style={{
+                                color: "#dc3545",
+                                borderColor: "#dc3545",
+                                backgroundColor: "transparent",
+                            }}
+                            >
+                            <FiLogOut /> Logout
+                            </StyledButton>
+                        ) : (
+                            <StyledButton
+                            as={Link}
+                            to="/user-auth"
+                            variant="outline-primary"
+                            style={{
+                                border: "1px solid #59b49a",
+                                color: "#59b49a",
+                                background: "#fff",
+                                borderRadius: "16px",
+                                fontWeight: 600,
+                                fontFamily: "Montserrat, sans-serif",
+                                minWidth: "100px",
+                                padding: "0.4rem 1.2rem",
+                            }}
+                            >
+                            <FiUser /> Sign In
+                            </StyledButton>
+                        )}
+                    </Navbar.Collapse>
+                </Container>
+            </StyledNavbar>
              {/* New Header Section */}
             <ExploreHeader>
                  <h1>What do you want to learn today?</h1>
@@ -900,9 +962,7 @@ const Explore = () => {
                  )}
             </ExploreContainer>
             {/* Footer */}
-            <StyledFooter>
-                <p>Copyright © {new Date().getFullYear()} Motivar Learning Technologies</p>
-            </StyledFooter>
+            <AppFooter />
         </>
     );
 };

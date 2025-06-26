@@ -11,7 +11,7 @@ export const FooterContainer = styled.footer`
 
 export const TopSection = styled.div`
   width: 100%;
-  max-width: 1200px;
+  max-width: 1500px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;

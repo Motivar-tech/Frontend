@@ -30,6 +30,8 @@ import styled from "styled-components";
 import { StyledImage } from "../components/images.js";
 import Accordion from "../components/accordion/accordion.js";
 import React, { useRef, useState } from "react";
+import TestimonialCarousel from '../components/Testimonial';
+
 
 let token = localStorage.getItem("motivar-token");
 
@@ -83,7 +85,7 @@ export default function AppHome() {
   const BackgroundWrapper = styled.div`
     width: 100vw;
     max-width: 100vw;
-    min-height: 700px;
+    min-height: 600px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -112,7 +114,7 @@ export default function AppHome() {
 
   const SubHeadText = styled.div`
     font-family: Montserrat, sans-serif;
-    font-size: 30px;
+    font-size: 25px;
     width: 80%;
     margin: 0 auto 32px auto;
     padding: 20px 0 0 0;
@@ -188,7 +190,7 @@ export default function AppHome() {
 
   const HeroText = styled.div`
     font-family: "Varela", Arial, sans-serif;
-    font-size: 90px;
+    font-size: 60px;
     font-weight: 900;
     text-align: center;
     width: 100%;
@@ -226,8 +228,8 @@ export default function AppHome() {
             onClick={() => setActiveTab("learner")}
             style={{
               fontFamily: "Montserrat, sans-serif",
-              fontWeight: 600,
-              fontSize: "18px",
+              fontWeight: 400,
+              fontSize: "14px",
               borderRadius: "8px",
               padding: "8px 16px",
               backgroundColor: activeTab === "learner" ? "#00AA87" : "#fff",
@@ -243,8 +245,8 @@ export default function AppHome() {
             onClick={() => setActiveTab("sponsor")}
             style={{
               fontFamily: "Montserrat, sans-serif",
-              fontWeight: 600,
-              fontSize: "18px",
+              fontWeight: 400,
+              fontSize: "14px",
               borderRadius: "8px",
               padding: "8px 16px", 
               backgroundColor: activeTab === "sponsor" ? "#00AA87" : "#fff",
@@ -279,7 +281,7 @@ export default function AppHome() {
                       style={{ color: "#222" }}
                     />
                     <br />
-                    online courses you need to&nbsp;
+                    online courses you need<br />to&nbsp;
                     <TypeAnimation
                       sequence={["succeed", 2000, "upskill", 2000]}
                       wrapper="span"
@@ -338,25 +340,27 @@ export default function AppHome() {
                     they need to succeed. Your support can change lives and create
                     opportunities.
                   </SubHeadText>
-                  <Button
-                    className="btn btn-secondary text-white btn-lg d-inline-flex justify-content-center align-items-center"
-                    style={{
-                      fontFamily: "Montserrat, sans-serif",
-                      fontWeight: 700,
-                      fontSize: "20px",
-                      width: "316px",
-                      height: "66px",
-                      borderRadius: "8px",
-                      boxShadow: "none",
-                      border: "none",
-                      letterSpacing: "0.5px",
-                      minWidth: "316px",
-                      minHeight: "66px",
-                      maxWidth: "100%",
-                    }}
-                  >
-                    Sponsor Now
-                  </Button>
+                  <Link to="/user-auth">
+                    <Button
+                      className="btn btn-secondary text-white btn-lg d-inline-flex justify-content-center align-items-center"
+                      style={{
+                        fontFamily: "Montserrat, sans-serif",
+                        fontWeight: 700,
+                        fontSize: "20px",
+                        width: "316px",
+                        height: "66px",
+                        borderRadius: "8px",
+                        boxShadow: "none",
+                        border: "none",
+                        letterSpacing: "0.5px",
+                        minWidth: "316px",
+                        minHeight: "66px",
+                        maxWidth: "100%",
+                      }}
+                    >
+                      Sponsor Now
+                    </Button>
+                  </Link>
                 </>
               )}
             </HeroContainer>
@@ -380,9 +384,9 @@ export default function AppHome() {
               <p className="h1 pt-5 px-md-4 text-md-start fw-normal">
                 <br />
                 <strong>
-                  <SectionHeadText>
+              <SectionHeadText>
                     Find the perfect online<br/>course for you
-                  </SectionHeadText>
+              </SectionHeadText>
                 </strong>
               </p>
               <SectionBodyText>
@@ -393,29 +397,29 @@ export default function AppHome() {
 
               <PaddedWrapper>
                 <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-                  <a
-                    href="https://motivar-recommender.onrender.com/test/personality/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button className="btn btn-lg btn-secondary text-white"
-                      style={{
-                            background: "#43B286",
-                            color: "#fff",
-                            fontFamily: "Montserrat, sans-serif",
-                            fontWeight: 700,
-                            fontSize: "16px",
-                            padding: "10px 20px",
-                            borderRadius: "8px",
-                            border: "none"
-                          }}>
-                      Get Started
-                    </Button>
-                  </a>
-                  <span className="shadow-sm pointer ms-3">
+                <a
+                  href="https://motivar-recommender.onrender.com/test/personality/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button className="btn btn-lg btn-secondary text-white"
+                    style={{
+                      background: "#43B286",
+                      color: "#fff",
+                      fontFamily: "Montserrat, sans-serif",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      padding: "10px 20px",
+                      borderRadius: "8px",
+                      border: "none"
+                    }}>
+                    Get Started
+                  </Button>
+                </a>
+                <span className="shadow-sm pointer ms-3">
                     <BsArrowLeftCircle className="spin" />{" "}
-                  </span>
-                </div>
+                </span>
+              </div>
               </PaddedWrapper>
             </Col>
             <Col md={5}>
@@ -446,10 +450,10 @@ export default function AppHome() {
               <p className=" h1 px-md-4 text-md-start fw-normal">
                 <br />
                 <strong>
-                  <SectionHeadText invert>
+              <SectionHeadText invert>
                     Help a learner pay for online courses they need and can't
                     afford
-                  </SectionHeadText>
+              </SectionHeadText>
                 </strong>
               </p>
               {/* <SectionBodyText invert>
@@ -459,17 +463,17 @@ export default function AppHome() {
               <div className="d-flex justify-content-center justify-content-md-start align-items-center gap-3">
                 <Link to="/help-learner">
                   <Button className="btn btn-lg btn-secondary text-white"
-                  style={{
-                        background: "#43B286",
-                        color: "#fff",
-                        fontFamily: "Montserrat, sans-serif",
-                        fontWeight: 700,
-                        fontSize: "16px",
-                        padding: "10px 20px",
+                    style={{
+                      background: "#43B286",
+                      color: "#fff",
+                      fontFamily: "Montserrat, sans-serif",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      padding: "10px 20px",
                         marginLeft: "20px",
-                        borderRadius: "8px",
-                        border: "none"
-                      }}>
+                      borderRadius: "8px",
+                      border: "none"
+                    }}>
                     Sponsor a learner
                   </Button>
                 </Link>
@@ -486,33 +490,33 @@ export default function AppHome() {
               <p className=" h1 px-md-4 text-md-start fw-normal">
                 <br />
                 <strong>
-                  <SectionHeadText>
-                    Ask for help to pay for courses you need but cannot afford
-                  </SectionHeadText>
+              <SectionHeadText>
+                Ask for help to pay for courses you need but cannot afford
+              </SectionHeadText>
                 </strong>
               </p>
               <PaddedWrapper>
                 <div className="px-md-4 py-2 d-flex justify-content-center justify-content-md-start align-items-center">
-                  <Link to="/help">
-                    <Button className="btn btn-lg btn-secondary text-white"
-                      style={{
-                            background: "#43B286",
-                            color: "#fff",
-                            fontFamily: "Montserrat, sans-serif",
-                            fontWeight: 700,
-                            fontSize: "16px",
-                            padding: "10px 20px",
-                            borderRadius: "8px",
-                            border: "none"
-                          }}>
-                      Request for help
-                    </Button>
-                  </Link>
-                  <span className="shadow-sm pointer ms-3">
+                <Link to="/help">
+                  <Button className="btn btn-lg btn-secondary text-white"
+                    style={{
+                      background: "#43B286",
+                      color: "#fff",
+                      fontFamily: "Montserrat, sans-serif",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      padding: "10px 20px",
+                      borderRadius: "8px",
+                      border: "none"
+                    }}>
+                    Request for help
+                  </Button>
+                </Link>
+                <span className="shadow-sm pointer ms-3">
                     {" "}
                     <BsArrowLeftCircle className="spin" />{" "}
-                  </span>
-                </div>
+                </span>
+              </div>
               </PaddedWrapper>
             </Col>
             <Col md={6}>
@@ -573,174 +577,15 @@ export default function AppHome() {
         </Container>
         {/* Participate end */}
 
+
         {/* Testimonial start */}
         <Container fluid style={{ background: "#F5FFFC", padding: "60px 0" }}>
-          <Row className="position-relative justify-content-center align-items-center">
-            {/* Left Navigation Button */}
-            <div className="position-absolute" style={{ left: "25%", zIndex: "2" }}>
-              <button 
-                className="d-flex justify-content-center align-items-center"
-                style={{ 
-                  width: "40px", 
-                  height: "40px",
-                  background: "#fff",
-                  border: "none",
-                  borderRadius: "50%",
-                  cursor: "pointer",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-                }}
-                onClick={() => testimonialCarouselRef.current.prev()}
-                aria-label="Previous testimonial"
-              >
-                <span style={{ 
-                  borderTop: "2px solid #43B286",
-                  borderLeft: "2px solid #43B286",
-                  width: "12px",
-                  height: "12px",
-                  transform: "rotate(-45deg)",
-                  marginLeft: "4px"
-                }} />
-              </button>
-            </div>
-
-            {/* Testimonial Content */}
-            <Col md={4} className="px-4">
-              <div className="bg-white rounded-4 shadow-sm" style={{ padding: "24px" }}>
-                <Carousel 
-                  controls={false} 
-                  indicators={false}
-                  ref={testimonialCarouselRef}
-                  interval={null}
-                >
-                  <Carousel.Item>
-                    <div className="d-flex align-items-center gap-3">
-                      <div style={{ width: "100px" }}>
-                        <Image 
-                          src={Test} 
-                          alt="testimonial"
-                          style={{
-                            width: "80px",
-                            height: "80px",
-                            objectFit: "cover",
-                            borderRadius: "50%"
-                          }}
-                        />
-                        <p className="mt-2 mb-0" style={{ 
-                          fontFamily: "Montserrat",
-                          fontSize: "14px",
-                          fontWeight: "500"
-                        }}>Yemi, 19</p>
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <p style={{
-                          fontFamily: "Montserrat",
-                          fontSize: "14px",
-                          lineHeight: "1.5",
-                          margin: 0
-                        }}>
-                          "Choosing a course to learn was almost overwhelming, so many options to choose from. Motivar helped make the process seamless. I totally love the course I am currently taking"
-                        </p>
-                      </div>
-                    </div>
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <div className="d-flex align-items-center gap-3">
-                      <div style={{ width: "100px" }}>
-                        <Image 
-                          src={Test} 
-                          alt="testimonial"
-                          style={{
-                            width: "80px",
-                            height: "80px",
-                            objectFit: "cover",
-                            borderRadius: "50%"
-                          }}
-                        />
-                        <p className="mt-2 mb-0" style={{ 
-                          fontFamily: "Montserrat",
-                          fontSize: "14px",
-                          fontWeight: "500"
-                        }}>Ada, 22</p>
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <p style={{
-                          fontFamily: "Montserrat",
-                          fontSize: "14px",
-                          lineHeight: "1.5",
-                          margin: 0
-                        }}>
-                          "I found the perfect course for my career switch. The recommendations were spot on and the process was easy."
-                        </p>
-                      </div>
-                    </div>
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <div className="d-flex align-items-center gap-3">
-                      <div style={{ width: "100px" }}>
-                        <Image 
-                          src={Test} 
-                          alt="testimonial"
-                          style={{
-                            width: "80px",
-                            height: "80px",
-                            objectFit: "cover",
-                            borderRadius: "50%"
-                          }}
-                        />
-                        <p className="mt-2 mb-0" style={{ 
-                          fontFamily: "Montserrat",
-                          fontSize: "14px",
-                          fontWeight: "500"
-                        }}>Sam, 25</p>
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <p style={{
-                          fontFamily: "Montserrat",
-                          fontSize: "14px",
-                          lineHeight: "1.5",
-                          margin: 0
-                        }}>
-                          "Motivar made it easy to connect with sponsors and get the help I needed to pay for my course."
-                        </p>
-                      </div>
-                    </div>
-                  </Carousel.Item>
-                </Carousel>
-              </div>
-            </Col>
-
-            {/* Right Navigation Button */}
-            <div className="position-absolute" style={{ right: "5%", zIndex: "2" }}>
-              <button 
-                className="d-flex justify-content-center align-items-center"
-                style={{ 
-                  width: "40px", 
-                  height: "40px",
-                  background: "#fff",
-                  border: "none",
-                  borderRadius: "50%",
-                  cursor: "pointer",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-                }}
-                onClick={() => testimonialCarouselRef.current.next()}
-                aria-label="Next testimonial"
-              >
-                <span style={{ 
-                  borderTop: "2px solid #43B286",
-                  borderRight: "2px solid #43B286",
-                  width: "12px",
-                  height: "12px",
-                  transform: "rotate(45deg)",
-                  marginRight: "4px"
-                }} />
-              </button>
-            </div>
-          </Row>
+          <TestimonialCarousel />
         </Container>
         {/* Testimonial end */}
 
         {/* FAQS start */}
-        <SectionBodyText style={{ width: "100%", textAlign: "center", fontWeight: 900, padding: '20px 0px 20px 0px' }}>
+        <SectionBodyText id="faqs" style={{ width: "100%", textAlign: "center", fontWeight: 900, padding: '20px 0px 20px 0px' }}>
           FAQs
         </SectionBodyText>
         <Accordion />

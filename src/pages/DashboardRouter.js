@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import LearnerDashboard from "./learnerDashboard";
 import SponsorDashboard from "./sponsorDashboard";
@@ -9,6 +10,7 @@ const DashboardRouter = () => {
     const [role, setRole] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchRole = async () => {
@@ -16,14 +18,14 @@ const DashboardRouter = () => {
             setError(null);
             try {
                 const token = localStorage.getItem("motivar-token");
-                if (!token) throw new Error("Authentication token is missing. Please log in again.");
+                if (!token) {
+                    throw new Error("Authentication token is missing. Please log in again.");
+                }
 
                 const response = await axios.get("https://motivar-sponsor-api-v1.onrender.com/dashboard", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                // The backend always returns userDetails with a role for learners, or just userDetails for sponsors
-                // We'll check for role property or fallback to sponsor if not present
                 const userDetails = response.data.userDetails;
                 if (userDetails.role === "learner") {
                     setRole("learner");
@@ -31,14 +33,19 @@ const DashboardRouter = () => {
                     setRole("sponsor");
                 }
             } catch (err) {
-                setError(err.response?.data?.message || err.message || "Failed to load dashboard.");
+                const errorMessage = err.response?.data?.message || err.message || "Failed to load dashboard.";
+                setError(errorMessage);
+
+                if (errorMessage === "Authentication token is missing. Please log in again.") {
+                    navigate("/user-auth");
+                }
             } finally {
                 setLoading(false);
             }
         };
 
         fetchRole();
-    }, []);
+    }, [navigate]);
 
     if (loading) {
         return (

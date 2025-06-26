@@ -46,12 +46,12 @@ export default function AppNavbar() {
             Explore
           </Nav.Link>
           <NavDropdown title="Programs" id="programs-dropdown" style={{ color: "#222" }}>
-            <NavDropdown.Item as={Link} to="/coming-soon">All Programs</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/coming-soon">DAP</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/coming-soon">DigiAccess</NavDropdown.Item>
           </NavDropdown>
           <NavDropdown title="Community" id="community-dropdown" style={{ color: "#222" }}>
             <NavDropdown.Item as={Link} to="/coming-soon">Find learners near you</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/coming-soon">Find mentors near you</NavDropdown.Item>
-            <NavDropdown.Divider />
             <NavDropdown.Item as={Link} to="/coming-soon">Join accountability group</NavDropdown.Item>
           </NavDropdown>
         </Nav>
@@ -142,7 +142,7 @@ export default function AppNavbar() {
                 </Button>
               </Link>
             )}
-            {token && (
+            {/* {token && (
               <Button
                 variant="outline-danger"
                 className="w-100"
@@ -160,7 +160,7 @@ export default function AppNavbar() {
               >
                 Logout
               </Button>
-            )}
+            )} */}
             {token ? (
               <Link to="/dashboard" className="w-100">
                 <Button
