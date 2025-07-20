@@ -244,6 +244,8 @@ export default function AppHelp() {
   );
   }
 
+  const userFirstName = localStorage.getItem("motivar-user-fname") || "Hi";
+
   return (
     <>
       <header>
@@ -287,7 +289,9 @@ export default function AppHelp() {
                   fontSize: "20px",
                   fontWeight: 600,
                 }}
-              >Hi, tell us about your course</h4>
+              >
+                {userFirstName}, tell us about your course
+              </h4>
               <Form style={{ width: "80%" }}>
                 <Form.Group className="mb-3">
                   <Form.Label

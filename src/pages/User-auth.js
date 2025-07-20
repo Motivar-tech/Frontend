@@ -159,6 +159,7 @@ export default function AppAuth() {
         toast.success(response.data.message);
         localStorage.setItem("motivar-token", response.data.data.token);
         localStorage.setItem("motivar-user-role", response.data.data.role);
+        localStorage.setItem("motivar-user-fname", response.data.data.firstName);
         window.location.pathname = "/dashboard";
       }
     } catch (error) {
@@ -188,6 +189,7 @@ export default function AppAuth() {
           toast.success(response.data.message);
           localStorage.setItem("motivar-token", response.data.data.token);
           localStorage.setItem("motivar-user-role", response.data.data.role);
+          localStorage.setItem("motivar-user-fname", response.data.data.firstName);
           window.location.pathname = "/dashboard";
         }
       }

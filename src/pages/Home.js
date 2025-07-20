@@ -292,7 +292,7 @@ export default function AppHome() {
                   </HeroText>
                   <SubHeadText>
                     Whatever you want to learn online, wherever they are hosted.
-                    We will help you make the most of the journey.
+                    <br/>We will help you make the most of the journey.
                   </SubHeadText>
                   <Link to="/user-auth">
                     <Button
@@ -322,11 +322,9 @@ export default function AppHome() {
                   <HeroText>
                     <TypeAnimation
                       sequence={[
-                        "Help ambitious youths",
+                        "Fund a Learner's Journey",
                         2000,
-                        "Support their dreams",
-                        2000,
-                        "Make a difference",
+                        "Support a Learner Today",
                         2000,
                       ]}
                       wrapper="span"
@@ -337,10 +335,9 @@ export default function AppHome() {
                   </HeroText>
                   <SubHeadText>
                     Sponsor ambitious, underprivileged youths to pay for online courses
-                    they need to succeed. Your support can change lives and create
-                    opportunities.
+                    they need to succeed.
                   </SubHeadText>
-                  <Link to="/user-auth">
+                  <Link to="/help-learner">
                     <Button
                       className="btn btn-secondary text-white btn-lg d-inline-flex justify-content-center align-items-center"
                       style={{
@@ -378,7 +375,7 @@ export default function AppHome() {
         {/* Partner end */}
 
         {/* Complete start */}
-        <Container fluid style={{ background: "#FFFCF9", padding: "80px 0" }}>
+         <Container fluid style={{ background: "#FFFCF9", padding: "80px 0" }}>
           <Row className="p-5">
             <Col md={7}>
               <p className="h1 pt-5 px-md-4 text-md-start fw-normal">

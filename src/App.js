@@ -41,7 +41,8 @@ function App() {
             <Route path="/dashboard" element={<DashboardRouter />} />
             <Route path="/explore" element={<Explore />} />
             <Route path="/fund-learner" element={<PrivateRoute component={AppFundLearner} />} />
-            <Route path="/help-learner" element={<PrivateRoute component={AppHelpLearner} />} />
+            {/* <Route path="/help-learner" element={<PrivateRoute component={AppHelpLearner} />} /> */}
+            <Route path="/help-learner" element={<AppHelpLearner />} />
             <Route path="/restricted" element={<Restricted />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
           </Routes>

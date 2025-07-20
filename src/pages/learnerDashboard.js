@@ -439,7 +439,8 @@ const LearnerDashboard = () => {
     // --- Logout Handler ---
     const handleLogout = () => {
         localStorage.removeItem("motivar-token");
-        localStorage.removeItem("motivar-user-role");   
+        localStorage.removeItem("motivar-user-role");
+        localStorage.removeItem("motivar-user-fname");   
         window.location.href = "/";
     };
 
@@ -507,6 +508,7 @@ const LearnerDashboard = () => {
     const pendingRequestsCount = requests.filter((req) => !req.paid).length;
     const paidRequestsCount = requests.filter((req) => req.paid).length;
     const coursesCount = dashboardCourses.length;
+    const completedCoursesCount = dashboardCourses.filter((course) => course.status === "completed").length;
 
     return (
         <DashboardWrapper>
@@ -570,25 +572,32 @@ const LearnerDashboard = () => {
 
                 {/* Summary Cards */}
                 <Row className="g-4">
-                  <Col md={4}>
+                  <Col md={3}>
                     <SummaryCard iconColor={brandColors.warning} valueColor={brandColors.warning}>
                       <FiClock className="summary-icon" />
                       <p className="summary-value">{pendingRequestsCount}</p>
                       <h5>Pending Requests</h5>
                     </SummaryCard>
                   </Col>
-                  <Col md={4}>
+                  <Col md={3}>
                     <SummaryCard iconColor={brandColors.success} valueColor={brandColors.success}>
                       <FiCheckCircle className="summary-icon" />
                       <p className="summary-value">{paidRequestsCount}</p>
                       <h5>Paid Requests</h5>
                     </SummaryCard>
                   </Col>
-                  <Col md={4}>
+                  <Col md={3}>
                     <SummaryCard iconColor={brandColors.primary} valueColor={brandColors.primary}>
                       <FiBookOpen className="summary-icon" />
                       <p className="summary-value">{coursesCount}</p>
                       <h5>Enrolled Courses</h5>
+                    </SummaryCard>
+                  </Col>
+                  <Col md={3}>
+                    <SummaryCard iconColor={brandColors.success} valueColor={brandColors.primaryDark}>
+                      <FiCheckCircle className="summary-icon" />
+                      <p className="summary-value">{completedCoursesCount}</p>
+                      <h5>Completed Courses</h5>
                     </SummaryCard>
                   </Col>
                 </Row>

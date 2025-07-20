@@ -502,6 +502,13 @@ function Anonymous(props) {
 //end  anonymous modal
 
 function LearnerDetailsModal({ show, onHide, learner }) {
+  // Helper to check and format links
+  const formatLink = (url) => {
+    if (!url || url === "N/A") return "N/A";
+    const hasProtocol = /^https?:\/\//i.test(url);
+    return hasProtocol ? url : `https://${url}`;
+  };
+
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton style={{ borderBottom: "none" }}></Modal.Header>
@@ -539,20 +546,36 @@ function LearnerDetailsModal({ show, onHide, learner }) {
               >
                 {learner?.learner?.userId?.fullName}
               </h5>
+              {/* Socials as clickable link */}
               <p
                 style={{
                   fontFamily: "Montserrat, sans-serif",
                   fontSize: "14px",
-                  color: "#6C757D",
+                  color: "#000000",
+                  wordBreak: "break-all",
                 }}
               >
-                {learner?.socials || "N/A"}
+                {learner?.socials && learner?.socials !== "N/A" ? (
+                  <a
+                    href={formatLink(learner?.socials)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "#11D99A",
+                      textDecoration: "underline",
+                      fontWeight: 500,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {learner?.socials}
+                  </a>
+                ) : "N/A"}
               </p>
               <p
                 style={{
                   fontFamily: "Montserrat, sans-serif",
                   fontSize: "16px",
-                  color: "#6C757D",
+                  color: "#000000",
                 }}
               >
                 {learner?.course?.courseTitle} - {learner?.course?.platform}
@@ -561,27 +584,49 @@ function LearnerDetailsModal({ show, onHide, learner }) {
           </Row>
           <Row className="text-center">
             <Col>
+              {/* Learner link as clickable */}
               <p
                 style={{
                   fontFamily: "Montserrat, sans-serif",
                   fontSize: "14px",
-                  color: "#6C757D",
+                  color: "#000000",
+                  wordBreak: "break-all",
                 }}
               >
-                {learner?.link || "N/A"}
+                {learner?.link && learner?.link !== "N/A" ? (
+                  <a
+                    href={formatLink(learner?.link)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "#11D99A",
+                      textDecoration: "underline",
+                      fontWeight: 500,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {learner?.link}
+                  </a>
+                ) : "N/A"}
               </p>
               <p
                 style={{
                   fontFamily: "Montserrat, sans-serif",
                   fontSize: "14px",
-                  color: "#6C757D",
+                  color: "#000000",
                 }}
               >
                 Duration: {learner?.course?.duration || "N/A"} {learner?.course?.durationUnit || ""}
               </p>
             </Col>
           </Row>
-          <hr />
+          {/* Custom horizontal rule */}
+          <hr style={{
+            border: "none",
+            borderTop: "4px solid #11D99A",
+            fontWeight: "bold",
+            margin: "24px 0"
+          }} />
           <Row>
             <Col>
               <p
@@ -705,9 +750,7 @@ export default function AppHelpLearner() {
                   id="community-dropdown"
                   style={{ color: "#222" }}
                 >
-                  <NavDropdown.Item as={Link} to="/coming-soon">Find learners near you</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/coming-soon">Find mentors near you</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/coming-soon">Join accountability group</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/coming-soon">Become a Mentor</NavDropdown.Item>
                 </NavDropdown>
                 {/* <Link>
                   <Button
@@ -732,7 +775,7 @@ export default function AppHelpLearner() {
             backgroundSize: "cover",
             backgroundPosition: "center",
             width: "90%",
-            height: "249px",
+            height: "200px",
             borderRadius: "16px",
             margin: "0 auto",
           }}
@@ -740,7 +783,7 @@ export default function AppHelpLearner() {
           <p
             style={{
               fontFamily: "Montserrat, sans-serif",
-              fontSize: "62px",
+              fontSize: "50px",
               fontWeight: "bold",
               color: "#000",
               textAlign: "center",
@@ -836,10 +879,23 @@ export default function AppHelpLearner() {
                     borderRadius: "6px",
                     backgroundColor: "#F4FFF8",
                     padding: "20px",
+                    cursor: "pointer", // Make card look clickable
+                    transition: "box-shadow 0.2s, transform 0.2s",
+                  }}
+                  onClick={() => {
+                    setModalShow(true);
+                    setIndex(index);
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.boxShadow = "0 4px 16px rgba(17,217,154,0.15)";
+                    e.currentTarget.style.transform = "translateY(-2px) scale(1.02)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.boxShadow = "0 2px 5px rgba(0,0,0,0.1)";
+                    e.currentTarget.style.transform = "none";
                   }}
                 >
                   <div style={{ display: "flex", width: "100%" }}>
-
                     {/* Left Column: Image stacked ON TOP of User Info/Course */}
                     <div style={{
                       display: "flex",
@@ -933,12 +989,8 @@ export default function AppHelpLearner() {
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          cursor: "pointer",
                           boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                        }}
-                        onClick={() => {
-                          setModalShow(true);
-                          setIndex(index);
+                          pointerEvents: "none", // Prevent arrow from capturing clicks
                         }}
                       >
                         <BsChevronDown
