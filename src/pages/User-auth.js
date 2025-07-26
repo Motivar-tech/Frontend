@@ -479,7 +479,7 @@ export default function AppAuth() {
                             <Form.Label>Email/Username</Form.Label>
                             <Form.Control
                               type="text"
-                              placeholder="Email"
+                              placeholder="e.g patricksean@gmail.com"
                               value={loginMail}
                               onChange={(e) => setLoginMail(e.target.value)}
                               style={{ borderRadius: 8, padding: "0.9rem 1rem", borderColor: "#00AA87" }}
@@ -489,7 +489,7 @@ export default function AppAuth() {
                             <Form.Label>Password</Form.Label>
                             <Form.Control
                               type="password"
-                              placeholder="e.g patricksean@gmail.com"
+                              placeholder="*********************"
                               value={loginPassword}
                               onChange={(e) => setLoginPassword(e.target.value)}
                               style={{ borderRadius: 8, padding: "0.9rem 1rem", borderColor: "#00AA87" }}
@@ -1032,7 +1032,21 @@ export default function AppAuth() {
                     </Col>
                   </Row>
                 </Container>
-
+                {/* Responsive styles for mobile */}
+                <style>
+                  {`
+                    @media (max-width: 767px) {
+                      .container-fluid, .row, .col-md-6 {
+                        min-height: auto !important;
+                        height: auto !important;
+                        padding: 10px !important;
+                      }
+                      .p-sm-5 {
+                        padding: 10px !important;
+                      }
+                    }
+                  `}
+                </style>
               </main>
             )
         }

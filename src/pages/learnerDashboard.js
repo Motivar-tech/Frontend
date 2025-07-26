@@ -459,7 +459,7 @@ const LearnerDashboard = () => {
             formData.append("certificate", selectedFile);
 
             const response = await axios.put(
-                `http://localhost:8089/dashboard/${selectedCourse._id}/upload-completion-certificate`,
+                `https://motivar-sponsor-api-v1.onrender.com/dashboard/${selectedCourse._id}/upload-completion-certificate`,
                 formData,
                 { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
             );
@@ -644,8 +644,8 @@ const LearnerDashboard = () => {
                                     <h6>{req.course?.courseTitle || 'Course Title Missing'}</h6>
                                     <div className="text-muted small">
                                       {/* Safely access nested properties */}
-                                      <span>Platform: {req.course?.platform || 'N/A'}</span> |
-                                      <span> Duration: {req.course?.duration || 'N/A'} {req.course?.durationUnit || ''}</span> |
+                                      <span>Platform: {req.course?.platform || 'N/A'} |</span>
+                                      <span> Duration: {req.course?.duration || 'N/A'} {req.course?.durationUnit || ''} |</span>
                                       <span> Price: {req.course?.price || 'N/A'} {req.course?.priceUnit || ''}</span>
                                     </div>
                                     <div className="mt-2">
@@ -746,7 +746,7 @@ const LearnerDashboard = () => {
                                                                         return;
                                                                     }
 
-                                                                    const response = await fetch(`http://localhost:8089/dashboard/${course._id}/view-certificate`, {
+                                                                    const response = await fetch(`https://motivar-sponsor-api-v1.onrender.com/dashboard/${course._id}/view-certificate`, {
                                                                         method: "GET",
                                                                         headers: {
                                                                             Authorization: `Bearer ${token}`,
