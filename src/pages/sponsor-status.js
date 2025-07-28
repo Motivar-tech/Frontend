@@ -165,7 +165,7 @@ const PayCourse = ({ learner, id, price, unit }) => {
     const token = await localStorage.getItem("motivar-token");
     try {
       const resp = await PaymentService.InitiatePayment(
-        Number(price) * 10,
+        Number(price) * 100,
         token
       );
 
