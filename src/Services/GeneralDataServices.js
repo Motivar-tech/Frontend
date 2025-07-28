@@ -1,8 +1,9 @@
 /* eslint-disable */
 
 import axios from "axios";
+import { BASE_URL } from "../utils/index";
 
-const ENDPOINT = "https://motivar-sponsor-api-v1.onrender.com";
+const ENDPOINT = BASE_URL;
 //const ENDPOINT = "http://localhost:8089";
 
 class GeneralDataServices {
@@ -38,14 +39,7 @@ class GeneralDataServices {
     return response;
   }
 
-  async InitiatePayment(requestID, token) {
-    const response = await axios.post(
-      `${ENDPOINT}/course/initiate/payment/${requestID}`,
-      {},
-      { headers: { Authorization: token } }
-    );
-    return response;
-  }
+  
 }
 
 export default new GeneralDataServices();

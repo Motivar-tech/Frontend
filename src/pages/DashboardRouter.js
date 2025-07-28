@@ -6,6 +6,8 @@ import SponsorDashboard from "./sponsorDashboard";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
 
+import { BASE_URL } from '../utils/index';
+
 const DashboardRouter = () => {
     const [role, setRole] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -22,7 +24,7 @@ const DashboardRouter = () => {
                     throw new Error("Authentication token is missing. Please log in again.");
                 }
 
-                const response = await axios.get("https://motivar-sponsor-api-v1.onrender.com/dashboard", {
+                const response = await axios.get(`${BASE_URL}/dashboard`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

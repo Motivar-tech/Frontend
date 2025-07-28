@@ -1,0 +1,36 @@
+/* eslint-disable */
+
+import axios from "axios";
+
+import { BASE_URL } from "../utils/index";
+
+const ENDPOINT = BASE_URL;
+
+class PaymentService {
+  async InitiatePayment(amount, token) {
+    const response = await axios.post(
+      `${ENDPOINT}/course/initiate/pay`,
+      { amount: amount },
+      {
+        headers: { Authorization: token },
+      }
+    );
+    return response;
+  }
+
+  async initiatePaymentVerification(token, reference) {
+    let response = await axios.get(`${ENDPOINT}/verify/pay/${reference}`, {
+      headers: { Authorization: token },
+    });
+
+    return response.data;
+  }
+
+  async completeSponsorship(token, requestID) {
+    let response = await axios.post();
+
+    return response.data;
+  }
+}
+
+export default new PaymentService();
