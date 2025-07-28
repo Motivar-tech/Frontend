@@ -128,13 +128,13 @@ export default function AppHome() {
 
   const SectionHeadText = styled.div`
     font-family: Montserrat;
-    width: 60%;
+    width: 100%;
     font-size: 42px;
-    font-weight: 1800;
     line-height: 1.2;
     padding: ${(props) => (props.invert ? "0px" : "0px 0px 0px 50px")};
 
     @media (max-width: 900px) {
+      width: 100%;
       font-size: 1.7rem;
       padding: 0px;
       text-align: left;
@@ -292,7 +292,7 @@ export default function AppHome() {
                   </HeroText>
                   <SubHeadText>
                     Whatever you want to learn online, wherever they are hosted.
-                    We will help you make the most of the journey.
+                    <br/>We will help you make the most of the journey.
                   </SubHeadText>
                   <Link to="/user-auth">
                     <Button
@@ -322,11 +322,9 @@ export default function AppHome() {
                   <HeroText>
                     <TypeAnimation
                       sequence={[
-                        "Help ambitious youths",
+                        "Fund a Learner's Journey",
                         2000,
-                        "Support their dreams",
-                        2000,
-                        "Make a difference",
+                        "Support a Learner Today",
                         2000,
                       ]}
                       wrapper="span"
@@ -337,10 +335,9 @@ export default function AppHome() {
                   </HeroText>
                   <SubHeadText>
                     Sponsor ambitious, underprivileged youths to pay for online courses
-                    they need to succeed. Your support can change lives and create
-                    opportunities.
+                    they need to succeed.
                   </SubHeadText>
-                  <Link to="/user-auth">
+                  <Link to="/help-learner">
                     <Button
                       className="btn btn-secondary text-white btn-lg d-inline-flex justify-content-center align-items-center"
                       style={{
@@ -378,199 +375,242 @@ export default function AppHome() {
         {/* Partner end */}
 
         {/* Complete start */}
-        <Container fluid style={{ background: "#FFFCF9", padding: "80px 0" }}>
-          <Row className="p-5">
-            <Col md={7}>
-              <p className="h1 pt-5 px-md-4 text-md-start fw-normal">
-                <br />
-                <strong>
-              <SectionHeadText>
-                    Find the perfect online<br/>course for you
-              </SectionHeadText>
-                </strong>
-              </p>
-              <SectionBodyText>
-                Take our psychometric test to discover personalized course
-                recommendations that match your unique abilities, learning style
-                and goals.
-              </SectionBodyText>
-
-              <PaddedWrapper>
-                <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-                <a
-                  href="https://motivar-recommender.onrender.com/test/personality/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button className="btn btn-lg btn-secondary text-white"
-                    style={{
-                      background: "#43B286",
-                      color: "#fff",
-                      fontFamily: "Montserrat, sans-serif",
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      padding: "10px 20px",
-                      borderRadius: "8px",
-                      border: "none"
-                    }}>
-                    Get Started
-                  </Button>
-                </a>
-                <span className="shadow-sm pointer ms-3">
-                    <BsArrowLeftCircle className="spin" />{" "}
-                </span>
+        <Container fluid style={{ background: "#F4FFF8", padding: "80px 0" }}>
+          <Row style={{ maxWidth: "1200px", margin: "0 auto", alignItems: "center" }}>
+            <Col md={6} className="pe-5">
+              <div style={{ marginLeft: "auto" }}>
+                <SectionHeadText style={{ 
+                  fontSize: "36px",
+                  fontWeight: 900, 
+                  paddingLeft: "0",
+                  marginBottom: "24px"
+                }}>
+                  Find the perfect online course for you
+                </SectionHeadText>
+                <SectionBodyText style={{
+                  padding: "0",
+                  fontSize: "18px",
+                  marginBottom: "32px",
+                  width: "100%"
+                }}>
+                  Take our psychometric test to discover personalized course
+                  recommendations that match your unique abilities, learning style
+                  and goals.
+                </SectionBodyText>
+                <div className="d-flex align-items-center">
+                  <a
+                    // href="https://motivar-recommender.onrender.com/test/personality/"
+                    href="/coming-soon"
+                    //target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button className="btn btn-lg btn-secondary text-white"
+                      style={{
+                        background: "#43B286",
+                        fontFamily: "Montserrat, sans-serif",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        padding: "12px 24px",
+                        borderRadius: "8px",
+                        border: "none"
+                      }}>
+                      Get Started
+                    </Button>
+                  </a>
+                  <BsArrowLeftCircle className="spin ms-3" style={{ color: "#43B286", fontSize: "24px" }} />
+                </div>
               </div>
-              </PaddedWrapper>
             </Col>
-            <Col md={5}>
-              <StyledImage
-                width={"80%"}
-                height={"100%"}
-                src={Faces}
-                alt="faces"
-              />
+            <Col md={6} className="d-flex justify-content-center align-items-center">
+              <div style={{ 
+                width: "90%",
+                height: "90%",
+                overflow: "hidden",
+                paddingTop: "20px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "relative" 
+              }}>
+                <StyledImage
+                  src={Faces}
+                  height="90%"
+                  width="90%"
+                  alt="faces"
+                />
+              </div>
             </Col>
           </Row>
         </Container>
         {/* Complete end */}
 
         {/* Sponsor start */}
-        <Container fluid className="bg-warning" style={{ padding: "40px 0" }}>
-          <Row className="align-items-center">
-            <Col md={5} className="d-flex justify-content-center">
-              <StyledImage
-                src={Persons}
-                width={"70%"}
-                height={"70%"}
-                alt="persons"
-              />
-            </Col>
-
-            <Col md={7}>
-              <p className=" h1 px-md-4 text-md-start fw-normal">
-                <br />
-                <strong>
-              <SectionHeadText invert>
-                    Help a learner pay for online courses they need and can't
-                    afford
-              </SectionHeadText>
-                </strong>
-              </p>
-              {/* <SectionBodyText invert>
-                Lots of young people want and need online courses to upskill and
-                improve their knowledge, but unfortunately cannot afford them.
-              </SectionBodyText> */}
-              <div className="d-flex justify-content-center justify-content-md-start align-items-center gap-3">
-                <Link to="/help-learner">
-                  <Button className="btn btn-lg btn-secondary text-white"
-                    style={{
-                      background: "#43B286",
-                      color: "#fff",
-                      fontFamily: "Montserrat, sans-serif",
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      padding: "10px 20px",
-                        marginLeft: "20px",
-                      borderRadius: "8px",
-                      border: "none"
-                    }}>
-                    Sponsor a learner
-                  </Button>
-                </Link>
-                <span className="shadow-sm pointer ms-3">
-                  {" "}
-                  <BsArrowLeftCircle className="spin" />{" "}
-                </span>
+        <Container fluid style={{ background: "#FFFCF9", padding: "80px 0" }}>
+          <Row style={{ maxWidth: "1200px", margin: "0 auto", alignItems: "center" }}>
+            <Col md={6} className="d-flex justify-content-center align-items-center">
+              <div style={{ 
+                width: "90%",
+                height: "90%",
+                overflow: "hidden",
+                paddingTop: "20px",
+                display: "flex",
+                justifyContent: "left",
+                alignItems: "left",
+                position: "relative" 
+              }}>
+                <StyledImage
+                  src={Persons}
+                  height={"80%"}
+                  width={"70%"}
+                  alt="persons"
+                />
               </div>
             </Col>
-          </Row>
-
-          <Row className="p-5 pt-5 text-center bg-alt-secondary align-items-center">
-            <Col md={6}>
-              <p className=" h1 px-md-4 text-md-start fw-normal">
-                <br />
-                <strong>
-              <SectionHeadText>
-                Ask for help to pay for courses you need but cannot afford
-              </SectionHeadText>
-                </strong>
-              </p>
-              <PaddedWrapper>
-                <div className="px-md-4 py-2 d-flex justify-content-center justify-content-md-start align-items-center">
-                <Link to="/help">
-                  <Button className="btn btn-lg btn-secondary text-white"
-                    style={{
-                      background: "#43B286",
-                      color: "#fff",
-                      fontFamily: "Montserrat, sans-serif",
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      padding: "10px 20px",
-                      borderRadius: "8px",
-                      border: "none"
-                    }}>
-                    Request for help
-                  </Button>
-                </Link>
-                <span className="shadow-sm pointer ms-3">
-                    {" "}
-                    <BsArrowLeftCircle className="spin" />{" "}
-                </span>
+            <Col md={6} className="pe-5">
+              <div style={{ marginLeft: "auto" }}>
+                <SectionHeadText style={{ 
+                  fontSize: "36px",
+                  fontWeight: 900, 
+                  paddingLeft: "0",
+                  marginBottom: "24px"
+                }}>
+                  Help a learner pay for online courses they need and can't afford
+                </SectionHeadText>
+                <div className="d-flex align-items-center">
+                  <Link to="/help-learner">
+                    <Button className="btn btn-lg btn-secondary text-white"
+                      style={{
+                        background: "#43B286",
+                        fontFamily: "Montserrat, sans-serif",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        padding: "12px 24px",
+                        borderRadius: "8px",
+                        border: "none"
+                      }}>
+                      Sponsor a learner
+                    </Button>
+                  </Link>
+                  <BsArrowLeftCircle className="spin ms-3" style={{ color: "#43B286", fontSize: "24px" }} />
+                </div>
               </div>
-              </PaddedWrapper>
-            </Col>
-            <Col md={6}>
-              <StyledImage
-                width={"80%"}
-                height={"80%"}
-                src={Stu}
-                alt="persons"
-              />
             </Col>
           </Row>
         </Container>
         {/* Sponsor end */}
 
-        {/* Participate start */}
-        <Container fluid>
-          <Row className="p-5 text-center bg-dark">
-            <Col md={5}>
-              <Image fluid src={Group} alt="group" className="pt-4" />
+        {/* Request Help section */}
+        <Container fluid style={{ background: "#F4FFF8", padding: "80px 0" }}>
+          <Row style={{ maxWidth: "1200px", margin: "0 auto", alignItems: "center" }}>
+            <Col md={6} className="pe-5">
+              <div style={{ marginLeft: "auto" }}>
+                <SectionHeadText style={{ 
+                  fontSize: "36px",
+                  fontWeight: 900, 
+                  paddingLeft: "0",
+                  marginBottom: "24px"
+                }}>
+                  Ask for help to pay for courses you need but cannot afford
+                </SectionHeadText>
+                <div className="d-flex align-items-center">
+                  <Link to="/help">
+                    <Button className="btn btn-lg btn-secondary text-white"
+                      style={{
+                        background: "#43B286",
+                        fontFamily: "Montserrat, sans-serif",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        padding: "12px 24px",
+                        borderRadius: "8px",
+                        border: "none"
+                      }}>
+                      Request for help
+                    </Button>
+                  </Link>
+                  <BsArrowLeftCircle className="spin ms-3" style={{ color: "#43B286", fontSize: "24px" }} />
+                </div>
+              </div>
             </Col>
+            <Col md={6} className="d-flex justify-content-center align-items-center">
+              <div style={{ 
+                width: "90%",
+                height: "100%",
+                overflow: "hidden",
+                paddingTop: "20px",
+                display: "flex",
+                justifyContent: "left",
+                alignItems: "left",
+                position: "relative" 
+              }}>
+                <StyledImage
+                  src={Stu}
+                  height={"100%"}
+                  width={"100%"}
+                  alt="student"
+                />
+              </div>
+            </Col>
+          </Row>
+        </Container>
+        {/* Request Help end */}
 
-            <Col md={7}>
-              <p className=" h1 pt-5 px-md-4 text-md-start fw-normal" style={{width: "70%"}}>
-                <br /> <br />
-                <strong>
-                  Participate in learner communities and turbocharge
-                  your learning experience
-                </strong>
-              </p>
-              <p class="h4 px-md-4 text-md-start fw-light" style={{width: "70%"}}>
-                Connect with learners like you in your location to share ideas,
-                insights, challenges, and wins
-              </p>
-
-              <div className="px-4 py-4 d-flex justify-content-center justify-content-md-start align-items-center">
-                <Link to="/coming-soon">
-                  <Button className="btn btn-lg btn-secondary text-white"
-                    style={{
-                          background: "#43B286",
-                          color: "#fff",
-                          fontFamily: "Montserrat, sans-serif",
-                          fontWeight: 700,
-                          fontSize: "16px",
-                          padding: "10px 20px",
-                          borderRadius: "8px",
-                          border: "none"
-                        }}>
-                    Get Started
-                  </Button>
-                </Link>
-                <span className="shadow-sm pointer ms-3">
-                  {" "}
-                  <BsArrowLeftCircle className="spin" />{" "}
-                </span>
+        {/* Participate start */}
+        <Container fluid style={{ background: "#FFFCF9", padding: "80px 0" }}>
+          <Row style={{ maxWidth: "1200px", margin: "0 auto", alignItems: "center" }}>
+            <Col md={6} className="d-flex justify-content-center align-items-center">
+              <div style={{ 
+                width: "90%",
+                height: "90%",
+                overflow: "hidden",
+                paddingTop: "20px",
+                display: "flex",
+                justifyContent: "left",
+                alignItems: "left",
+                position: "relative" 
+              }}>
+                <StyledImage
+                  src={Group}
+                  height={"100%"}
+                  width={"100%"}
+                  alt="group"
+                />
+              </div>
+            </Col>
+            <Col md={6} className="pe-5">
+              <div style={{ marginLeft: "auto" }}>
+                <SectionHeadText style={{ 
+                  fontSize: "36px",
+                  fontWeight: 900, 
+                  paddingLeft: "0",
+                  marginBottom: "24px"
+                }}>
+                  Participate in learner communities and turbocharge your learning experience
+                </SectionHeadText>
+                <SectionBodyText style={{
+                  padding: "0",
+                  fontSize: "18px",
+                  marginBottom: "32px",
+                  width: "100%"
+                }}>
+                  Connect with learners like you in your location to share ideas, insights, challenges, and wins
+                </SectionBodyText>
+                <div className="d-flex align-items-center">
+                  <Link to="/coming-soon">
+                    <Button className="btn btn-lg btn-secondary text-white"
+                      style={{
+                        background: "#43B286",
+                        fontFamily: "Montserrat, sans-serif",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        padding: "12px 24px",
+                        borderRadius: "8px",
+                        border: "none"
+                      }}>
+                      Get Started
+                    </Button>
+                  </Link>
+                  <BsArrowLeftCircle className="spin ms-3" style={{ color: "#43B286", fontSize: "24px" }} />
+                </div>
               </div>
             </Col>
           </Row>

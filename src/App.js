@@ -58,6 +58,7 @@ function App() {
               path="/sponsor-status/*"
               element={<PrivateRoute component={SponsorStatus} />}
             />
+
             <Route path="/restricted" element={<Restricted />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
           </Routes>
