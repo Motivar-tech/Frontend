@@ -7,6 +7,7 @@ import { Button } from "react-bootstrap";
 import Tick from "../assets/Icons/tick-circle.svg";
 import ArrowLeft from "../assets/Icons/arrow-left.svg";
 import PaymentService from "../Services/PaymentService";
+import Spinner from "react-bootstrap/Spinner";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -166,6 +167,18 @@ const PaymentVerification = () => {
               </div>
             </p>
           </Body>
+        )}
+
+        {isLoading && (
+          <>
+            <div
+              className="d-flex flex-column align-items-center justify-content-center"
+              style={{ minHeight: "60vh" }}
+            >
+              <Spinner animation="border" />
+              <p className="mt-3">Processing payment, please wait...</p>
+            </div>
+          </>
         )}
       </Wrapper>
     </>

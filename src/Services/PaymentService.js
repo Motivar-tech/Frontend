@@ -31,7 +31,7 @@ class PaymentService {
 
   async completeSponsorship(token, requestID, ref) {
     let response = await axios.get(
-      `${ENDPOINT}/course/approve/payment?requestID=${requestID}&ref=${ref}`,
+      `${ENDPOINT}/course/approve/payment?requestId=${requestID}&ref=${ref}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
