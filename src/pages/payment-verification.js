@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
@@ -38,8 +38,12 @@ const Body = styled.div`
 const PaymentVerification = () => {
   const [searchParams] = useSearchParams();
 
+  const [data, setData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState("");
+
   let txref = searchParams.get("trxref");
-  let ref = searchParams.get("reference");
+  let reference = searchParams.get("reference");
   let requestID = localStorage.getItem("requestID");
 
   const router = useNavigate();
@@ -48,101 +52,121 @@ const PaymentVerification = () => {
     const token = localStorage.getItem("motivar-token");
 
     try {
-      const resp = await PaymentService.initiatePaymentVerification(token, ref);
+      setIsLoading(true);
+      const resp = await PaymentService.initiatePaymentVerification(
+        token,
+        reference
+      );
 
-      console.log(resp);
+      if (resp.data.status === "success") {
+        setStatus(resp.data.status);
+        let res = await PaymentService.completeSponsorship(
+          token,
+          requestID,
+          reference
+        );
+
+        if (res) {
+          setIsLoading(false);
+          setData(resp.data);
+        }
+      }
     } catch (error) {
+      setIsLoading(false);
       console.log(error);
     }
   };
 
   useEffect(() => {
     handleVerifyPayment();
-  }, [ref]);
-
+  }, [reference]);
 
   return (
     <>
       <Wrapper>
-        <Body>
-          <img
-            src={Tick}
-            style={{
-              objectFit: "center",
-              height: "70px",
-              width: "70px",
-            }}
-          />
-          <p
-            style={{
-              fontFamily: "Montserrat, sans-serif",
-              fontWeight: "bolder",
-              fontSize: "20px",
-              padding: "20px 0px 5px 0px",
-            }}
-          >
-            Sucessfull Payment!
-          </p>
-          <p
-            style={{
-              width: "65%",
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "16px",
-              textAlign: "center",
-            }}
-          >
-            Payment has been made successfully, check your sponsored courses?
-          </p>
-
-          <Button
-            onClick={() => router(`/dashboard`)}
-            style={{
-              backgroundColor: "#00AA87",
-              border: "none",
-              width: "50%",
-              fontSize: "20px",
-              fontWeight: "bold",
-            }}
-          >
-            Continue
-          </Button>
-
-          <p
-            onClick={() => {
-              router("/help-learner");
-            }}
-            style={{
-              width: "80%",
-              margin: "2vh auto 2vh auto",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-            }}
-          >
+        {!isLoading && (
+          <Body>
             <img
-              src={ArrowLeft}
+              src={Tick}
               style={{
                 objectFit: "center",
-                height: "20px",
-                width: "30px",
+                height: "70px",
+                width: "70px",
               }}
             />
-            <div>
-              <h6
+            <p
+              style={{
+                fontFamily: "Montserrat, sans-serif",
+                fontWeight: "bolder",
+                fontSize: "20px",
+                padding: "20px 0px 5px 0px",
+              }}
+            >
+              Sucessfull Payment!
+            </p>
+            <p
+              style={{
+                width: "65%",
+                fontFamily: "Montserrat, sans-serif",
+                fontSize: "16px",
+                textAlign: "center",
+              }}
+            >
+              Payment of {data?.currency}
+              {Number(data?.amount / 100).toLocaleString()} been made
+              successfully, check your sponsored courses?
+            </p>
+
+            <Button
+              onClick={() => router(`/dashboard`)}
+              style={{
+                backgroundColor: "#00AA87",
+                border: "none",
+                width: "50%",
+                fontSize: "20px",
+                fontWeight: "bold",
+              }}
+            >
+              Continue
+            </Button>
+
+            <p
+              onClick={() => {
+                router("/help-learner");
+              }}
+              style={{
+                width: "80%",
+                margin: "2vh auto 2vh auto",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              }}
+            >
+              <img
+                src={ArrowLeft}
                 style={{
-                  fontFamily: "Montserrat, sans-serif",
-                  color: "#00AA87",
-                  fontSize: "16px",
-                  padding: "10px",
+                  objectFit: "center",
+                  height: "20px",
+                  width: "30px",
                 }}
-              >
-                Go back to Listing
-              </h6>
-            </div>
-          </p>
-        </Body>
+              />
+              <div>
+                <h6
+                  style={{
+                    fontFamily: "Montserrat, sans-serif",
+                    color: "#00AA87",
+                    fontSize: "16px",
+                    padding: "10px",
+                  }}
+                >
+                  Go back to Listing
+                </h6>
+              </div>
+            </p>
+          </Body>
+        )}
       </Wrapper>
     </>
   );

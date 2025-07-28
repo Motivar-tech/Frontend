@@ -19,15 +19,23 @@ class PaymentService {
   }
 
   async initiatePaymentVerification(token, reference) {
-    let response = await axios.get(`${ENDPOINT}/verify/pay/${reference}`, {
-      headers: { Authorization: token },
-    });
+    let response = await axios.get(
+      `${ENDPOINT}/course/verify/pay?reference=${reference}`,
+      {
+        headers: { Authorization: token },
+      }
+    );
 
     return response.data;
   }
 
-  async completeSponsorship(token, requestID) {
-    let response = await axios.post();
+  async completeSponsorship(token, requestID, ref) {
+    let response = await axios.get(
+      `${ENDPOINT}/course/approve/payment?requestID=${requestID}&ref=${ref}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
     return response.data;
   }
