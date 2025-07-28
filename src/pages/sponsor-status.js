@@ -6,11 +6,11 @@ import Tick from "../assets/Icons/tick-circle.svg";
 import ArrowLeft from "../assets/Icons/arrow-left.svg";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import PaystackPop from "@paystack/inline-js";
+
 import GeneralDataServices from "../Services/GeneralDataServices";
 import PaymentService from "../Services/PaymentService";
 
-const popup = new PaystackPop();
+
 
 const Wrapper = styled.div`
   width: 100%;
