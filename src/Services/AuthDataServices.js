@@ -1,7 +1,8 @@
 /* eslint-disable */
 
 import axios from "axios";
-const ENDPOINT = "https://motivar-sponsor-api-v1.onrender.com";
+import { BASE_URL } from '../utils/index'
+const ENDPOINT = BASE_URL;
 //const ENDPOINT = "http://localhost:8089";
 
 class AuthDataServices {

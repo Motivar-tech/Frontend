@@ -17,6 +17,8 @@ import styled, { createGlobalStyle } from 'styled-components';
 import Logo from "../assets/images/Motivar.svg";
 import { FiUser, FiList, FiLogOut, FiAlertCircle } from 'react-icons/fi';
 
+import { BASE_URL } from '../utils/index'
+
 // --- Brand Colors ---
 const brandColors = {
     primary: '#59b49a',
@@ -255,7 +257,7 @@ const SponsorDashboard = () => {
                 const token = localStorage.getItem("motivar-token");
                 if (!token) throw new Error("Authentication token is missing. Please log in again.");
 
-                const response = await axios.get("https://motivar-sponsor-api-v1.onrender.com/dashboard", {
+                const response = await axios.get(`${BASE_URL}/dashboard`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

@@ -22,6 +22,7 @@ import {
     FiUser, FiClock, FiCheckCircle, FiBookOpen, FiList,
     FiUpload, FiLogOut, FiAlertCircle
 } from 'react-icons/fi';
+import { BASE_URL } from '../utils/index'
 
 // --- Brand Colors ---
 const brandColors = {
@@ -417,7 +418,7 @@ const LearnerDashboard = () => {
             const token = localStorage.getItem("motivar-token");
             if (!token) throw new Error("Authentication token is missing. Please log in again.");
 
-            const response = await axios.get("https://motivar-sponsor-api-v1.onrender.com/dashboard", {
+            const response = await axios.get(`${BASE_URL}/dashboard`, {
             headers: { Authorization: `Bearer ${token}` },
             });
 

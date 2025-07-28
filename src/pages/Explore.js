@@ -22,6 +22,8 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { Link } from "react-router-dom";
 import Logo from "../assets/images/Motivar.svg";
 
+import { BASE_URL } from '../utils/index.js'
+
 // --- Brand Colors ---
 const brandColors = {
     primary: '#59b49a', // Main interactive green
@@ -498,7 +500,7 @@ const Explore = () => {
 
         try {
             // --- === ACTUAL API CALL === ---
-            const response = await axios.get('https://motivar-sponsor-api-v1.onrender.com/explore/filter', {
+            const response = await axios.get(`${BASE_URL}/explore/filter`, {
                 params: {
                     ...filters, // Send all applied filters (level, status, platform, tags, search)
                     page,
@@ -591,7 +593,7 @@ const Explore = () => {
             if (!token) throw new Error("Authentication token is missing. Please log in again.");
 
             const response = await axios.post(
-                "https://motivar-sponsor-api-v1.onrender.com/dashboard/add", // Backend endpoint
+                `${BASE_URL}/dashboard/add`, // Backend endpoint
                 {
                     title: course.title,
                     description: course.description,
@@ -821,7 +823,7 @@ const Explore = () => {
                                     {/* Add more common tags or fetch dynamically */}
                                 </datalist>
                             </Form.Group>
-                        </Col> 
+                        </Col>
                         <Col md={12} lg={2}> {/* Apply Button - takes full width on medium */}
                              <StyledButton variant="primary" onClick={handleFilter} className="w-100">
                                 <FiFilter /> Apply Filters
