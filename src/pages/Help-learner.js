@@ -528,6 +528,13 @@ function LearnerDetailsModal({ show, onHide, learner }) {
     }
   };
 
+  // Helper to check and format links
+  const formatLink = (url) => {
+    if (!url || url === "N/A") return "N/A";
+    const hasProtocol = /^https?:\/\//i.test(url);
+    return hasProtocol ? url : `https://${url}`;
+  };
+
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton style={{ borderBottom: "none" }}></Modal.Header>
@@ -902,15 +909,7 @@ export default function AppHelpLearner() {
                   id="community-dropdown"
                   style={{ color: "#222" }}
                 >
-                  <NavDropdown.Item as={Link} to="/coming-soon">
-                    Find learners near you
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/coming-soon">
-                    Find mentors near you
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/coming-soon">
-                    Join accountability group
-                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/coming-soon">Become a Mentor</NavDropdown.Item>
                 </NavDropdown>
                 {/* <Link>
                   <Button
@@ -935,7 +934,7 @@ export default function AppHelpLearner() {
             backgroundSize: "cover",
             backgroundPosition: "center",
             width: "90%",
-            height: "249px",
+            height: "200px",
             borderRadius: "16px",
             margin: "0 auto",
           }}
@@ -943,7 +942,7 @@ export default function AppHelpLearner() {
           <p
             style={{
               fontFamily: "Montserrat, sans-serif",
-              fontSize: "62px",
+              fontSize: "50px",
               fontWeight: "bold",
               color: "#000",
               textAlign: "center",

@@ -86,7 +86,6 @@ const StyledNavbar = styled(Navbar)`
 `;
 
 // --- Placeholder SearchAutocomplete Component ---
-// Replace this with your actual implementation
 const SearchAutocomplete = ({ onSearch, initialQuery }) => {
     const [query, setQuery] = useState(initialQuery || '');
 
@@ -98,37 +97,6 @@ const SearchAutocomplete = ({ onSearch, initialQuery }) => {
         event.preventDefault();
         onSearch(query); // Trigger search on submit
     };
-
-    // Basic styling for the placeholder
-    const SearchInput = styled.input`
-        padding: 0.8rem 1.5rem;
-        border-radius: 50px;
-        border: 1px solid ${brandColors.greyMid};
-        min-width: 300px; /* Adjust as needed */
-        max-width: 500px;
-        width: 100%;
-        font-size: 1rem;
-        &:focus {
-            outline: none;
-            border-color: ${brandColors.primary};
-            box-shadow: 0 0 0 3px rgba(89, 180, 154, 0.3);
-        }
-    `;
-    const SearchButton = styled.button`
-        background: none;
-        border: none;
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: ${brandColors.primary};
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 5px;
-         &:hover {
-             color: ${brandColors.primaryDark};
-         }
-    `;
 
     return (
         <form onSubmit={handleFormSubmit} style={{ position: 'relative', width: '100%', maxWidth: '500px' }}>
@@ -146,6 +114,35 @@ const SearchAutocomplete = ({ onSearch, initialQuery }) => {
 };
 // --- End Placeholder SearchAutocomplete ---
 
+const SearchInput = styled.input`
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    border: 1px solid ${brandColors.greyMid};
+    min-width: 300px;
+    max-width: 500px;
+    width: 100%;
+    font-size: 1rem;
+    &:focus {
+        outline: none;
+        border-color: ${brandColors.primary};
+        box-shadow: 0 0 0 3px rgba(89, 180, 154, 0.3);
+    }
+`;
+const SearchButton = styled.button`
+    background: none;
+    border: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: ${brandColors.primary};
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    &:hover {
+        color: ${brandColors.primaryDark};
+    }
+`;
 
 const ExploreHeader = styled.div`
   background-color: ${brandColors.primary}; // Use primary green for header background

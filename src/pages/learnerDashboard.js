@@ -441,6 +441,7 @@ const LearnerDashboard = () => {
     const handleLogout = () => {
         localStorage.removeItem("motivar-token");
         localStorage.removeItem("motivar-user-role");
+        localStorage.removeItem("motivar-user-fname");   
         window.location.href = "/";
     };
 
@@ -459,7 +460,7 @@ const LearnerDashboard = () => {
             formData.append("certificate", selectedFile);
 
             const response = await axios.put(
-                `http://localhost:8089/dashboard/${selectedCourse._id}/upload-completion-certificate`,
+                `https://motivar-sponsor-api-v1.onrender.com/dashboard/${selectedCourse._id}/upload-completion-certificate`,
                 formData,
                 { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
             );
@@ -508,6 +509,7 @@ const LearnerDashboard = () => {
     const pendingRequestsCount = requests.filter((req) => !req.paid).length;
     const paidRequestsCount = requests.filter((req) => req.paid).length;
     const coursesCount = dashboardCourses.length;
+    const completedCoursesCount = dashboardCourses.filter((course) => course.status === "completed").length;
 
     return (
         <DashboardWrapper>
@@ -571,25 +573,32 @@ const LearnerDashboard = () => {
 
                 {/* Summary Cards */}
                 <Row className="g-4">
-                  <Col md={4}>
+                  <Col md={3}>
                     <SummaryCard iconColor={brandColors.warning} valueColor={brandColors.warning}>
                       <FiClock className="summary-icon" />
                       <p className="summary-value">{pendingRequestsCount}</p>
                       <h5>Pending Requests</h5>
                     </SummaryCard>
                   </Col>
-                  <Col md={4}>
+                  <Col md={3}>
                     <SummaryCard iconColor={brandColors.success} valueColor={brandColors.success}>
                       <FiCheckCircle className="summary-icon" />
                       <p className="summary-value">{paidRequestsCount}</p>
                       <h5>Paid Requests</h5>
                     </SummaryCard>
                   </Col>
-                  <Col md={4}>
+                  <Col md={3}>
                     <SummaryCard iconColor={brandColors.primary} valueColor={brandColors.primary}>
                       <FiBookOpen className="summary-icon" />
                       <p className="summary-value">{coursesCount}</p>
                       <h5>Enrolled Courses</h5>
+                    </SummaryCard>
+                  </Col>
+                  <Col md={3}>
+                    <SummaryCard iconColor={brandColors.success} valueColor={brandColors.primaryDark}>
+                      <FiCheckCircle className="summary-icon" />
+                      <p className="summary-value">{completedCoursesCount}</p>
+                      <h5>Completed Courses</h5>
                     </SummaryCard>
                   </Col>
                 </Row>
@@ -636,8 +645,8 @@ const LearnerDashboard = () => {
                                     <h6>{req.course?.courseTitle || 'Course Title Missing'}</h6>
                                     <div className="text-muted small">
                                       {/* Safely access nested properties */}
-                                      <span>Platform: {req.course?.platform || 'N/A'}</span> |
-                                      <span> Duration: {req.course?.duration || 'N/A'} {req.course?.durationUnit || ''}</span> |
+                                      <span>Platform: {req.course?.platform || 'N/A'} |</span>
+                                      <span> Duration: {req.course?.duration || 'N/A'} {req.course?.durationUnit || ''} |</span>
                                       <span> Price: {req.course?.price || 'N/A'} {req.course?.priceUnit || ''}</span>
                                     </div>
                                     <div className="mt-2">
@@ -738,7 +747,7 @@ const LearnerDashboard = () => {
                                                                         return;
                                                                     }
 
-                                                                    const response = await fetch(`http://localhost:8089/dashboard/${course._id}/view-certificate`, {
+                                                                    const response = await fetch(`https://motivar-sponsor-api-v1.onrender.com/dashboard/${course._id}/view-certificate`, {
                                                                         method: "GET",
                                                                         headers: {
                                                                             Authorization: `Bearer ${token}`,

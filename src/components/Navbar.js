@@ -13,6 +13,7 @@ import Logo from "../assets/images/Motivar.svg";
 const handleLogout = () => {
   localStorage.removeItem('motivar-token');
   localStorage.removeItem('motivar-user-role');
+  localStorage.removeItem('motivar-user-fname');
   window.location.href = '/';
 };
 
