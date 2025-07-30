@@ -101,10 +101,10 @@ const MeetLearner = ({ learner, name, id, price, unit }) => {
           </p>
 
           <Button
-            onClick={() =>{}
-              // router(
-              //   `/sponsor-status?state=pay&learner=${name}&id=${id}&price=${price}&unit=${unit}`
-              // )
+            onClick={() =>
+              router(
+                `/sponsor-status?state=pay&learner=${name}&id=${id}&price=${price}&unit=${unit}`
+              )
             }
             style={{
               backgroundColor: "#00AA87",
