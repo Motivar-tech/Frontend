@@ -1,15 +1,14 @@
 /*eslint-disable*/
 
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Tick from "../assets/Icons/tick-circle.svg";
 import ArrowLeft from "../assets/Icons/arrow-left.svg";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
 
-import GeneralDataServices from "../Services/GeneralDataServices";
 import PaymentService from "../Services/PaymentService";
-
 
 const Wrapper = styled.div`
   width: 100%;
@@ -41,6 +40,8 @@ const Body = styled.div`
 const SponsorStatus = () => {
   const [searchParams] = useSearchParams();
 
+  const [loading, setLoading] = useState(false);
+
   let learner = searchParams.get("learner");
   let learner_id = searchParams.get("id");
   let price = searchParams.get("price");
@@ -59,7 +60,14 @@ const SponsorStatus = () => {
     );
   } else {
     return (
-      <PayCourse learner={learner} id={learner_id} price={price} unit={unit} />
+      <PayCourse
+        learner={learner}
+        id={learner_id}
+        price={price}
+        unit={unit}
+        loading={loading}
+        setLoading={setLoading}
+      />
     );
   }
 };
@@ -158,21 +166,22 @@ const MeetLearner = ({ learner, name, id, price, unit }) => {
   );
 };
 
-const PayCourse = ({ learner, id, price, unit }) => {
+const PayCourse = ({ learner, id, price, unit, loading, setLoading }) => {
   const router = useNavigate();
 
   const handlePayWithPaystack = async () => {
+    setLoading(true);
     const token = await localStorage.getItem("motivar-token");
     try {
       const resp = await PaymentService.InitiatePayment(
         Number(price) * 100,
         token
       );
+      setLoading(false);
 
       window.open(resp.data.data.data.authorization_url, "_blank");
-
-      // popup.resumeTransaction(resp?.data.data.data?.access_code);
     } catch (error) {
+      setLoading(false);
       console.log("Error intiating payment..", error);
     }
   };
@@ -233,7 +242,8 @@ const PayCourse = ({ learner, id, price, unit }) => {
             fontWeight: "bold",
           }}
         >
-          Pay for course
+          {loading && <Spinner animation="border" role="status" />}
+          {!loading && "Pay for course"}
         </Button>
 
         <p
@@ -275,4 +285,5 @@ const PayCourse = ({ learner, id, price, unit }) => {
     </Wrapper>
   );
 };
+
 export default SponsorStatus;

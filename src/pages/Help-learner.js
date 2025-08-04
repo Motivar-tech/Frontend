@@ -384,7 +384,21 @@ function MeetLearner(props) {
   );
 }
 
-//end  meet learner modal
+const handleScheduleClick = async (email, name, id, price, unit) => {
+  const title = encodeURIComponent(`Motivar - Sponsor Meetup with ${name}`);
+  const details = encodeURIComponent(
+    `Hello, ${name}. We will be meeting to discuss your interest in the course sponsorship you requested on Motivar!. Please do well to be available within the set time. Thanks!`
+  );
+  const invitee = encodeURIComponent(email);
+
+  const url = `https://calendar.google.com/calendar/u/0/r/eventedit?text=${title}&details=${details}&add=${invitee}&conference=hangouts`;
+
+  window.open(url, "_blank");
+
+  const token = await localStorage.getItem("motivar-token");
+  const payload = { name, id, price, unit, email };
+  const resp = await GeneralDataServices.notifyMeetingSchedule(payload, token);
+};
 
 // start anonymous modal
 function Anonymous(props) {
@@ -508,7 +522,8 @@ function LearnerDetailsModal({ show, onHide, learner }) {
   const [proceed, setProceed] = useState(false);
   const router = useNavigate();
 
-  const handleMeetLearner = async (name, id, price, unit) => {
+  const handleMeetLearner = async (name, email, id, price, unit) => {
+    handleScheduleClick(email, name, id, price, unit);
     try {
       router(
         `/sponsor-status?state=meet&learner=${name}&id=${id}&price=${price}&unit=${unit}`
@@ -740,6 +755,7 @@ function LearnerDetailsModal({ show, onHide, learner }) {
                   onClick={() =>
                     handleMeetLearner(
                       learner?.learner?.userId?.fullName,
+                      learner?.learner?.userId?.email,
                       learner?.learner?.userId?._id,
                       learner?.course?.price,
                       learner?.course?.priceUnit
@@ -909,7 +925,9 @@ export default function AppHelpLearner() {
                   id="community-dropdown"
                   style={{ color: "#222" }}
                 >
-                  <NavDropdown.Item as={Link} to="/coming-soon">Become a Mentor</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/coming-soon">
+                    Become a Mentor
+                  </NavDropdown.Item>
                 </NavDropdown>
                 {/* <Link>
                   <Button

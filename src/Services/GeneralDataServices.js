@@ -39,7 +39,15 @@ class GeneralDataServices {
     return response;
   }
 
-  
+  async notifyMeetingSchedule(payload, token) {
+    const response = await axios.post(
+      `${ENDPOINT}/course/meet/notify`,
+      payload,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    return response.data;
+  }
 }
 
 export default new GeneralDataServices();
