@@ -25,7 +25,7 @@ export const QuestionRow = styled.div`
 
 export const QuestionText = styled.p`
   margin: 0;
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 500;
 `;
 

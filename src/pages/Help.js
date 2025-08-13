@@ -246,6 +246,19 @@ export default function AppHelp() {
 
   const userFirstName = localStorage.getItem("motivar-user-fname") || "Hi";
 
+  // Add validation logic
+  const isFormValid =
+    courseTitle.trim() &&
+    platform.trim() &&
+    link.trim() &&
+    price.trim() &&
+    duration.trim() &&
+    email.trim() &&
+    password.trim() &&
+    motivation.trim() &&
+    social.trim() &&
+    (!isPrivate || privateEmails.every((e) => e.trim() !== ""));
+
   return (
     <>
       <header>
@@ -563,7 +576,7 @@ export default function AppHelp() {
                     border: "none",
                   }}
                   onClick={handleSubmit}
-                  disabled={loading}
+                  disabled={loading || !isFormValid} // Disable if loading or form is invalid
                 >
                   {loading ? "SUBMITTING..." : "SUBMIT FORM"}
                 </Button>
