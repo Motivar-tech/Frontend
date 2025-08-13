@@ -31,6 +31,8 @@ import { StyledImage } from "../components/images.js";
 import Accordion from "../components/accordion/accordion.js";
 import React, { useRef, useState } from "react";
 import TestimonialCarousel from '../components/Testimonial';
+import axios from "axios";
+import BASE_URL from '../utils/index';
 
 
 let token = localStorage.getItem("motivar-token");
@@ -205,6 +207,32 @@ export default function AppHome() {
 
   // Add this ref at the top of your function
   const testimonialCarouselRef = useRef(null);
+
+  // Newsletter email state
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+  const [newsletterError, setNewsletterError] = useState("");
+
+  // Newsletter handler
+  const handleNewsletterJoin = async (e) => {
+    e.preventDefault();
+    setNewsletterError("");
+    setNewsletterSuccess(false);
+
+    // Simple email validation
+    if (!newsletterEmail || !/\S+@\S+\.\S+/.test(newsletterEmail)) {
+      setNewsletterError("Please enter a valid email address.");
+      return;
+    }
+
+    try {
+      await axios.post(`${ENDPOINT}/user/email-capture`, { email: newsletterEmail });
+      setNewsletterSuccess(true);
+      setNewsletterEmail("");
+    } catch (err) {
+      setNewsletterError("Failed to subscribe. Please try again later.");
+    }
+  };
 
   return (
     <>
@@ -570,8 +598,8 @@ export default function AppHome() {
               }}>
                 <StyledImage
                   src={Group}
-                  height={"100%"}
-                  width={"100%"}
+                  height={"80%"}
+                  width={"80%"}
                   alt="group"
                 />
               </div>
@@ -637,7 +665,7 @@ export default function AppHome() {
           <Row className="p-5 text-white">
             <Col className="col-sm-12 col-md-8 offset-md-2">
               <Row className="p-3 bg-success rounded">
-                <Form className="p-2 d-md-flex">
+                <Form className="p-2 d-md-flex" onSubmit={handleNewsletterJoin}>
                   <div className="col-md-6 col-sm-12 text-md-start">
                     <h5>
                       <strong>Get updates</strong>
@@ -652,20 +680,30 @@ export default function AppHome() {
                       <Form.Control
                         type="email"
                         placeholder="name@example.com"
+                        value={newsletterEmail}
+                        onChange={e => setNewsletterEmail(e.target.value)}
                       />
                     </Form.Group>
                   </div>
                   <div className="col-md-3 col-sm-12 pt-3">
-                    <Link to="/coming-soon">
-                      <Button
-                        className="btn btn-md btn-secondary text-white"
-                        type="button"
-                      >
-                        Join newsletter
-                      </Button>
-                    </Link>
+                    <Button
+                      className="btn btn-md btn-secondary text-white"
+                      type="submit"
+                    >
+                      Join newsletter
+                    </Button>
                   </div>
                 </Form>
+                {newsletterSuccess && (
+                  <div className="w-100 text-center mt-2" style={{ color: "#fff" }}>
+                    Thank you for joining our newsletter!
+                  </div>
+                )}
+                {newsletterError && (
+                  <div className="w-100 text-center mt-2" style={{ color: "#ffd6d6" }}>
+                    {newsletterError}
+                  </div>
+                )}
               </Row>
             </Col>
           </Row>

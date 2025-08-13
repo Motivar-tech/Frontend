@@ -399,13 +399,13 @@ const SponsorDashboard = () => {
                                         <StyledListGroupItem key={req._id}>
                                             <div className="item-content">
                                                 <h6>
-                                                    {req.courseTitle || "Course Title Missing"}
+                                                    {req.course.courseTitle || "Course Title Missing"}
                                                 </h6>
                                                 <p className="text-muted small">
                                                     {/* Display more fields as needed */}
-                                                    <span>Beneficiary: {req.learnerName || "N/A"}</span> |{" "}
-                                                    <span>Platform: {req.platform || "N/A"}</span> |{" "}
-                                                    <span>Price: {req.price || "N/A"} {req.priceUnit || ""}</span>
+                                                    <span>Beneficiary: {req.account.email || "N/A"}</span> |{" "}
+                                                    <span>Platform: {req.course.platform || "N/A"}</span> |{" "}
+                                                    <span>Price: {req.course.price || "N/A"} {req.priceUnit || ""}</span>
                                                 </p>
                                                 {req.status && (
                                                     <span>

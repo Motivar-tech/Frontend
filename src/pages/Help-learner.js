@@ -11,6 +11,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Navbar from "react-bootstrap/Navbar";
 import React, { useEffect, useState } from "react";
+import Vector from "../assets/images/Vector.png";
 import Modal from "react-bootstrap/Modal";
 import { Link, useNavigate } from "react-router-dom";
 import NavDropdown from "react-bootstrap/NavDropdown";
@@ -1031,11 +1032,13 @@ export default function AppHelpLearner() {
         <div
           className="container-fluid d-flex justify-content-center align-items-center"
           style={{
-            backgroundImage: `url(${Subtract})`,
+            backgroundImage: `url(${Vector})`,
+            opacity: 1,
+            backgroundColor: "#11D99A",
             backgroundSize: "cover",
             backgroundPosition: "center",
             width: "90%",
-            height: "200px",
+            height: "120px",
             borderRadius: "16px",
             margin: "0 auto",
           }}

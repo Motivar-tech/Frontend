@@ -28,27 +28,27 @@ const Footer = () => {
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
             <StyledImage
               src={logo}
-              width="80%"
-              height="80%"
+              width="60%"
+              height="60%"
               style={{ marginBottom: "2px", marginTop: "-10px" }}
             />
             <div
               style={{
-                fontSize: "10px",
+                fontSize: "9px",
                 fontWeight: 400,
                 fontStyle: "italic",
                 color: "#222",
                 margin: "2px 0 10px 0",
-                maxWidth: "160px",
+                maxWidth: "300px",
                 lineHeight: 1.2,
-                padding: 0,
+                paddingTop: 10,
                 whiteSpace: "normal",
               }}
             >
               Learner Support Infrastructure for Digital Education
             </div>
           </div>
-          <h4 style={{fontSize: '12px',fontWeight: "400", fontStyle: "italic", marginTop: "30px"}}>
+          <h4 style={{fontSize: '8px',fontWeight: "400", fontStyle: "italic", marginTop: "30px"}}>
             Find Us on Social Media:
           </h4>
           <SocialIcons>
