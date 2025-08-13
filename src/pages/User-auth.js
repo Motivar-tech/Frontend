@@ -1005,7 +1005,7 @@ export default function AppAuth() {
                                 fontFamily: "Montserrat, sans-serif",
                                 fontWeight: 400
                               }}>
-                                I accept the <a href="#">Terms & Conditions</a> and understand my data may be collected and used as described in Motivar's privacy policy
+                                I accept the <a href="/terms.html" target="blank">Terms & Conditions</a> and understand my data may be collected and used as described in Motivar's <a href="https://www.freeprivacypolicy.com/live/37127b01-6492-48cd-b7d5-b2f521359753" target="blank">privacy policy</a>
                               </span>
                             }
                           />

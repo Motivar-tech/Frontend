@@ -850,12 +850,89 @@ function LearnerDetailsModal({ show, onHide, learner }) {
   );
 }
 
+function SponsorGroupModal({ show, onHide, onSubmit }) {
+  const [amount, setAmount] = useState("");
+  const [targetGroup, setTargetGroup] = useState("");
+  const [note, setNote] = useState("");
+
+  const handleSubmit = () => {
+    onSubmit({ amount, targetGroup, note });
+    onHide();
+  };
+
+  return (
+    <Modal show={show} onHide={onHide} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Sponsor a Group</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group className="mb-3">
+            <Form.Label>Amount to be paid</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Target group</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="e.g. Women in Tech, Undergraduates"
+              value={targetGroup}
+              onChange={(e) => setTargetGroup(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Extra note</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Any extra note to add"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="success" onClick={handleSubmit}>
+          Submit
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
 export default function AppHelpLearner() {
   const [modalShow, setModalShow] = useState(false);
   const [modalShowII, setModalShowII] = useState(false);
 
   const [requests, setRequests] = useState([]);
   const [index, setIndex] = useState();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredRequests, setFilteredRequests] = useState([]);
+
+  useEffect(() => {
+    setFilteredRequests(requests);
+  }, [requests]);
+
+  const handleFilter = () => {
+    const filtered = requests.filter((req) => {
+      const keyword = searchTerm.trim().toLowerCase();
+      if (!keyword) return true;
+      return (
+        req.course.courseTitle?.toLowerCase().includes(keyword) ||
+        req.course.platform?.toLowerCase().includes(keyword) ||
+        req.motivation?.toLowerCase().includes(keyword) ||
+        req.socials?.toLowerCase().includes(keyword)
+      );
+    });
+    setFilteredRequests(filtered);
+  };
 
   const fetchRequests = async () => {
     try {
@@ -885,6 +962,12 @@ export default function AppHelpLearner() {
 
     return () => clearInterval(textAlternator);
   }, []);
+
+  const [showSponsorGroupModal, setShowSponsorGroupModal] = useState(false);
+
+  const handleSponsorGroupSubmit = (data) => {
+    toast.success("Group sponsorship submitted!");
+  };
 
   return (
     <div
@@ -977,9 +1060,11 @@ export default function AppHelpLearner() {
               <Form className="d-flex">
                 <Form.Control
                   type="search"
-                  placeholder="🔍"
+                  placeholder="🔍 Filter by keyword"
                   className="me-2"
                   aria-label="Search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   style={{
                     borderRadius: "10px",
                     border: "1px solid #11D99A",
@@ -994,12 +1079,12 @@ export default function AppHelpLearner() {
                     border: "1px solid #11D99A",
                     fontFamily: "Montserrat, sans-serif",
                   }}
+                  onClick={handleFilter}
                 >
                   Filter <BsArrowDown className="ms-1" />
                 </Button>
               </Form>
             </Col>
-
             <Col
               md={5}
               className="d-flex pt-3 pt-md-0 justify-content-between justify-content-md-end"
@@ -1018,9 +1103,9 @@ export default function AppHelpLearner() {
                   if (requests.length > 0) {
                     const randomIndex = Math.floor(
                       Math.random() * requests.length
-                    ); // Select a random index
-                    setIndex(randomIndex); // Set the index to the randomly selected card
-                    setModalShow(true); // Open the modal
+                    );
+                    setIndex(randomIndex);
+                    setModalShow(true);
                   } else {
                     toast.error("No learners available to sponsor.");
                   }
@@ -1038,7 +1123,7 @@ export default function AppHelpLearner() {
                   whiteSpace: "nowrap",
                   width: "60%",
                 }}
-                onClick={() => setModalShowII(true)}
+                onClick={() => setShowSponsorGroupModal(true)}
               >
                 Sponsor a group
               </Button>
@@ -1048,8 +1133,8 @@ export default function AppHelpLearner() {
 
         <Container fluid>
           <Row className="px-md-5 pt-5 justify-content-start">
-            {requests.length > 0 &&
-              requests.map((item, index) => (
+            {filteredRequests.length > 0 &&
+              filteredRequests.map((item, index) => (
                 <Col key={index} md={6} lg={5} xl={4} className="mb-4">
                   <Card
                     className="shadow-sm"
@@ -1193,6 +1278,11 @@ export default function AppHelpLearner() {
             />
           )}
         </Container>
+        <SponsorGroupModal
+          show={showSponsorGroupModal}
+          onHide={() => setShowSponsorGroupModal(false)}
+          onSubmit={handleSponsorGroupSubmit}
+        />
       </main>
       <AppFooter />
     </div>
