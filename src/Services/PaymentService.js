@@ -7,10 +7,10 @@ import { BASE_URL } from "../utils/index";
 const ENDPOINT = BASE_URL;
 
 class PaymentService {
-  async InitiatePayment(amount, token) {
+  async InitiatePayment(payload, token) {
     const response = await axios.post(
       `${ENDPOINT}/course/initiate/pay`,
-      { amount: amount },
+      payload,
       {
         headers: { Authorization: token },
       }

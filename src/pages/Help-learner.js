@@ -385,7 +385,7 @@ function MeetLearner(props) {
   );
 }
 
-const handleScheduleClick = async (email, name, id, price, unit) => {
+const handleScheduleClick = async (email, name, id, price, unit, requestId) => {
   const title = encodeURIComponent(`Motivar - Sponsor Meetup with ${name}`);
   const details = encodeURIComponent(
     `Hello, ${name}. We will be meeting to discuss your interest in the course sponsorship you requested on Motivar!. Please do well to be available within the set time. Thanks!`
@@ -397,8 +397,8 @@ const handleScheduleClick = async (email, name, id, price, unit) => {
   window.open(url, "_blank");
 
   const token = await localStorage.getItem("motivar-token");
-  const payload = { name, id, price, unit, email };
-  const resp = await GeneralDataServices.notifyMeetingSchedule(payload, token);
+  const payload = { name, id, price, unit, email, requestId};
+  await GeneralDataServices.notifyMeetingSchedule(payload, token);
 };
 
 // start anonymous modal
@@ -523,21 +523,21 @@ function LearnerDetailsModal({ show, onHide, learner }) {
   const [proceed, setProceed] = useState(false);
   const router = useNavigate();
 
-  const handleMeetLearner = async (name, email, id, price, unit) => {
-    handleScheduleClick(email, name, id, price, unit);
+  const handleMeetLearner = async (name, email, id, price, unit, requestId) => {
+    handleScheduleClick(email, name, id, price, unit, requestId);
     try {
       router(
-        `/sponsor-status?state=meet&learner=${name}&id=${id}&price=${price}&unit=${unit}`
+        `/sponsor-status?state=meet&learner=${name}&id=${id}&price=${price}&unit=${unit}&requestId=${requestId}`
       );
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handlePayAsAnnonymous = async (name, id, price, unit) => {
+  const handlePayAsAnnonymous = async (name, id, price, unit, requestId) => {
     try {
       router(
-        `/sponsor-status?state=pay&learner=${name}&id=${id}&price=${price}&unit=${unit}`
+        `/sponsor-status?state=pay&learner=${name}&id=${id}&price=${price}&unit=${unit}&requestID=${requestId}`
       );
     } catch (error) {
       console.log(error);
@@ -759,7 +759,8 @@ function LearnerDetailsModal({ show, onHide, learner }) {
                       learner?.learner?.userId?.email,
                       learner?.learner?.userId?._id,
                       learner?.course?.price,
-                      learner?.course?.priceUnit
+                      learner?.course?.priceUnit,
+                      learner?._id
                     )
                   }
                   style={{
@@ -785,7 +786,8 @@ function LearnerDetailsModal({ show, onHide, learner }) {
                       learner?.learner?.userId?.fullName,
                       learner?.learner?.userId?._id,
                       learner?.course?.price,
-                      learner?.course?.priceUnit
+                      learner?.course?.priceUnit,
+                      learner?._id
                     );
                     localStorage.setItem("requestID", learner?._id);
                   }}
