@@ -14,6 +14,8 @@ import PrivateRoute from "./components/PrivateRoute.js";
 import DashboardRouter from "./pages/DashboardRouter";
 import Restricted from "./pages/Restricted.js";
 import CompleteProfile from "./pages/CompleteProfile.js";
+import ChatInterface from "./pages/Chat.js";
+import RecommendationsList from "./pages/Recommendation.js";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -60,6 +62,14 @@ function App() {
             />
             <Route path="/restricted" element={<Restricted />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
+            <Route
+              path="/chat"
+              element={<PrivateRoute component={ChatInterface} />}
+            />
+            <Route
+              path="/recommendations"
+              element={<PrivateRoute component={RecommendationsList} />}
+            />
           </Routes>
         </div>
       </Router>
