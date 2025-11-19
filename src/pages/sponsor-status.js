@@ -9,6 +9,7 @@ import { Button } from "react-bootstrap";
 import Spinner from "react-bootstrap/Spinner";
 
 import PaymentService from "../Services/PaymentService";
+import toast from "react-hot-toast";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -47,6 +48,7 @@ const SponsorStatus = () => {
   let price = searchParams.get("price");
   let state = searchParams.get("state");
   let unit = searchParams.get("unit");
+  let requestID = searchParams.get("requestID");
 
   if (state === "meet") {
     return (
@@ -56,6 +58,7 @@ const SponsorStatus = () => {
         id={learner_id}
         price={price}
         unit={unit}
+        requestID={requestID}
       />
     );
   } else {
@@ -67,12 +70,13 @@ const SponsorStatus = () => {
         unit={unit}
         loading={loading}
         setLoading={setLoading}
+        requestID={requestID}
       />
     );
   }
 };
 
-const MeetLearner = ({ learner, name, id, price, unit }) => {
+const MeetLearner = ({ learner, name, id, price, unit, requestID }) => {
   const router = useNavigate();
   return (
     <>
@@ -111,7 +115,7 @@ const MeetLearner = ({ learner, name, id, price, unit }) => {
           <Button
             onClick={() =>
               router(
-                `/sponsor-status?state=pay&learner=${name}&id=${id}&price=${price}&unit=${unit}`
+                `/sponsor-status?state=pay&learner=${name}&id=${id}&price=${price}&unit=${unit}&requestID=${requestID}`
               )
             }
             style={{
@@ -166,22 +170,40 @@ const MeetLearner = ({ learner, name, id, price, unit }) => {
   );
 };
 
-const PayCourse = ({ learner, id, price, unit, loading, setLoading }) => {
+const PayCourse = ({
+  learner,
+  id,
+  price,
+  unit,
+  loading,
+  setLoading,
+  requestID,
+}) => {
   const router = useNavigate();
 
   const handlePayWithPaystack = async () => {
     setLoading(true);
     const token = await localStorage.getItem("motivar-token");
     try {
-      const resp = await PaymentService.InitiatePayment(
-        Number(price) * 100,
-        token
-      );
+      const payload = {
+        amount: Number(price) * 100 + (Number(price) * 9) / 100,
+        requestID: requestID,
+        currency: unit,
+        description: `Sponsoring ${learner} for a ${unit}${Number(
+          price
+        ).toLocaleString("en-US", {
+          minimumFractionDigits: 0,
+        })} course.`,
+      };
+      const resp = await PaymentService.InitiatePayment(payload, token);
       setLoading(false);
 
       window.open(resp.data.data.data.authorization_url, "_blank");
     } catch (error) {
       setLoading(false);
+      toast.error(
+        error?.response?.data?.message || "Error intiating payment.."
+      );
       console.log("Error intiating payment..", error);
     }
   };
