@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Import styled-components
-import ChatService from '../Services/ChatService';
+import chatService from '../Services/ChatService';
 import Container from 'react-bootstrap/Container';
 import Vector from "../assets/images/Vector.png";
 
@@ -262,7 +262,7 @@ function ChatInterface() {
   const startChat = async () => {
     try {
       setIsLoading(true);
-      const response = await ChatService.startChat();
+      const response = await chatService.startChat();
       handleChatResponse(response);
     } catch (error) {
       console.error('Error starting chat:', error);
@@ -304,7 +304,7 @@ function ChatInterface() {
       setIsLoading(true);
 
       try {
-        const response = await ChatService.sendMessage(sessionId, messageText);
+        const response = await chatService.sendMessage(sessionId, messageText);
         handleChatResponse(response);
       } catch (error) {
         console.error('Error sending message:', error);

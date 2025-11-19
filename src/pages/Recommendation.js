@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import styled from 'styled-components';
-import RecService from '../Services/RecService';
+import recService from '../Services/RecService';
 import { FiStar, FiExternalLink, FiImage } from 'react-icons/fi';
 import { getCourseImage } from '../utils/recImgs.js';
 import { generateSmartTags } from '../utils/tags.js';
@@ -291,7 +291,7 @@ function RecommendationsList() {
   const loadRecommendations = async () => {
     try {
       setIsLoading(true);
-      const response = await RecService.getRecommendations();
+      const response = await recService.getRecommendations();
       
       const augmentedRecommendations = response.recommendations.map((rec, index) => {
           return {

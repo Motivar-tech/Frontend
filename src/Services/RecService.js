@@ -26,4 +26,5 @@ class RecService {
   }
 }
 
-export default new RecService();
+const recService = new RecService();
+export default recService;
