@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Import styled-components
 import chatService from '../Services/ChatService';
@@ -205,19 +205,7 @@ const styles = {
   }
 };
 
-function ChatInterface() {
-  const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [sessionId, setSessionId] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
-  const [suggestions, setSuggestions] = useState([]); 
-
-  const messagesEndRef = useRef(null);
-  const hasInitialized = useRef(false);
-  const navigate = useNavigate();
-
-  const generateSuggestions = (botText) => {
+const generateSuggestions = (botText) => {
     const sentences = botText.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [botText];
     const questionSentence = sentences.reverse().find(s => s.includes('?'));
 
@@ -243,35 +231,27 @@ function ChatInterface() {
     return [];
   };
 
+function ChatInterface() {
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [sessionId, setSessionId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const [suggestions, setSuggestions] = useState([]); 
+
+  const messagesEndRef = useRef(null);
+  const hasInitialized = useRef(false);
+  const navigate = useNavigate();
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    if (!hasInitialized.current) {
-      startChat();
-      hasInitialized.current = true;
-    }
-    scrollToBottom();
-  }, []);
-
-  useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  const startChat = async () => {
-    try {
-      setIsLoading(true);
-      const response = await chatService.startChat();
-      handleChatResponse(response);
-    } catch (error) {
-      console.error('Error starting chat:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleChatResponse = (response) => {
+  const handleChatResponse = useCallback((response) => {
     if (response.redirect) {
       navigate(response.redirect);
       return;
@@ -293,7 +273,27 @@ function ChatInterface() {
     }
 
     setMessages(prev => [...prev, { type: 'bot', content: response.bot }]);
-  };
+  }, [navigate]);
+  
+  const startChat = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await chatService.startChat();
+      handleChatResponse(response);
+    } catch (error) {
+      console.error('Error starting chat:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [handleChatResponse]);
+
+  useEffect(() => {
+    if (!hasInitialized.current) {
+      startChat();
+      hasInitialized.current = true;
+    }
+    scrollToBottom();
+  }, [startChat]);
 
   const processSendMessage = async (messageText) => {
       if (!messageText.trim() || !sessionId) return; // Added safety check for sessionId
