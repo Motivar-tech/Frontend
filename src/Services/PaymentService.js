@@ -16,7 +16,7 @@ class PaymentService {
       }
     );
     return response;
-  }
+  } 
 
   async initiatePaymentVerification(token, reference) {
     let response = await axios.get(
