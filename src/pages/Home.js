@@ -413,7 +413,7 @@ export default function AppHome() {
                   paddingLeft: "0",
                   marginBottom: "24px"
                 }}>
-                  Find the perfect online course for you
+                  Unlock Your Personalized Learning Journey
                 </SectionHeadText>
                 <SectionBodyText style={{
                   padding: "0",
@@ -421,15 +421,12 @@ export default function AppHome() {
                   marginBottom: "32px",
                   width: "100%"
                 }}>
-                  Take our psychometric test to discover personalized course
-                  recommendations that match your unique abilities, learning style
-                  and goals.
+                  Chat live with Motivar EduBuddy to define your career goals, assess your skills, 
+                  and instantly get matched with the online courses that fit your budget and schedule.
                 </SectionBodyText>
                 <div className="d-flex align-items-center">
                   <a
-                    // href="https://motivar-recommender.onrender.com/test/personality/"
-                    href="/coming-soon"
-                    //target="_blank"
+                    href="/chat"
                     rel="noopener noreferrer"
                   >
                     <Button className="btn btn-lg btn-secondary text-white"

@@ -859,7 +859,7 @@ function SponsorGroupModal({ show, onHide, onSubmit }) {
   const [note, setNote] = useState("");
 
   const handleSubmit = () => {
-    onSubmit({ amount, targetGroup, note });
+    onSubmit({ number, targetGroup, targetTrack, note });
     onHide();
   };
 
@@ -871,11 +871,11 @@ function SponsorGroupModal({ show, onHide, onSubmit }) {
       <Modal.Body>
         <Form>
           <Form.Group className="mb-3">
-            <Form.Label>Amount to be paid</Form.Label>
+            <Form.Label>Number of Learners to Sponsor</Form.Label>
             <Form.Control
               type="number"
               placeholder="Enter amount"
-              value={amount}
+              value={number}
               onChange={(e) => setAmount(e.target.value)}
             />
           </Form.Group>
@@ -885,6 +885,15 @@ function SponsorGroupModal({ show, onHide, onSubmit }) {
               type="text"
               placeholder="e.g. Women in Tech, Undergraduates"
               value={targetGroup}
+              onChange={(e) => setTargetGroup(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Target learning track</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="e.g. Web Development, Data Science"
+              value={targetTrack}
               onChange={(e) => setTargetGroup(e.target.value)}
             />
           </Form.Group>
