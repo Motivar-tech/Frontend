@@ -527,7 +527,7 @@ function LearnerDetailsModal({ show, onHide, learner }) {
     handleScheduleClick(email, name, id, price, unit, requestId);
     try {
       router(
-        `/sponsor-status?state=meet&learner=${name}&id=${id}&price=${price}&unit=${unit}&requestId=${requestId}`
+        `/sponsor-status?state=meet&learner=${name}&id=${id}&price=${price}&unit=${unit}&requestID=${requestId}`
       );
     } catch (error) {
       console.log(error);
@@ -856,10 +856,11 @@ function LearnerDetailsModal({ show, onHide, learner }) {
 function SponsorGroupModal({ show, onHide, onSubmit }) {
   const [amount, setAmount] = useState("");
   const [targetGroup, setTargetGroup] = useState("");
+  const [targetTrack, setTargetTrack] = useState("");
   const [note, setNote] = useState("");
 
   const handleSubmit = () => {
-    onSubmit({ number, targetGroup, targetTrack, note });
+    onSubmit({ amount, targetGroup, targetTrack, note });
     onHide();
   };
 
@@ -875,7 +876,7 @@ function SponsorGroupModal({ show, onHide, onSubmit }) {
             <Form.Control
               type="number"
               placeholder="Enter amount"
-              value={number}
+              value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
           </Form.Group>
@@ -894,7 +895,7 @@ function SponsorGroupModal({ show, onHide, onSubmit }) {
               type="text"
               placeholder="e.g. Web Development, Data Science"
               value={targetTrack}
-              onChange={(e) => setTargetGroup(e.target.value)}
+              onChange={(e) => setTargetTrack(e.target.value)}
             />
           </Form.Group>
           <Form.Group className="mb-3">

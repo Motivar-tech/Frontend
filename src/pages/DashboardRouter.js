@@ -29,10 +29,10 @@ const DashboardRouter = () => {
                 });
 
                 const userDetails = response.data.userDetails;
-                if (userDetails.role === "learner") {
-                    setRole("learner");
+                if (userDetails.role === "learner" || userDetails.role === "sponsor") {
+                    setRole(userDetails.role);
                 } else {
-                    setRole("sponsor");
+                    setError("Your account role is not set. Please complete account setup.");
                 }
             } catch (err) {
                 const errorMessage = err.response?.data?.message || err.message || "Failed to load dashboard.";

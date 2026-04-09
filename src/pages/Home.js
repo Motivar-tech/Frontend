@@ -32,7 +32,7 @@ import Accordion from "../components/accordion/accordion.js";
 import React, { useRef, useState } from "react";
 import TestimonialCarousel from '../components/Testimonial';
 import axios from "axios";
-import BASE_URL from '../utils/index';
+import { BASE_URL } from '../utils/index';
 
 
 let token = localStorage.getItem("motivar-token");
@@ -226,7 +226,7 @@ export default function AppHome() {
     }
 
     try {
-      await axios.post(`${ENDPOINT}/user/email-capture`, { email: newsletterEmail });
+      await axios.post(`${BASE_URL}/user/email-capture`, { email: newsletterEmail });
       setNewsletterSuccess(true);
       setNewsletterEmail("");
     } catch (err) {

@@ -7,19 +7,34 @@ const ENDPOINT = BASE_URL;
 
 class AuthDataServices {
   async signUp(payload) {
-    const response = await axios.post(`${ENDPOINT}/user/onboard`,
-      payload,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await axios.post(`${ENDPOINT}/user/onboard`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     return response;
   }
 
-  async signIn(payload){
+  async signIn(payload) {
     const response = await axios.post(`${ENDPOINT}/user/auth`, payload);
+    return response;
+  }
+
+  async resendVerificationCode(payload) {
+    // payload: { email }
+    const response = await axios.post(`${ENDPOINT}/user/resend-otp`, payload, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response;
+  }
+
+  async updateProfile(token, data) {
+    const response = await axios.patch(`${ENDPOINT}/user/profile/update`, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response;
   }
 
@@ -29,9 +44,7 @@ class AuthDataServices {
         `${ENDPOINT}/user/auth/google`,
         payload,
         {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { "Content-Type": "application/json" },
         }
       );
       return response;
@@ -46,9 +59,7 @@ class AuthDataServices {
         `${ENDPOINT}/user/auth/google-finalize`,
         userData,
         {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { "Content-Type": "application/json" },
         }
       );
       return response;

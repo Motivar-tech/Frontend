@@ -12,17 +12,17 @@ class PaymentService {
       `${ENDPOINT}/course/initiate/pay`,
       payload,
       {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
     return response;
-  } 
+  }
 
   async initiatePaymentVerification(token, reference) {
     let response = await axios.get(
       `${ENDPOINT}/course/verify/pay?reference=${reference}`,
       {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
 

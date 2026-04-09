@@ -9,7 +9,7 @@ const ENDPOINT = BASE_URL;
 class GeneralDataServices {
   async RequestHelp(payload, token) {
     const response = await axios.post(`${ENDPOINT}/course/request`, payload, {
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     return response;
@@ -19,7 +19,7 @@ class GeneralDataServices {
     const response = await axios.post(
       `${ENDPOINT}/course/meet/${requestID}`,
       payload,
-      { headers: { Authorization: token } }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
     return response;
@@ -34,7 +34,7 @@ class GeneralDataServices {
     const response = await axios.post(
       `${ENDPOINT}/course/add-proof/${requestID}`,
       payload,
-      { headers: { Authorization: token } }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
     return response;
   }

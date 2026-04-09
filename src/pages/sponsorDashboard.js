@@ -18,6 +18,7 @@ import Logo from "../assets/images/Motivar.svg";
 import { FiUser, FiList, FiLogOut, FiAlertCircle } from 'react-icons/fi';
 
 import { BASE_URL } from '../utils/index'
+import CompleteProfileModal from '../components/CompleteProfileModal';
 
 // --- Brand Colors ---
 const brandColors = {
@@ -248,6 +249,8 @@ const SponsorDashboard = () => {
     const [sponsoredRequests, setSponsoredRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
 
     useEffect(() => {
         const fetchSponsorDashboard = async () => {
@@ -264,6 +267,12 @@ const SponsorDashboard = () => {
                 const data = response.data;
                 setUserDetails(data.userDetails);
                 setSponsoredRequests(data.sponsoredRequests || []);
+
+                // Prompt profile completion if fullName or phoneNumber is missing
+                const profile = data.userDetails;
+                if (!profile.fullName || !profile.phoneNumber) {
+                    setShowProfileModal(true);
+                }
             } catch (err) {
                 setError(err.response?.data?.message || "Failed to load sponsor dashboard.");
             } finally {
@@ -272,7 +281,7 @@ const SponsorDashboard = () => {
         };
 
         fetchSponsorDashboard();
-    }, []);
+    }, [refreshKey]);
 
     const handleLogout = () => {
         localStorage.removeItem("motivar-token");
@@ -437,6 +446,16 @@ const SponsorDashboard = () => {
             <StyledFooter>
                 <p>Copyright © {new Date().getFullYear()} Motivar Learning Technologies</p>
             </StyledFooter>
+
+            {/* Complete Profile Modal */}
+            <CompleteProfileModal
+                show={showProfileModal}
+                onComplete={({ fullName }) => {
+                    setShowProfileModal(false);
+                    setUserDetails((prev) => ({ ...prev, fullName }));
+                    setRefreshKey((k) => k + 1);
+                }}
+            />
         </DashboardWrapper>
     );
 };

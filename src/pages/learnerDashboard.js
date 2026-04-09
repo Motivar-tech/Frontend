@@ -23,6 +23,7 @@ import {
     FiUpload, FiLogOut, FiAlertCircle
 } from 'react-icons/fi';
 import { BASE_URL } from '../utils/index'
+import CompleteProfileModal from '../components/CompleteProfileModal';
 
 // --- Brand Colors ---
 const brandColors = {
@@ -407,7 +408,9 @@ const LearnerDashboard = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [isUploading, setIsUploading] = useState(false); // Uploading state
+    const [isUploading, setIsUploading] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -426,6 +429,12 @@ const LearnerDashboard = () => {
             setUserDetails(data.userDetails);
             setDashboardCourses(data.dashboardCourses);
             setRequests(data.requests);
+
+            // Prompt profile completion if fullName or phoneNumber is missing
+            const profile = data.userDetails;
+            if (!profile.fullName || !profile.phoneNumber) {
+                setShowProfileModal(true);
+            }
         } catch (err) {
             console.error("Error fetching dashboard data:", err);
             setError(err.response?.data?.message || "Failed to load dashboard data. Please try again later.");
@@ -435,7 +444,7 @@ const LearnerDashboard = () => {
         };
 
         fetchDashboardData();
-    }, []);
+    }, [refreshKey]);
 
     // --- Logout Handler ---
     const handleLogout = () => {
@@ -460,7 +469,7 @@ const LearnerDashboard = () => {
             formData.append("certificate", selectedFile);
 
             const response = await axios.put(
-                `https://motivar-sponsor-api-v1.onrender.com/dashboard/${selectedCourse._id}/upload-completion-certificate`,
+                `${BASE_URL}/dashboard/${selectedCourse._id}/upload-completion-certificate`,
                 formData,
                 { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
             );
@@ -747,7 +756,7 @@ const LearnerDashboard = () => {
                                                                         return;
                                                                     }
 
-                                                                    const response = await fetch(`https://motivar-sponsor-api-v1.onrender.com/dashboard/${course._id}/view-certificate`, {
+                                                                    const response = await fetch(`${BASE_URL}/dashboard/${course._id}/view-certificate`, {
                                                                         method: "GET",
                                                                         headers: {
                                                                             Authorization: `Bearer ${token}`,
@@ -803,6 +812,17 @@ const LearnerDashboard = () => {
             <StyledFooter>
                 <p>Copyright © {new Date().getFullYear()} Motivar Learning Technologies</p>
             </StyledFooter>
+
+            {/* Complete Profile Modal */}
+            <CompleteProfileModal
+                show={showProfileModal}
+                onComplete={({ fullName }) => {
+                    setShowProfileModal(false);
+                    // Update the displayed name immediately, then refresh full data
+                    setUserDetails((prev) => ({ ...prev, fullName }));
+                    setRefreshKey((k) => k + 1);
+                }}
+            />
 
             {/* Upload Certificate Modal - Styled */}
             {selectedCourse && (
