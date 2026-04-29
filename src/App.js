@@ -16,6 +16,7 @@ import Restricted from "./pages/Restricted.js";
 import CompleteProfile from "./pages/CompleteProfile.js";
 import ChatInterface from "./pages/Chat.js";
 import RecommendationsList from "./pages/Recommendation.js";
+import ResetPassword from "./pages/ResetPassword.js";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -60,6 +61,7 @@ function App() {
               path="/sponsor-status/*"
               element={<PrivateRoute component={SponsorStatus} />}
             />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/restricted" element={<Restricted />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
             <Route

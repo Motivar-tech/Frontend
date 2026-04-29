@@ -114,6 +114,12 @@ export default function AppAuth() {
   const [loginPassword, setLoginPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
 
+  // ── Forgot password state ──
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
+
   // ── Sign-up state ──
   const [signUpStep, setSignUpStep] = useState(1); // 1 | 2 | 3
 
@@ -137,26 +143,32 @@ export default function AppAuth() {
       setTimeout(() => reject(new Error("Request timed out. Please try again.")), ms)
     );
 
-  // ── Restore signup state when returning from verification link ───────────
+  // ── Restore signup state on mount (persists across refreshes and new tabs) ─
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const verifiedParam = params.get("verified");
 
     if (verifiedParam === "true") {
-      const saved = sessionStorage.getItem("motivar-signup-state");
+      // User clicked the verification link — restore credentials and advance to step 3
+      let restoredEmail = "", restoredPassword = "";
+      const saved = localStorage.getItem("motivar-signup-state");
       if (saved) {
         try {
-          const { email: savedEmail, password: savedPassword } = JSON.parse(saved);
-          setEmail(savedEmail || "");
-          setPassword(savedPassword || "");
-        } catch (_) {
-          // ignore malformed data
-        }
+          const parsed = JSON.parse(saved);
+          restoredEmail = parsed.email || "";
+          restoredPassword = parsed.password || "";
+        } catch (_) {}
       }
+      setEmail(restoredEmail);
+      setPassword(restoredPassword);
+      localStorage.setItem(
+        "motivar-signup-state",
+        JSON.stringify({ email: restoredEmail, password: restoredPassword, step: 3 })
+      );
       setTabIndex(2);
       setSignUpStep(3);
-      // Clean up URL without triggering a navigation
       window.history.replaceState({}, "", window.location.pathname);
+      return;
     }
 
     if (verifiedParam === "false") {
@@ -164,6 +176,21 @@ export default function AppAuth() {
       setSignUpStep(2);
       toast.error("Verification link is invalid or expired. Please request a new one.");
       window.history.replaceState({}, "", window.location.pathname);
+      return;
+    }
+
+    // No URL params — check for a persisted in-progress signup
+    const saved = localStorage.getItem("motivar-signup-state");
+    if (saved) {
+      try {
+        const { email: savedEmail, password: savedPassword, step: savedStep } = JSON.parse(saved);
+        if (savedStep && savedStep >= 2) {
+          setEmail(savedEmail || "");
+          setPassword(savedPassword || "");
+          setTabIndex(2);
+          setSignUpStep(savedStep);
+        }
+      } catch (_) {}
     }
   }, []);
 
@@ -181,9 +208,11 @@ export default function AppAuth() {
       ]);
       if (response) {
         toast.success(response.data.message);
-        localStorage.setItem("motivar-token", response.data.data.token);
-        localStorage.setItem("motivar-user-role", response.data.data.role);
-        localStorage.setItem("motivar-user-fname", response.data.data.firstName);
+        const { accessToken, refreshToken, role: userRole, firstName } = response.data.data;
+        localStorage.setItem("motivar-token", accessToken);
+        localStorage.setItem("motivar-refresh-token", refreshToken);
+        localStorage.setItem("motivar-user-role", userRole);
+        localStorage.setItem("motivar-user-fname", firstName);
         window.location.pathname = "/dashboard";
       }
     } catch (error) {
@@ -191,6 +220,23 @@ export default function AppAuth() {
         error.response?.data?.message || error.message || "Sign in failed. Please try again."
       );
       setLoginLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!forgotEmail.trim()) {
+      toast.error("Please enter your email address.");
+      return;
+    }
+    setForgotLoading(true);
+    try {
+      await AuthDataServices.forgotPassword(forgotEmail.trim());
+      setForgotSent(true);
+    } catch {
+      // Always show success to prevent user enumeration
+      setForgotSent(true);
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -207,9 +253,11 @@ export default function AppAuth() {
           window.location.pathname = "/complete-profile";
         } else {
           toast.success(response.data.message);
-          localStorage.setItem("motivar-token", response.data.data.token);
-          localStorage.setItem("motivar-user-role", response.data.data.role);
-          localStorage.setItem("motivar-user-fname", response.data.data.firstName);
+          const { accessToken, refreshToken, role: userRole, firstName } = response.data.data;
+          localStorage.setItem("motivar-token", accessToken);
+          localStorage.setItem("motivar-refresh-token", refreshToken);
+          localStorage.setItem("motivar-user-role", userRole);
+          localStorage.setItem("motivar-user-fname", firstName);
           window.location.pathname = "/dashboard";
         }
       }
@@ -254,9 +302,9 @@ export default function AppAuth() {
         AuthDataServices.signUp({ email, password }),
         timeoutPromise(30000),
       ]);
-      // Persist credentials so they survive the round-trip through the
-      // verification email link and can be used to sign in on step 3.
-      sessionStorage.setItem("motivar-signup-state", JSON.stringify({ email, password }));
+      // Persist to localStorage (survives refreshes and new tabs opened by
+      // the verification email link) with the current step so we can restore it.
+      localStorage.setItem("motivar-signup-state", JSON.stringify({ email, password, step: 2 }));
       setSignUpStep(2);
     } catch (error) {
       toast.error(
@@ -295,19 +343,20 @@ export default function AppAuth() {
         AuthDataServices.signIn({ email, password }),
         timeoutPromise(20000),
       ]);
-      const { token, firstName } = signInResponse.data.data;
+      const { accessToken, refreshToken, firstName } = signInResponse.data.data;
 
       // Set the chosen role as a profile update
       await Promise.race([
-        AuthDataServices.updateProfile(token, { role }),
+        AuthDataServices.updateProfile(accessToken, { role }),
         timeoutPromise(20000),
       ]);
 
       toast.success("Account set up! Welcome to Motivar.");
-      localStorage.setItem("motivar-token", token);
+      localStorage.setItem("motivar-token", accessToken);
+      localStorage.setItem("motivar-refresh-token", refreshToken);
       localStorage.setItem("motivar-user-role", role);
       if (firstName) localStorage.setItem("motivar-user-fname", firstName);
-      sessionStorage.removeItem("motivar-signup-state");
+      localStorage.removeItem("motivar-signup-state");
       window.location.pathname = "/dashboard";
     } catch (error) {
       const msg =
@@ -325,7 +374,7 @@ export default function AppAuth() {
     setFormErrors({});
     setRole("");
     setSignUpStep(1);
-    sessionStorage.removeItem("motivar-signup-state");
+    localStorage.removeItem("motivar-signup-state");
   };
 
   const handleTabSwitch = (index) => {
@@ -458,6 +507,50 @@ export default function AppAuth() {
                         {loginLoading ? <Spinner animation="border" size="sm" /> : "Sign in"}
                       </Button>
                     </div>
+
+                    {/* Forgot password */}
+                    {!showForgot && (
+                      <div className="text-center mb-2">
+                        <button
+                          type="button"
+                          onClick={() => { setShowForgot(true); setForgotSent(false); setForgotEmail(""); }}
+                          style={{ background: "none", border: "none", color: "#00AA87", fontSize: 13, fontFamily: "Montserrat, sans-serif", fontWeight: 600, cursor: "pointer", textDecoration: "underline" }}
+                        >
+                          Forgot your password?
+                        </button>
+                      </div>
+                    )}
+
+                    {showForgot && !forgotSent && (
+                      <div style={{ background: "#f1fdf8", borderRadius: 10, padding: "1rem", marginBottom: "0.75rem", border: "1px solid #d0f0e8" }}>
+                        <p style={{ fontSize: 13, color: "#374740", fontFamily: "Montserrat, sans-serif", marginBottom: "0.5rem" }}>
+                          Enter your email and we'll send you a reset link.
+                        </p>
+                        <Form.Control
+                          type="email"
+                          placeholder="your@email.com"
+                          value={forgotEmail}
+                          onChange={(e) => setForgotEmail(e.target.value)}
+                          style={{ ...inputStyle, height: 44, marginBottom: "0.5rem" }}
+                        />
+                        <div className="d-flex gap-2">
+                          <Button size="sm" style={{ background: "#00AA87", border: "none", fontFamily: "Montserrat, sans-serif", fontWeight: 600, flex: 1 }} onClick={handleForgotPassword} disabled={forgotLoading}>
+                            {forgotLoading ? <Spinner animation="border" size="sm" /> : "Send Reset Link"}
+                          </Button>
+                          <Button size="sm" variant="outline-secondary" style={{ fontFamily: "Montserrat, sans-serif" }} onClick={() => setShowForgot(false)}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {showForgot && forgotSent && (
+                      <div style={{ background: "#f1fdf8", borderRadius: 10, padding: "1rem", marginBottom: "0.75rem", border: "1px solid #d0f0e8", textAlign: "center" }}>
+                        <p style={{ fontSize: 13, color: "#00AA87", fontFamily: "Montserrat, sans-serif", fontWeight: 600, marginBottom: "0.25rem" }}>Check your inbox!</p>
+                        <p style={{ fontSize: 12, color: "#555", fontFamily: "Montserrat, sans-serif", margin: 0 }}>If that email is registered, a reset link is on its way.</p>
+                        <button type="button" onClick={() => setShowForgot(false)} style={{ background: "none", border: "none", color: "#00AA87", fontSize: 12, fontFamily: "Montserrat, sans-serif", marginTop: "0.5rem", cursor: "pointer", textDecoration: "underline" }}>Back to sign in</button>
+                      </div>
+                    )}
                   </Form>
 
                   <div className="text-center mb-3" style={{ color: "#888" }}>Or</div>
@@ -724,7 +817,13 @@ export default function AppAuth() {
                           textDecoration: "none",
                           fontSize: 13,
                         }}
-                        onClick={() => setSignUpStep(1)}
+                        onClick={() => {
+                          localStorage.removeItem("motivar-signup-state");
+                          setSignUpStep(1);
+                          setEmail("");
+                          setPassword("");
+                          setConfirmPassword("");
+                        }}
                       >
                         ← Use a different email
                       </Button>

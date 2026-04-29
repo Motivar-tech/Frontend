@@ -1,16 +1,14 @@
 /* eslint-disable */
 
 import axios from "axios";
-import { BASE_URL } from '../utils/index'
+import { BASE_URL } from '../utils/index';
+
 const ENDPOINT = BASE_URL;
-//const ENDPOINT = "http://localhost:8089";
 
 class AuthDataServices {
   async signUp(payload) {
     const response = await axios.post(`${ENDPOINT}/user/onboard`, payload, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     });
     return response;
   }
@@ -21,7 +19,6 @@ class AuthDataServices {
   }
 
   async resendVerificationCode(payload) {
-    // payload: { email }
     const response = await axios.post(`${ENDPOINT}/user/resend-otp`, payload, {
       headers: { "Content-Type": "application/json" },
     });
@@ -39,33 +36,48 @@ class AuthDataServices {
   }
 
   async googleLogin(payload) {
-    try {
-      const response = await axios.post(
-        `${ENDPOINT}/user/auth/google`,
-        payload,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    const response = await axios.post(`${ENDPOINT}/user/auth/google`, payload, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response;
   }
 
   async finalizeGoogleRegistration(userData) {
-    try {
-      const response = await axios.post(
-        `${ENDPOINT}/user/auth/google-finalize`,
-        userData,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    const response = await axios.post(`${ENDPOINT}/user/auth/google-finalize`, userData, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response;
+  }
+
+  async refreshToken(refreshToken) {
+    const response = await axios.post(`${ENDPOINT}/user/auth/refresh`, { refreshToken });
+    return response;
+  }
+
+  async logout(refreshToken) {
+    const token = localStorage.getItem("motivar-token");
+    await axios.post(
+      `${ENDPOINT}/user/auth/logout`,
+      { refreshToken },
+      { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(() => {});
+    localStorage.removeItem("motivar-token");
+    localStorage.removeItem("motivar-refresh-token");
+    localStorage.removeItem("motivar-user-role");
+  }
+
+  async forgotPassword(email) {
+    const response = await axios.post(`${ENDPOINT}/user/forgot-password`, { email });
+    return response;
+  }
+
+  async resetPassword(token, userId, newPassword) {
+    const response = await axios.post(`${ENDPOINT}/user/reset-password`, {
+      token,
+      userId,
+      newPassword,
+    });
+    return response;
   }
 }
 
