@@ -1,27 +1,28 @@
 /* eslint-disable */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
 import Tick from "../assets/Icons/tick-circle.svg";
 import ArrowLeft from "../assets/Icons/arrow-left.svg";
 import PaymentService from "../Services/PaymentService";
-import Spinner from "react-bootstrap/Spinner";
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #fffffa;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 2rem 1rem;
 `;
 
 const Body = styled.div`
   width: 45%;
-  height: 50%;
+  min-height: 50%;
   box-shadow: 0px 0px 65px 21px #0000000a;
   border-radius: 20px;
   background-color: #ffffff;
@@ -29,159 +30,153 @@ const Body = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  gap: 1rem;
 
   @media (max-width: 1040px) {
     width: 95%;
-    height: 80%;
   }
+`;
+
+const GreenBtn = styled(Button)`
+  background-color: #00aa87;
+  border: none;
+  width: 60%;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 10px;
+  padding: 0.7rem;
+  &:hover { background-color: #008f71; }
+`;
+
+const BackLink = styled.p`
+  width: 80%;
+  margin: 1rem auto 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 6px;
 `;
 
 const PaymentVerification = () => {
   const [searchParams] = useSearchParams();
-
-  const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState("");
+  const [verified, setVerified] = useState(false);
+  const [paymentData, setPaymentData] = useState(null);
+  const [verifyError, setVerifyError] = useState(null);
 
-  let txref = searchParams.get("trxref");
-  let reference = searchParams.get("reference");
-  let requestID = localStorage.getItem("requestID");
-
+  const reference = searchParams.get("reference");
+  const requestID = localStorage.getItem("requestID");
   const router = useNavigate();
 
-  const handleVerifyPayment = async () => {
-    const token = localStorage.getItem("motivar-token");
-
+  const handleConfirmAndVerify = async () => {
+    if (!reference) {
+      setVerifyError("Missing payment reference. Please go back and try again.");
+      return;
+    }
+    setIsLoading(true);
+    setVerifyError(null);
     try {
-      setIsLoading(true);
-      const resp = await PaymentService.initiatePaymentVerification(
-        token,
-        reference
-      );
+      const token = localStorage.getItem("motivar-token");
+      const resp = await PaymentService.initiatePaymentVerification(token, reference);
 
-      if (resp.data.status === "success") {
-        setStatus(resp.data.status);
-        let res = await PaymentService.completeSponsorship(
-          token,
-          requestID,
-          reference
+      if (resp?.data?.status === "success") {
+        await PaymentService.completeSponsorship(token, requestID, reference);
+        setPaymentData(resp.data);
+        setVerified(true);
+      } else {
+        setVerifyError(
+          "Payment could not be confirmed. Please check your payment and try again, or contact support."
         );
-
-        if (res) {
-          setIsLoading(false);
-          setData(resp.data);
-        }
       }
-    } catch (error) {
+    } catch (err) {
+      setVerifyError(
+        err?.response?.data?.message ||
+          "An error occurred while verifying your payment. Please try again."
+      );
+    } finally {
       setIsLoading(false);
-      console.log(error);
     }
   };
 
-  useEffect(() => {
-    handleVerifyPayment();
-  }, [reference]);
-
-  return (
-    <>
+  /* ── Step 1: Confirmation prompt ── */
+  if (!verified && !isLoading) {
+    return (
       <Wrapper>
-        {!isLoading && (
-          <Body>
-            <img
-              src={Tick}
-              style={{
-                objectFit: "center",
-                height: "70px",
-                width: "70px",
-              }}
-            />
-            <p
-              style={{
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: "bolder",
-                fontSize: "20px",
-                padding: "20px 0px 5px 0px",
-              }}
-            >
-              Sucessfull Payment!
-            </p>
-            <p
-              style={{
-                width: "65%",
-                fontFamily: "Montserrat, sans-serif",
-                fontSize: "16px",
-                textAlign: "center",
-              }}
-            >
-              Payment of {data?.currency}
-              {Number(data?.amount / 100).toLocaleString()} been made
-              successfully, check your sponsored courses?
-            </p>
+        <Body>
+          <img src={Tick} style={{ height: 70, width: 70 }} alt="tick" />
+          <p style={{ fontFamily: "Montserrat, sans-serif", fontWeight: "bolder", fontSize: 22, margin: 0 }}>
+            Complete Your Sponsorship
+          </p>
+          <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: 15, color: "#6C757D", width: "80%" }}>
+            Once you have finished your payment on Paystack, tap the button below
+            to confirm and record your sponsorship.
+          </p>
 
-            <Button
-              onClick={() => router(`/dashboard`)}
-              style={{
-                backgroundColor: "#00AA87",
-                border: "none",
-                width: "50%",
-                fontSize: "20px",
-                fontWeight: "bold",
-              }}
-            >
-              Continue
-            </Button>
-
-            <p
-              onClick={() => {
-                router("/help-learner");
-              }}
-              style={{
-                width: "80%",
-                margin: "2vh auto 2vh auto",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-              }}
-            >
-              <img
-                src={ArrowLeft}
-                style={{
-                  objectFit: "center",
-                  height: "20px",
-                  width: "30px",
-                }}
-              />
-              <div>
-                <h6
-                  style={{
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#00AA87",
-                    fontSize: "16px",
-                    padding: "10px",
-                  }}
-                >
-                  Go back to Listing
-                </h6>
-              </div>
+          {verifyError && (
+            <p style={{ color: "#dc3545", fontSize: 14, width: "80%", fontFamily: "Montserrat, sans-serif" }}>
+              {verifyError}
             </p>
-          </Body>
-        )}
+          )}
 
-        {isLoading && (
-          <>
-            <div
-              className="d-flex flex-column align-items-center justify-content-center"
-              style={{ minHeight: "60vh" }}
-            >
-              <Spinner animation="border" />
-              <p className="mt-3">Processing payment, please wait...</p>
-            </div>
-          </>
-        )}
+          <GreenBtn onClick={handleConfirmAndVerify}>
+            I've Paid — Confirm Sponsorship
+          </GreenBtn>
+
+          <BackLink onClick={() => router("/help-learner")}>
+            <img src={ArrowLeft} style={{ height: 20, width: 30 }} alt="back" />
+            <h6 style={{ fontFamily: "Montserrat, sans-serif", color: "#00AA87", fontSize: 16, padding: "5px", margin: 0 }}>
+              Go back to Listing
+            </h6>
+          </BackLink>
+        </Body>
       </Wrapper>
-    </>
+    );
+  }
+
+  /* ── Step 2: Verifying spinner ── */
+  if (isLoading) {
+    return (
+      <Wrapper>
+        <div className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: "60vh" }}>
+          <Spinner animation="border" />
+          <p className="mt-3" style={{ fontFamily: "Montserrat, sans-serif" }}>
+            Verifying your payment, please wait...
+          </p>
+        </div>
+      </Wrapper>
+    );
+  }
+
+  /* ── Step 3: Success ── */
+  return (
+    <Wrapper>
+      <Body>
+        <img src={Tick} style={{ height: 70, width: 70 }} alt="tick" />
+        <p style={{ fontFamily: "Montserrat, sans-serif", fontWeight: "bolder", fontSize: 22, margin: 0 }}>
+          Sponsorship Confirmed!
+        </p>
+        <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: 15, color: "#6C757D", width: "80%" }}>
+          Payment of {paymentData?.currency}
+          {Number(paymentData?.amount / 100).toLocaleString()} has been recorded.
+          The learner has been notified.
+        </p>
+
+        <GreenBtn onClick={() => router("/dashboard")}>
+          Go to Dashboard
+        </GreenBtn>
+
+        <BackLink onClick={() => router("/help-learner")}>
+          <img src={ArrowLeft} style={{ height: 20, width: 30 }} alt="back" />
+          <h6 style={{ fontFamily: "Montserrat, sans-serif", color: "#00AA87", fontSize: 16, padding: "5px", margin: 0 }}>
+            Sponsor Another Learner
+          </h6>
+        </BackLink>
+      </Body>
+    </Wrapper>
   );
 };
 

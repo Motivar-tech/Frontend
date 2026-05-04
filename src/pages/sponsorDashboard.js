@@ -15,7 +15,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Buffer } from 'buffer';
 import { toast } from 'react-hot-toast';
@@ -142,6 +142,7 @@ const learnerAvatarSrc = (pic) => {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const SponsorDashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [userDetails, setUserDetails] = useState(null);
   const [analytics, setAnalytics] = useState({});
@@ -196,6 +197,10 @@ const SponsorDashboard = () => {
   const [paymentForm, setPaymentForm] = useState({ type: 'bank_transfer', label: '' });
   const [paymentSaving, setPaymentSaving] = useState(false);
 
+  // Currency preference
+  const [preferredCurrency, setPreferredCurrency] = useState('NGN');
+  const [currencySaving, setCurrencySaving] = useState(false);
+
   // ─── Load dashboard ────────────────────────────────────────────────────────
   useEffect(() => {
     (async () => {
@@ -208,6 +213,7 @@ const SponsorDashboard = () => {
         setAnalytics(d.analytics || {});
         setFunded(d.sponsoredRequests || []);
         setPaymentMethod(d.paymentMethod || null);
+        setPreferredCurrency(d.preferredCurrency || 'NGN');
         setUnreadCount(d.unreadNotifications || 0);
         setProfileForm({
           fullName: d.userDetails?.fullName || '',
@@ -382,6 +388,19 @@ const SponsorDashboard = () => {
     setProfilePicPreview(URL.createObjectURL(file));
   };
 
+  const handleCurrencySave = async (currency) => {
+    setCurrencySaving(true);
+    try {
+      await axiosInstance.patch('/sponsor/preferred-currency', { preferredCurrency: currency });
+      setPreferredCurrency(currency);
+      toast.success('Currency preference saved.');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not update currency preference.');
+    } finally {
+      setCurrencySaving(false);
+    }
+  };
+
   const profileSrc = profilePicPreview || avatarSrc(userDetails?.profilePicture);
   const reqPages = Math.ceil(reqTotal / 12);
 
@@ -433,7 +452,7 @@ const SponsorDashboard = () => {
               <FiSearch size={36} color={brand.primary} style={{ marginBottom: 12 }} />
               <h6 style={{ fontWeight: 700, color: brand.text }}>Browse Sponsorship Requests</h6>
               <p style={{ fontSize: 13, color: brand.sub, marginBottom: 16 }}>Find learners who need your support and make a lasting impact.</p>
-              <PrimaryBtn onClick={() => setActiveTab('browse')}>View Requests</PrimaryBtn>
+              <PrimaryBtn onClick={() => navigate('/help-learner')}>View Requests</PrimaryBtn>
             </Card.Body>
           </SectionCard>
         </Col>
@@ -689,13 +708,33 @@ const SponsorDashboard = () => {
         <Row className="g-4">
           <Col md={6}>
             <SectionCard>
-              <Card.Header><FiDollarSign /> Total Investment</Card.Header>
+              <Card.Header>
+                <FiDollarSign /> Total Investment
+                <Form.Select
+                  size="sm"
+                  value={preferredCurrency}
+                  onChange={e => handleCurrencySave(e.target.value)}
+                  disabled={currencySaving}
+                  style={{ marginLeft: 'auto', width: 'auto', fontSize: 12, borderColor: brand.primary, borderRadius: 6 }}
+                  title="Sponsorship currency preference"
+                >
+                  {['NGN', 'USD', 'GBP', 'EUR', 'ZAR', 'KES', 'GHS'].map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </Form.Select>
+              </Card.Header>
               <Card.Body>
+                <p style={{ fontSize: 11, color: brand.sub, marginBottom: 12 }}>
+                  Showing your sponsorship currency preference. Only currencies you have transacted in appear below.
+                </p>
                 {Object.entries(detailed.spendByCurrency || {}).length === 0 ? (
                   <p className="text-muted text-center py-3" style={{ fontSize: 13 }}>No spending data yet.</p>
                 ) : Object.entries(detailed.spendByCurrency).map(([currency, amount]) => (
-                  <div key={currency} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 0', borderBottom: `1px solid ${brand.grey}` }}>
-                    <span style={{ fontWeight: 600, color: brand.text }}>{currency}</span>
+                  <div key={currency} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 0', borderBottom: `1px solid ${brand.grey}`, opacity: currency === preferredCurrency ? 1 : 0.5 }}>
+                    <span style={{ fontWeight: 600, color: brand.text }}>
+                      {currency}
+                      {currency === preferredCurrency && <Badge bg="success" style={{ marginLeft: 6, borderRadius: 50, fontSize: 10 }}>Preferred</Badge>}
+                    </span>
                     <span style={{ fontWeight: 700, fontSize: '1.1rem', color: brand.primary }}>{amount.toLocaleString()}</span>
                   </div>
                 ))}
@@ -772,7 +811,11 @@ const SponsorDashboard = () => {
       {/* Avatar + info */}
       <Col lg={4}>
         <SectionCard className="text-center p-3">
-          <div style={{ position: 'relative', display: 'inline-block', marginBottom: '1rem' }}>
+          <div
+            style={{ position: 'relative', display: 'inline-block', marginBottom: '1rem', cursor: 'pointer' }}
+            onClick={() => avatarRef.current?.click()}
+            title="Click to change profile picture"
+          >
             {profileSrc ? (
               <img src={profileSrc} alt="Avatar" style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', border: `3px solid ${brand.primary}` }} />
             ) : (
@@ -780,11 +823,9 @@ const SponsorDashboard = () => {
                 <FiUser size={40} color={brand.primary} />
               </div>
             )}
-            {editingProfile && (
-              <button onClick={() => avatarRef.current?.click()} style={{ position: 'absolute', bottom: 0, right: 0, background: brand.primary, border: 'none', borderRadius: '50%', padding: '0.3rem', cursor: 'pointer', color: '#fff', display: 'flex' }}>
-                <FiCamera size={14} />
-              </button>
-            )}
+            <div style={{ position: 'absolute', bottom: 0, right: 0, background: brand.primary, border: 'none', borderRadius: '50%', padding: '0.3rem', color: '#fff', display: 'flex', pointerEvents: 'none' }}>
+              <FiCamera size={14} />
+            </div>
             <input ref={avatarRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarChange} />
           </div>
           <h5 style={{ fontWeight: 700 }}>{userDetails?.fullName || 'Your Name'}</h5>
@@ -875,6 +916,30 @@ const SponsorDashboard = () => {
                 )}
               </Row>
             )}
+          </Card.Body>
+        </SectionCard>
+
+        {/* Sponsorship currency preference */}
+        <SectionCard className="mb-4">
+          <Card.Header><FiDollarSign /> Sponsorship Currency</Card.Header>
+          <Card.Body>
+            <p style={{ fontSize: 13, color: brand.sub, marginBottom: 12 }}>
+              Choose the currency you plan to sponsor learners in. Currently, Motivar processes payments in NGN via Paystack.
+            </p>
+            <div className="d-flex align-items-center gap-3">
+              <Form.Select
+                value={preferredCurrency}
+                onChange={e => handleCurrencySave(e.target.value)}
+                disabled={currencySaving}
+                style={{ maxWidth: 160, borderColor: brand.primary, borderRadius: 8 }}
+              >
+                {['NGN', 'USD', 'GBP', 'EUR', 'ZAR', 'KES', 'GHS'].map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </Form.Select>
+              {currencySaving && <Spinner animation="border" size="sm" style={{ color: brand.primary }} />}
+              <Badge bg="success" style={{ borderRadius: 50 }}>Active: {preferredCurrency}</Badge>
+            </div>
           </Card.Body>
         </SectionCard>
 

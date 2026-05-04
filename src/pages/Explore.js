@@ -13,7 +13,7 @@ import Pagination from 'react-bootstrap/Pagination';
 import styled, { createGlobalStyle, css } from 'styled-components';
 import {
     FiSearch, FiFilter, FiTag, FiBarChart2, FiExternalLink, FiLogOut,
-    FiImage, FiChevronLeft, FiChevronRight, FiStar, FiPlusCircle, FiCheckCircle, FiUser, FiGrid
+    FiImage, FiChevronLeft, FiChevronRight, FiStar, FiHeart, FiCheckCircle, FiUser, FiGrid
 } from 'react-icons/fi';
 import { getCourseImage } from '../utils/imgs.js';
 import Navbar from 'react-bootstrap/Navbar';
@@ -469,7 +469,7 @@ const Explore = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [addedCourses, setAddedCourses] = useState([]); // Track added courses
+    const [wishedCourses, setWishedCourses] = useState([]); // Track wishlisted courses
     const [savingCourseId, setSavingCourseId] = useState(null); // Track the course being saved
 
     // Filter input states
@@ -585,32 +585,36 @@ const Explore = () => {
         }
     };
 
-    // Function to handle adding a course to the dashboard
+    // Add course to wishlist (not dashboard enrollment)
     const handleAddCourse = async (course) => {
-        setSavingCourseId(course._id); // Set the course being saved
+        setSavingCourseId(course._id);
         try {
             const token = localStorage.getItem("motivar-token");
-            if (!token) throw new Error("Authentication token is missing. Please log in again.");
+            if (!token) {
+                alert("Please log in to save courses to your wishlist.");
+                return;
+            }
 
-            const response = await axios.post(
-                `${BASE_URL}/dashboard/add`, // Backend endpoint
+            await axios.post(
+                `${BASE_URL}/dashboard/wishlist`,
                 {
+                    courseId: course._id,
                     title: course.title,
-                    description: course.description,
-                    link: course.url,
+                    url: course.url,
+                    platform: course.platform,
+                    status: course.status,
+                    price: course.price,
+                    priceUnit: course.priceUnit,
                 },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            alert(response.data.message); // Notify the user
-            setAddedCourses((prev) => [...prev, course._id]); // Mark the course as added
+            setWishedCourses((prev) => [...prev, course._id]);
         } catch (err) {
-            console.error("Error adding course:", err);
-            alert(err.response?.data?.message || "Failed to add course. Please try again.");
+            console.error("Error saving to wishlist:", err);
+            alert(err.response?.data?.message || "Failed to save to wishlist. Please try again.");
         } finally {
-            setSavingCourseId(null); // Reset the saving state
+            setSavingCourseId(null);
         }
     };
 
@@ -851,7 +855,7 @@ const Explore = () => {
                         <Row xs={1} sm={2} md={3} lg={4} className="g-4">
                             {courses.map((course) => {
                                 const imageUrl = getCourseImage(course.title, course.description, course.tags || []);
-                                const isAdded = addedCourses.includes(course._id); // Check if the course is already added
+                                const isWished = wishedCourses.includes(course._id);
                                 return (
                                 <Col key={course._id}>
                                     <CourseCardWrapper>
@@ -918,13 +922,13 @@ const Explore = () => {
                                                     <FiExternalLink /> View Course
                                                 </StyledButton>
                                                 <StyledButton
-                                                    variant={isAdded ? "outline-success" : "outline-primary"}
+                                                    variant={isWished ? "outline-success" : "outline-primary"}
                                                     size="sm"
                                                     onClick={() => handleAddCourse(course)}
-                                                    disabled={isAdded || savingCourseId === course._id} // Disable if already added or saving
+                                                    disabled={isWished || savingCourseId === course._id}
                                                     className="mt-2 w-100"
                                                 >
-                                                    {isAdded ? (
+                                                    {isWished ? (
                                                         <FiCheckCircle />
                                                     ) : savingCourseId === course._id ? (
                                                         <Spinner
@@ -935,9 +939,9 @@ const Explore = () => {
                                                             aria-hidden="true"
                                                         />
                                                     ) : (
-                                                        <FiPlusCircle />
+                                                        <FiHeart />
                                                     )}{" "}
-                                                    {isAdded ? "Added" : savingCourseId === course._id ? "Saving..." : "Save to Dashboard"}
+                                                    {isWished ? "Wishlisted" : savingCourseId === course._id ? "Saving..." : "Save to Wishlist"}
                                                 </StyledButton>
                                             </CardFooterStyled>
 

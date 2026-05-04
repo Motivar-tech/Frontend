@@ -59,34 +59,44 @@ const DashboardRouter = () => {
         try {
             const token = localStorage.getItem("motivar-token");
             if (!token) {
-                throw new Error("Authentication token is missing. Please log in again.");
+                navigate("/user-auth");
+                return;
             }
 
+            // Fast path: returning users with a cached role skip the API call
+            const cachedRole = localStorage.getItem("motivar-user-role");
+            if (cachedRole === "learner" || cachedRole === "sponsor") {
+                setRole(cachedRole);
+                setLoading(false);
+                return;
+            }
+
+            // No cached role — call API to determine (new users or cleared storage)
             const response = await axios.get(`${BASE_URL}/dashboard`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            const userDetails = response.data.userDetails;
+            // Learner controller returns flat JSON; sponsor controller wraps in {data:{}}
+            const userDetails =
+                response.data.userDetails ?? response.data.data?.userDetails;
+
             if (userDetails?.role === "learner" || userDetails?.role === "sponsor") {
+                localStorage.setItem("motivar-user-role", userDetails.role);
                 setRole(userDetails.role);
                 setShowRoleModal(false);
             } else {
-                // Verified user but no role assigned — force role selection
+                // Authenticated but no role assigned yet — prompt for selection
                 setShowRoleModal(true);
             }
         } catch (err) {
             const msg = err.response?.data?.message || err.message || "Failed to load dashboard.";
 
-            if (
-                err.response?.status === 400 &&
-                msg === "Invalid user role"
-            ) {
-                // User is authenticated and verified but has no role yet
+            if (err.response?.status === 400 && msg === "Invalid user role") {
                 setShowRoleModal(true);
                 return;
             }
 
-            if (msg === "Authentication token is missing. Please log in again.") {
+            if (err.response?.status === 401) {
                 navigate("/user-auth");
                 return;
             }

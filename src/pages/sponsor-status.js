@@ -186,7 +186,7 @@ const PayCourse = ({
     const token = await localStorage.getItem("motivar-token");
     try {
       const payload = {
-        amount: Number(price) * 100 + (Number(price) * 9) / 100,
+        amount: Math.round(Number(price) * 100),
         requestID: requestID,
         currency: unit,
         description: `Sponsoring ${learner} for a ${unit}${Number(

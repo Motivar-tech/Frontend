@@ -54,10 +54,26 @@ const LEARNING_GOALS = [
 ];
 
 const INTERESTS = [
-  'Web Development', 'Data Science', 'Cybersecurity', 'UI/UX Design',
-  'Digital Marketing', 'Cloud Computing', 'Machine Learning', 'Mobile Development',
-  'Project Management', 'DevOps', 'Blockchain', 'Product Management',
-  'Graphic Design', 'Content Creation', 'Finance & Accounting',
+  // Technology & Engineering
+  'Web Development', 'Mobile Development', 'Backend Development', 'Frontend Development',
+  'Full-Stack Development', 'DevOps', 'Cloud Computing', 'Cybersecurity',
+  'Data Science', 'Machine Learning', 'Artificial Intelligence', 'Deep Learning',
+  'Data Engineering', 'Data Analytics', 'Business Intelligence', 'Database Administration',
+  'Blockchain', 'Web3 & Smart Contracts', 'Embedded Systems', 'Robotics',
+  'Game Development', 'AR/VR Development', 'API Development', 'Microservices',
+  // Design & Creative
+  'UI/UX Design', 'Graphic Design', 'Motion Graphics', 'Video Editing',
+  'Photography', 'Illustration', 'Brand Design', '3D Modelling',
+  // Business & Management
+  'Product Management', 'Project Management', 'Agile & Scrum', 'Business Analysis',
+  'Entrepreneurship', 'Finance & Accounting', 'Supply Chain Management',
+  'Human Resources', 'Sales & CRM', 'Legal & Compliance',
+  // Marketing & Communication
+  'Digital Marketing', 'Content Creation', 'SEO & SEM', 'Social Media Marketing',
+  'Email Marketing', 'Copywriting', 'Public Relations', 'Community Management',
+  // Personal & Professional Development
+  'Leadership', 'Communication Skills', 'Critical Thinking', 'Time Management',
+  'Foreign Languages', 'Research & Academia',
 ];
 
 const INDUSTRIES = [
@@ -297,6 +313,17 @@ const LearnerDashboard = () => {
   const [academicForm, setAcademicForm] = useState({
     institution: '', fieldOfStudy: '', highestDegree: '', certifications: '',
   });
+
+  // Messaging state
+  const [msgThreads, setMsgThreads] = useState([]);
+  const [msgLoading, setMsgLoading] = useState(false);
+  const [selectedThread, setSelectedThread] = useState(null);
+  const [replyContent, setReplyContent] = useState('');
+  const [replying, setReplying] = useState(false);
+  const msgBottomRef = useRef();
+
+  // Interest search filter
+  const [interestSearch, setInterestSearch] = useState('');
 
   // Rating / review modal state
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -681,6 +708,48 @@ const LearnerDashboard = () => {
     }
   };
 
+  // ─── Messaging ────────────────────────────────────────────────────────────
+  const fetchMessages = async () => {
+    setMsgLoading(true);
+    try {
+      const res = await axios.get(`${BASE_URL}/dashboard/messages`, { headers: authHeader() });
+      setMsgThreads(res.data.threads || []);
+    } catch {
+      toast.error('Failed to load messages.');
+    } finally {
+      setMsgLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'messages') fetchMessages();
+  }, [activeTab]);
+
+  const handleReply = async () => {
+    if (!replyContent.trim() || !selectedThread) return;
+    setReplying(true);
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/dashboard/messages/${selectedThread.threadId}/reply`,
+        { content: replyContent.trim() },
+        { headers: { ...authHeader(), 'Content-Type': 'application/json' } }
+      );
+      const newMsg = res.data.msg;
+      setSelectedThread(prev => ({ ...prev, messages: [...prev.messages, newMsg] }));
+      setMsgThreads(prev => prev.map(t =>
+        t.threadId === selectedThread.threadId
+          ? { ...t, messages: [...t.messages, newMsg], lastMessage: newMsg }
+          : t
+      ));
+      setReplyContent('');
+      setTimeout(() => msgBottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not send reply.');
+    } finally {
+      setReplying(false);
+    }
+  };
+
   // ─── Computed ─────────────────────────────────────────────────────────────
   const pendingCount = requests.filter(r => !r.paid).length;
   const paidCount = requests.filter(r => r.paid).length;
@@ -841,13 +910,6 @@ const LearnerDashboard = () => {
                           >
                             <FiUpload size="0.85em" /> Upload Cert
                           </PrimaryBtn>
-                          <PrimaryBtn
-                            size="sm"
-                            variant="outline-primary"
-                            onClick={() => handleMarkComplete(course)}
-                          >
-                            <FiCheckCircle size="0.85em" /> Mark Done
-                          </PrimaryBtn>
                         </>
                       )}
                       <PrimaryBtn
@@ -878,7 +940,11 @@ const LearnerDashboard = () => {
       <Col lg={4}>
         {/* Avatar + name card */}
         <SectionCard className="text-center p-3">
-          <div style={{ position: 'relative', display: 'inline-block', marginBottom: '1rem' }}>
+          <div
+            style={{ position: 'relative', display: 'inline-block', marginBottom: '1rem', cursor: 'pointer' }}
+            onClick={() => avatarInputRef.current?.click()}
+            title="Click to change profile picture"
+          >
             {profilePicSrc ? (
               <img
                 src={profilePicSrc}
@@ -890,14 +956,9 @@ const LearnerDashboard = () => {
                 <FiUser size={40} color={brand.primary} />
               </div>
             )}
-            {editingProfile && (
-              <button
-                onClick={() => avatarInputRef.current?.click()}
-                style={{ position: 'absolute', bottom: 0, right: 0, background: brand.primary, border: 'none', borderRadius: '50%', padding: '0.3rem', cursor: 'pointer', color: 'white', display: 'flex' }}
-              >
-                <FiCamera size={14} />
-              </button>
-            )}
+            <div style={{ position: 'absolute', bottom: 0, right: 0, background: brand.primary, border: 'none', borderRadius: '50%', padding: '0.3rem', color: 'white', display: 'flex', pointerEvents: 'none' }}>
+              <FiCamera size={14} />
+            </div>
             <input ref={avatarInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarChange} />
           </div>
           <h5 style={{ fontWeight: 600, color: brand.text }}>{userDetails?.fullName || 'Your Name'}</h5>
@@ -1034,22 +1095,49 @@ const LearnerDashboard = () => {
 
             <Form.Group className="mb-4">
               <Form.Label style={{ fontWeight: 600, fontSize: 14 }}>Interests in Learning <span style={{ color: brand.textSub, fontWeight: 400 }}>(select all that apply)</span></Form.Label>
-              <div className="d-flex flex-wrap gap-2 mt-2">
-                {INTERESTS.map(interest => (
-                  <TagChip
-                    key={interest}
-                    selected={goalsForm.interests.includes(interest)}
-                    onClick={() => setGoalsForm(p => ({
-                      ...p,
-                      interests: p.interests.includes(interest)
-                        ? p.interests.filter(i => i !== interest)
-                        : [...p.interests, interest],
-                    }))}
-                  >
-                    {interest}
-                  </TagChip>
-                ))}
+              <Form.Control
+                placeholder="Filter interests..."
+                value={interestSearch}
+                onChange={e => setInterestSearch(e.target.value)}
+                style={{ marginBottom: 10, borderColor: brand.primary, borderRadius: 20, fontSize: 13 }}
+              />
+              <div className="d-flex flex-wrap gap-2 mt-1">
+                {INTERESTS
+                  .filter(i => i.toLowerCase().includes(interestSearch.toLowerCase()))
+                  .map(interest => (
+                    <TagChip
+                      key={interest}
+                      selected={goalsForm.interests.includes(interest)}
+                      onClick={() => setGoalsForm(p => ({
+                        ...p,
+                        interests: p.interests.includes(interest)
+                          ? p.interests.filter(i => i !== interest)
+                          : [...p.interests, interest],
+                      }))}
+                    >
+                      {interest}
+                    </TagChip>
+                  ))}
+                {/* Custom interest via search input if no match */}
+                {interestSearch.trim() &&
+                  !INTERESTS.some(i => i.toLowerCase() === interestSearch.trim().toLowerCase()) &&
+                  !goalsForm.interests.some(i => i.toLowerCase() === interestSearch.trim().toLowerCase()) && (
+                    <TagChip
+                      onClick={() => {
+                        setGoalsForm(p => ({ ...p, interests: [...p.interests, interestSearch.trim()] }));
+                        setInterestSearch('');
+                      }}
+                      style={{ borderStyle: 'dashed' }}
+                    >
+                      + Add "{interestSearch.trim()}"
+                    </TagChip>
+                  )}
               </div>
+              {goalsForm.interests.length > 0 && (
+                <div style={{ marginTop: 8, fontSize: 12, color: brand.textSub }}>
+                  Selected: {goalsForm.interests.join(', ')}
+                </div>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-4">
@@ -1374,6 +1462,104 @@ const LearnerDashboard = () => {
     </>
   );
 
+  // ─── Messages Tab ─────────────────────────────────────────────────────────
+  const MessagesTab = () => (
+    <Row className="g-4">
+      {/* Thread list */}
+      <Col md={4}>
+        <SectionCard style={{ maxHeight: 600, overflowY: 'auto' }}>
+          <Card.Header><FiMessageSquare /> Sponsor Messages</Card.Header>
+          {msgLoading ? (
+            <div className="text-center py-4"><Spinner animation="border" size="sm" style={{ color: brand.primary }} /></div>
+          ) : msgThreads.length === 0 ? (
+            <div className="text-center text-muted p-4" style={{ fontSize: 13 }}>
+              No messages yet. Sponsors who fund your courses can message you here.
+            </div>
+          ) : (
+            <ListGroup variant="flush">
+              {msgThreads.map(t => (
+                <ListGroup.Item
+                  key={t.threadId}
+                  action
+                  active={selectedThread?.threadId === t.threadId}
+                  onClick={() => setSelectedThread(t)}
+                  style={{ cursor: 'pointer', padding: '0.9rem 1rem' }}
+                >
+                  <div style={{ fontWeight: 600, fontSize: 13 }}>{t.sponsor?.fullName || 'Sponsor'}</div>
+                  <div style={{ fontSize: 11, color: brand.textSub, marginTop: 2 }}>{t.courseTitle}</div>
+                  {t.lastMessage && (
+                    <div style={{ fontSize: 11, color: brand.textSub, marginTop: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {t.lastMessage.content}
+                    </div>
+                  )}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          )}
+        </SectionCard>
+      </Col>
+
+      {/* Thread messages + reply */}
+      <Col md={8}>
+        {!selectedThread ? (
+          <SectionCard>
+            <Card.Body className="text-center py-5">
+              <FiMessageSquare size={40} color={brand.greyMid} style={{ marginBottom: 12 }} />
+              <p style={{ color: brand.textSub, fontSize: 14 }}>Select a conversation to read and reply.</p>
+            </Card.Body>
+          </SectionCard>
+        ) : (
+          <SectionCard>
+            <Card.Header>
+              <FiMessageSquare /> {selectedThread.sponsor?.fullName} — <span style={{ fontWeight: 400, fontSize: 13 }}>{selectedThread.courseTitle}</span>
+            </Card.Header>
+            <Card.Body style={{ padding: 0 }}>
+              {/* Messages */}
+              <div style={{ maxHeight: 380, overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {selectedThread.messages.map((msg, idx) => {
+                  const isMine = String(msg.senderId) === String(userDetails?._id) ||
+                    (msg.senderId?._id && String(msg.senderId._id) === String(userDetails?._id));
+                  return (
+                    <div key={idx} style={{ display: 'flex', justifyContent: isMine ? 'flex-end' : 'flex-start' }}>
+                      <div style={{
+                        maxWidth: '75%',
+                        background: isMine ? brand.primary : brand.greyLight,
+                        color: isMine ? '#fff' : brand.text,
+                        borderRadius: isMine ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                        padding: '0.6rem 0.9rem',
+                        fontSize: 13,
+                      }}>
+                        <p style={{ margin: 0 }}>{msg.content}</p>
+                        <p style={{ margin: '4px 0 0', fontSize: 10, opacity: 0.7, textAlign: 'right' }}>
+                          {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+                <div ref={msgBottomRef} />
+              </div>
+
+              {/* Reply input */}
+              <div style={{ borderTop: `1px solid ${brand.greyLight}`, padding: '0.75rem 1rem', display: 'flex', gap: 8 }}>
+                <Form.Control
+                  placeholder="Type a reply..."
+                  value={replyContent}
+                  onChange={e => setReplyContent(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleReply()}
+                  style={{ borderColor: brand.primary, borderRadius: 20, fontSize: 13 }}
+                />
+                <PrimaryBtn onClick={handleReply} disabled={replying || !replyContent.trim()} style={{ borderRadius: 20, padding: '0.4rem 1rem' }}>
+                  {replying ? <Spinner animation="border" size="sm" /> : <FiSend size={14} />}
+                </PrimaryBtn>
+              </div>
+            </Card.Body>
+          </SectionCard>
+        )}
+      </Col>
+    </Row>
+  );
+
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <DashboardWrapper>
@@ -1431,6 +1617,7 @@ const LearnerDashboard = () => {
             { key: 'profile', icon: <FiUser />, label: 'My Profile' },
             { key: 'goals', icon: <FiTarget />, label: 'Goals & Availability' },
             { key: 'courses', icon: <FiBookOpen />, label: 'Courses & Wishlist' },
+            { key: 'messages', icon: <FiMessageSquare />, label: 'Messages' },
           ].map(({ key, icon, label }) => (
             <TabBtn key={key} active={activeTab === key} onClick={() => setActiveTab(key)}>
               {icon} {label}
@@ -1443,6 +1630,7 @@ const LearnerDashboard = () => {
         {activeTab === 'profile' && <ProfileTab />}
         {activeTab === 'goals' && <GoalsTab />}
         {activeTab === 'courses' && <CoursesTab />}
+        {activeTab === 'messages' && <MessagesTab />}
       </DashboardContainer>
 
       <StyledFooter>

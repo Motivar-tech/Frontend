@@ -24,6 +24,13 @@ class RecService {
       throw this.handleError(error);
     }
   }
+
+  handleError(error) {
+    if (error.response) {
+      return new Error(error.response.data?.message || 'An error occurred');
+    }
+    return new Error('Network error');
+  }
 }
 
 const recService = new RecService();
