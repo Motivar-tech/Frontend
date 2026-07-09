@@ -13,7 +13,12 @@ export default function CompleteProfile() {
   useEffect(() => {
     const tempData = localStorage.getItem("temp-google-data");
     if (tempData) {
-      setGoogleData(JSON.parse(tempData));
+      try {
+        setGoogleData(JSON.parse(tempData));
+      } catch (error) {
+        localStorage.removeItem("temp-google-data");
+        window.location.pathname = "/user-auth";
+      }
     } else {
       window.location.pathname = "/user-auth";
     }

@@ -625,7 +625,10 @@ const LearnerDashboard = () => {
     if (!file.type.startsWith('image/')) { toast.error('Only image files are allowed.'); return; }
     if (file.size > 5 * 1024 * 1024) { toast.error('Image must be under 5 MB.'); return; }
     setProfilePicFile(file);
-    setProfilePicPreview(URL.createObjectURL(file));
+    setProfilePicPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
   };
 
   // ─── Mark course complete ─────────────────────────────────────────────────
@@ -1626,11 +1629,14 @@ const LearnerDashboard = () => {
         </TabNav>
 
         {/* Tab Content */}
-        {activeTab === 'overview' && <OverviewTab />}
-        {activeTab === 'profile' && <ProfileTab />}
-        {activeTab === 'goals' && <GoalsTab />}
-        {activeTab === 'courses' && <CoursesTab />}
-        {activeTab === 'messages' && <MessagesTab />}
+        {/* Invoked as plain functions (not JSX elements) so React reconciles
+            their output against the previous tree instead of remounting the
+            whole subtree (and losing input focus) on every parent re-render. */}
+        {activeTab === 'overview' && OverviewTab()}
+        {activeTab === 'profile' && ProfileTab()}
+        {activeTab === 'goals' && GoalsTab()}
+        {activeTab === 'courses' && CoursesTab()}
+        {activeTab === 'messages' && MessagesTab()}
       </DashboardContainer>
 
       <StyledFooter>

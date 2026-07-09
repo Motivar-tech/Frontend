@@ -69,7 +69,9 @@ const PaymentVerification = () => {
   const [verifyError, setVerifyError] = useState(null);
 
   const reference = searchParams.get("reference");
-  const requestID = localStorage.getItem("requestID");
+  const requestID =
+    localStorage.getItem(`requestID-${reference}`) ||
+    localStorage.getItem("requestID");
   const router = useNavigate();
 
   const handleConfirmAndVerify = async () => {
@@ -85,6 +87,8 @@ const PaymentVerification = () => {
 
       if (resp?.data?.status === "success") {
         await PaymentService.completeSponsorship(token, requestID, reference);
+        localStorage.removeItem(`requestID-${reference}`);
+        localStorage.removeItem("requestID");
         setPaymentData(resp.data);
         setVerified(true);
       } else {

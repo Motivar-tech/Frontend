@@ -4,6 +4,7 @@ import styled from 'styled-components'; // Import styled-components
 import chatService from '../Services/ChatService';
 import Container from 'react-bootstrap/Container';
 import Vector from "../assets/images/Vector.png";
+import { toast } from 'react-hot-toast';
 
 
 const PageWrapper = styled.div`
@@ -282,6 +283,7 @@ function ChatInterface() {
       handleChatResponse(response);
     } catch (error) {
       console.error('Error starting chat:', error);
+      toast.error('Could not start chat. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -298,9 +300,10 @@ function ChatInterface() {
   const processSendMessage = async (messageText) => {
       if (!messageText.trim() || !sessionId) return; // Added safety check for sessionId
 
-      setMessages(prev => [...prev, { type: 'user', content: messageText }]);
+      const optimisticMessage = { type: 'user', content: messageText };
+      setMessages(prev => [...prev, optimisticMessage]);
       setInputMessage('');
-      setSuggestions([]); 
+      setSuggestions([]);
       setIsLoading(true);
 
       try {
@@ -308,6 +311,9 @@ function ChatInterface() {
         handleChatResponse(response);
       } catch (error) {
         console.error('Error sending message:', error);
+        toast.error('Failed to send message. Please try again.');
+        setMessages(prev => prev.filter(m => m !== optimisticMessage));
+        setInputMessage(messageText);
       } finally {
         setIsLoading(false);
       }

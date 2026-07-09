@@ -140,6 +140,105 @@ const learnerAvatarSrc = (pic) => {
   return null;
 };
 
+// ── Analytics ──────────────────────────────────────────────────────────────
+// Hoisted to module scope (unlike the other tabs) because it owns its own
+// hooks (useState/useEffect) — keeping it inline would recreate its identity
+// (and refetch analytics) on every SponsorDashboard re-render.
+const AnalyticsTab = ({ preferredCurrency, currencySaving, handleCurrencySave }) => {
+  const [detailed, setDetailed] = useState(null);
+  const [loadingDetailed, setLoadingDetailed] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      setLoadingDetailed(true);
+      try {
+        const res = await axiosInstance.get('/sponsor/analytics');
+        setDetailed(res.data.data);
+      } catch { toast.error('Could not load analytics.'); }
+      finally { setLoadingDetailed(false); }
+    })();
+  }, []);
+
+  if (loadingDetailed) return <div className="text-center py-5"><Spinner animation="border" style={{ color: brand.primary }} /></div>;
+  if (!detailed) return null;
+
+  return (
+    <>
+      <Row className="g-3 mb-4">
+        {[
+          { lbl: 'Learners Helped', val: detailed.learnersHelped, vc: brand.primary },
+          { lbl: 'Courses Completed', val: detailed.completedCount, vc: brand.success },
+          { lbl: 'Completion Rate', val: `${detailed.completionRate}%`, vc: brand.warning },
+          { lbl: 'Countries Reached', val: detailed.countriesReached?.length || 0, vc: '#0d6efd' },
+        ].map(({ lbl, val, vc }) => (
+          <Col md={3} sm={6} key={lbl}>
+            <StatCard vc={vc}>
+              <p className="val">{val}</p>
+              <p className="lbl">{lbl}</p>
+            </StatCard>
+          </Col>
+        ))}
+      </Row>
+
+      <Row className="g-4">
+        <Col md={6}>
+          <SectionCard>
+            <Card.Header>
+              <FiDollarSign /> Total Investment
+              <Form.Select
+                size="sm"
+                value={preferredCurrency}
+                onChange={e => handleCurrencySave(e.target.value)}
+                disabled={currencySaving}
+                style={{ marginLeft: 'auto', width: 'auto', fontSize: 12, borderColor: brand.primary, borderRadius: 6 }}
+                title="Sponsorship currency preference"
+              >
+                {['NGN', 'USD', 'GBP', 'EUR', 'ZAR', 'KES', 'GHS'].map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </Form.Select>
+            </Card.Header>
+            <Card.Body>
+              <p style={{ fontSize: 11, color: brand.sub, marginBottom: 12 }}>
+                Showing your sponsorship currency preference. Only currencies you have transacted in appear below.
+              </p>
+              {Object.entries(detailed.spendByCurrency || {}).length === 0 ? (
+                <p className="text-muted text-center py-3" style={{ fontSize: 13 }}>No spending data yet.</p>
+              ) : Object.entries(detailed.spendByCurrency).map(([currency, amount]) => (
+                <div key={currency} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 0', borderBottom: `1px solid ${brand.grey}`, opacity: currency === preferredCurrency ? 1 : 0.5 }}>
+                  <span style={{ fontWeight: 600, color: brand.text }}>
+                    {currency}
+                    {currency === preferredCurrency && <Badge bg="success" style={{ marginLeft: 6, borderRadius: 50, fontSize: 10 }}>Preferred</Badge>}
+                  </span>
+                  <span style={{ fontWeight: 700, fontSize: '1.1rem', color: brand.primary }}>{amount.toLocaleString()}</span>
+                </div>
+              ))}
+            </Card.Body>
+          </SectionCard>
+        </Col>
+        <Col md={6}>
+          <SectionCard>
+            <Card.Header><FiMapPin /> Countries Reached</Card.Header>
+            <Card.Body>
+              {detailed.countriesReached?.length === 0 ? (
+                <p className="text-muted text-center py-3" style={{ fontSize: 13 }}>No data yet.</p>
+              ) : (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingTop: 8 }}>
+                  {detailed.countriesReached?.map(c => (
+                    <Badge key={c} bg="light" text="dark" style={{ borderRadius: 50, border: '1px solid #ddd', fontSize: 13, padding: '0.4rem 0.9rem' }}>
+                      <FiMapPin size={11} /> {c}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </Card.Body>
+          </SectionCard>
+        </Col>
+      </Row>
+    </>
+  );
+};
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 const SponsorDashboard = () => {
   const navigate = useNavigate();
@@ -251,9 +350,10 @@ const SponsorDashboard = () => {
     finally { setReqLoading(false); }
   }, [reqSearch, reqPlatform, reqMinAmt, reqMaxAmt, reqLocation]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- only refetch on tab/page change, not on every filter keystroke (fetchRequests reads current filters via closure)
   useEffect(() => {
     if (activeTab === 'browse') fetchRequests(reqPage);
-  }, [activeTab, reqPage, fetchRequests]);
+  }, [activeTab, reqPage]);
 
   // ─── Notifications ─────────────────────────────────────────────────────────
   const fetchNotifications = async () => {
@@ -385,7 +485,10 @@ const SponsorDashboard = () => {
     if (!file.type.startsWith('image/')) { toast.error('Only image files are allowed.'); return; }
     if (file.size > 5 * 1024 * 1024) { toast.error('Image must be under 5 MB.'); return; }
     setProfilePicFile(file);
-    setProfilePicPreview(URL.createObjectURL(file));
+    setProfilePicPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
   };
 
   const handleCurrencySave = async (currency) => {
@@ -667,102 +770,6 @@ const SponsorDashboard = () => {
       </ListGroup>
     </SectionCard>
   );
-
-  // ── Analytics ──────────────────────────────────────────────────────────────
-  const AnalyticsTab = () => {
-    const [detailed, setDetailed] = useState(null);
-    const [loadingDetailed, setLoadingDetailed] = useState(true);
-
-    useEffect(() => {
-      (async () => {
-        setLoadingDetailed(true);
-        try {
-          const res = await axiosInstance.get('/sponsor/analytics');
-          setDetailed(res.data.data);
-        } catch { toast.error('Could not load analytics.'); }
-        finally { setLoadingDetailed(false); }
-      })();
-    }, []);
-
-    if (loadingDetailed) return <div className="text-center py-5"><Spinner animation="border" style={{ color: brand.primary }} /></div>;
-    if (!detailed) return null;
-
-    return (
-      <>
-        <Row className="g-3 mb-4">
-          {[
-            { lbl: 'Learners Helped', val: detailed.learnersHelped, vc: brand.primary },
-            { lbl: 'Courses Completed', val: detailed.completedCount, vc: brand.success },
-            { lbl: 'Completion Rate', val: `${detailed.completionRate}%`, vc: brand.warning },
-            { lbl: 'Countries Reached', val: detailed.countriesReached?.length || 0, vc: '#0d6efd' },
-          ].map(({ lbl, val, vc }) => (
-            <Col md={3} sm={6} key={lbl}>
-              <StatCard vc={vc}>
-                <p className="val">{val}</p>
-                <p className="lbl">{lbl}</p>
-              </StatCard>
-            </Col>
-          ))}
-        </Row>
-
-        <Row className="g-4">
-          <Col md={6}>
-            <SectionCard>
-              <Card.Header>
-                <FiDollarSign /> Total Investment
-                <Form.Select
-                  size="sm"
-                  value={preferredCurrency}
-                  onChange={e => handleCurrencySave(e.target.value)}
-                  disabled={currencySaving}
-                  style={{ marginLeft: 'auto', width: 'auto', fontSize: 12, borderColor: brand.primary, borderRadius: 6 }}
-                  title="Sponsorship currency preference"
-                >
-                  {['NGN', 'USD', 'GBP', 'EUR', 'ZAR', 'KES', 'GHS'].map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </Form.Select>
-              </Card.Header>
-              <Card.Body>
-                <p style={{ fontSize: 11, color: brand.sub, marginBottom: 12 }}>
-                  Showing your sponsorship currency preference. Only currencies you have transacted in appear below.
-                </p>
-                {Object.entries(detailed.spendByCurrency || {}).length === 0 ? (
-                  <p className="text-muted text-center py-3" style={{ fontSize: 13 }}>No spending data yet.</p>
-                ) : Object.entries(detailed.spendByCurrency).map(([currency, amount]) => (
-                  <div key={currency} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 0', borderBottom: `1px solid ${brand.grey}`, opacity: currency === preferredCurrency ? 1 : 0.5 }}>
-                    <span style={{ fontWeight: 600, color: brand.text }}>
-                      {currency}
-                      {currency === preferredCurrency && <Badge bg="success" style={{ marginLeft: 6, borderRadius: 50, fontSize: 10 }}>Preferred</Badge>}
-                    </span>
-                    <span style={{ fontWeight: 700, fontSize: '1.1rem', color: brand.primary }}>{amount.toLocaleString()}</span>
-                  </div>
-                ))}
-              </Card.Body>
-            </SectionCard>
-          </Col>
-          <Col md={6}>
-            <SectionCard>
-              <Card.Header><FiMapPin /> Countries Reached</Card.Header>
-              <Card.Body>
-                {detailed.countriesReached?.length === 0 ? (
-                  <p className="text-muted text-center py-3" style={{ fontSize: 13 }}>No data yet.</p>
-                ) : (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingTop: 8 }}>
-                    {detailed.countriesReached?.map(c => (
-                      <Badge key={c} bg="light" text="dark" style={{ borderRadius: 50, border: '1px solid #ddd', fontSize: 13, padding: '0.4rem 0.9rem' }}>
-                        <FiMapPin size={11} /> {c}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </Card.Body>
-            </SectionCard>
-          </Col>
-        </Row>
-      </>
-    );
-  };
 
   // ── Notifications ──────────────────────────────────────────────────────────
   const NotificationsTab = () => (
@@ -1088,12 +1095,22 @@ const SponsorDashboard = () => {
           ))}
         </TabNav>
 
-        {activeTab === 'overview' && <OverviewTab />}
-        {activeTab === 'browse' && <BrowseTab />}
-        {activeTab === 'funded' && <FundedTab />}
-        {activeTab === 'analytics' && <AnalyticsTab />}
-        {activeTab === 'notifications' && <NotificationsTab />}
-        {activeTab === 'profile' && <ProfileTab />}
+        {/* Invoked as plain functions (not JSX elements) so React reconciles
+            their output against the previous tree instead of remounting the
+            whole subtree on every parent re-render. AnalyticsTab owns its own
+            hooks, so it must stay a real component rendered via JSX. */}
+        {activeTab === 'overview' && OverviewTab()}
+        {activeTab === 'browse' && BrowseTab()}
+        {activeTab === 'funded' && FundedTab()}
+        {activeTab === 'analytics' && (
+          <AnalyticsTab
+            preferredCurrency={preferredCurrency}
+            currencySaving={currencySaving}
+            handleCurrencySave={handleCurrencySave}
+          />
+        )}
+        {activeTab === 'notifications' && NotificationsTab()}
+        {activeTab === 'profile' && ProfileTab()}
       </DashboardContainer>
 
       <footer style={{ background: brand.white, color: brand.sub, textAlign: 'center', padding: '1.5rem 0', fontSize: '.88rem', borderTop: `1px solid ${brand.grey}`, marginTop: 'auto' }}>

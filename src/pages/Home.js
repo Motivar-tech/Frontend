@@ -8,14 +8,10 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Carousel from "react-bootstrap/Carousel";
 import { Link } from "react-router-dom";
 import AppNavbar from "../components/Navbar.js";
 import AppFooter from "../components/Footer.js";
 
-import Image from "react-bootstrap/Image";
-import Sketch1 from "../assets/images/sketch1.png";
-import Sketch2 from "../assets/images/sketch2.png";
 import Vector from "../assets/images/Vector.png";
 import Pardna from "../assets/images/padna.svg";
 import Padna from "../assets/images/pardna.svg";
@@ -23,19 +19,15 @@ import Faces from "../assets/images/faces.svg";
 import Persons from "../assets/images/persons.svg";
 import Stu from "../assets/images/stu.png";
 import Group from "../assets/images/group.png";
-import Test from "../assets/images/test.png";
 import { BsArrowLeftCircle } from "react-icons/bs";
 import { TypeAnimation } from "react-type-animation";
 import styled from "styled-components";
 import { StyledImage } from "../components/images.js";
 import Accordion from "../components/accordion/accordion.js";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import TestimonialCarousel from '../components/Testimonial';
 import axios from "axios";
 import { BASE_URL } from '../utils/index';
-
-
-let token = localStorage.getItem("motivar-token");
 
 const PartnersSection = styled.section`
   width: 100vw;
@@ -67,146 +59,121 @@ const PartnerLogo = styled.img`
   box-shadow: none;
 `;
 
-export default function AppHome() {
-  const [activeTab, setActiveTab] = useState("learner"); // State to track active tab
+// Fix: Ensure hero section is tall enough and never causes horizontal scroll
+const BackgroundWrapper = styled.div`
+  width: 100vw;
+  max-width: 100vw;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: #fff;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
 
-  const HeadText = styled.div`
-    width: 65%;
-    margin: auto;
-    font-weight: 900;
-    font-size: 3.5rem;
-    padding: 30px 0px 30px 0px;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url(${Vector});
+    opacity: 1;
+    z-index: 0;
+  }
 
-    @media (max-width: 900px) {
-      width: 85%;
-      font-size: 2rem;
-    }
-  `;
-
-  // Fix: Ensure hero section is tall enough and never causes horizontal scroll
-  const BackgroundWrapper = styled.div`
-    width: 100vw;
-    max-width: 100vw;
-    min-height: 600px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    background: #fff;
-    overflow: hidden;
-    padding: 0;
-    margin: 0;
-
+  @media (max-width: 900px) {
+    min-height: 480px;
     &::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background-image: url(${Vector});
-      opacity: 1;
-      z-index: 0;
+      background-size: 600px;
     }
-
-    @media (max-width: 900px) {
-      min-height: 480px;
-      &::before {
-        background-size: 600px;
-      }
-    }
+  }
 `;
 
-  const SubHeadText = styled.div`
-    font-family: Montserrat, sans-serif;
-    font-size: 25px;
-    width: 80%;
-    margin: 0 auto 32px auto;
-    padding: 20px 0 0 0;
-    text-align: center;
-    @media (max-width: 900px) {
-      font-size: 1rem;
-      width: 98%;
-      padding: 10px 0 0 0;
-    }
-  `;
+const SubHeadText = styled.div`
+  font-family: Montserrat, sans-serif;
+  font-size: 25px;
+  width: 80%;
+  margin: 0 auto 32px auto;
+  padding: 20px 0 0 0;
+  text-align: center;
+  @media (max-width: 900px) {
+    font-size: 1rem;
+    width: 98%;
+    padding: 10px 0 0 0;
+  }
+`;
 
-  const SectionHeadText = styled.div`
-    font-family: Montserrat;
+const SectionHeadText = styled.div`
+  font-family: Montserrat;
+  width: 100%;
+  font-size: 42px;
+  line-height: 1.2;
+  padding: ${(props) => (props.invert ? "0px" : "0px 0px 0px 50px")};
+
+  @media (max-width: 900px) {
     width: 100%;
-    font-size: 42px;
-    line-height: 1.2;
-    padding: ${(props) => (props.invert ? "0px" : "0px 0px 0px 50px")};
-
-    @media (max-width: 900px) {
-      width: 100%;
-      font-size: 1.7rem;
-      padding: 0px;
-      text-align: left;
-    }
-  `;
-
-  const SectionBodyText = styled.div`
-    font-family: Montserrat;
-    font-size: 20px;
-    padding-right: 64px;
-    line-height: 1.5;
-    font-weight: 400;
-    padding: ${(props) =>
-      props.invert ? "0px 0px 0px 25px" : "0px 0px 0px 75px"};
+    font-size: 1.7rem;
+    padding: 0px;
     text-align: left;
-    width: 70%;
+  }
+`;
 
-    @media (max-width: 900px) {
-      font-size: 0.7rem;
-      padding: 0px;
-      width: 100%;
-    }
-  `;
+const SectionBodyText = styled.div`
+  font-family: Montserrat;
+  font-size: 20px;
+  padding-right: 64px;
+  line-height: 1.5;
+  font-weight: 400;
+  padding: ${(props) =>
+    props.invert ? "0px 0px 0px 25px" : "0px 0px 0px 75px"};
+  text-align: left;
+  width: 70%;
 
-  const PaddedWrapper = styled.div`
+  @media (max-width: 900px) {
+    font-size: 0.7rem;
+    padding: 0px;
     width: 100%;
-    padding: 0px 0px 0px 50px;
+  }
+`;
 
-    @media (max-width: 900px) {
-      padding: 0px;
-    }
-  `;
+const HeroContainer = styled.div`
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px 32px 24px;
+  box-sizing: border-box;
+  min-height: 500px;
 
-  const HeroContainer = styled.div`
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 1100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 48px 24px 32px 24px;
-    box-sizing: border-box;
-    min-height: 500px;
+  @media (max-width: 900px) {
+    min-height: 320px;
+    padding: 24px 8px 16px 8px;
+    max-width: 100vw;
+  }
+`;
 
-    @media (max-width: 900px) {
-      min-height: 320px;
-      padding: 24px 8px 16px 8px;
-      max-width: 100vw;
-    }
-  `;
+const HeroText = styled.div`
+  font-family: "Varela", Arial, sans-serif;
+  font-size: 60px;
+  font-weight: 900;
+  text-align: center;
+  width: 100%;
+  line-height: 1.1;
+  margin-bottom: 18px;
+  word-break: break-word;
+  @media (max-width: 900px) {
+    font-size: 40px;
+    padding: 0 2vw;
+  }
+`;
 
-  const HeroText = styled.div`
-    font-family: "Varela", Arial, sans-serif;
-    font-size: 60px;
-    font-weight: 900;
-    text-align: center;
-    width: 100%;
-    line-height: 1.1;
-    margin-bottom: 18px;
-    word-break: break-word;
-    @media (max-width: 900px) {
-      font-size: 40px;
-      padding: 0 2vw;
-    }
-  `;
-
-  // Add this ref at the top of your function
-  const testimonialCarouselRef = useRef(null);
+export default function AppHome() {
+  const [activeTab, setActiveTab] = useState("learner"); // State to track active tab
 
   // Newsletter email state
   const [newsletterEmail, setNewsletterEmail] = useState("");

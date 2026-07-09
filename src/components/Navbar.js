@@ -10,13 +10,6 @@ import { Link } from "react-router-dom";
 import Image from "react-bootstrap/Image";
 import Logo from "../assets/images/Motivar.svg";
 
-const handleLogout = () => {
-  localStorage.removeItem('motivar-token');
-  localStorage.removeItem('motivar-user-role');
-  localStorage.removeItem('motivar-user-fname');
-  window.location.href = '/';
-};
-
 export default function AppNavbar() {
   let token = localStorage.getItem("motivar-token");
 
@@ -143,25 +136,6 @@ export default function AppNavbar() {
                 </Button>
               </Link>
             )}
-            {/* {token && (
-              <Button
-                variant="outline-danger"
-                className="w-100"
-                style={{
-                  border: "2px solid #dc3545",
-                  color: "#dc3545",
-                  background: "#fff",
-                  borderRadius: "8px",
-                  fontWeight: 600,
-                  fontFamily: "Montserrat, sans-serif",
-                  minWidth: "100px",
-                  padding: "0.4rem 1.2rem",
-                }}
-                onClick={handleLogout}
-              >
-                Logout
-              </Button>
-            )} */}
             {token ? (
               <Link to="/dashboard" className="w-100">
                 <Button

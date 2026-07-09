@@ -12,6 +12,15 @@ import { Link } from "react-router-dom";
 import Logo from "../assets/images/Motivar.svg";
 import { FiLogOut, FiUser, FiGrid } from 'react-icons/fi';
 
+const hashString = (str) => {
+    let hash = 0;
+    for (let i = 0; i < String(str).length; i++) {
+        hash = (hash << 5) - hash + String(str).charCodeAt(i);
+        hash |= 0;
+    }
+    return Math.abs(hash);
+};
+
 // --- STYLED COMPONENTS ---
 
 const brandColors = {
@@ -294,12 +303,14 @@ function RecommendationsList() {
       const response = await recService.getRecommendations();
       
       const augmentedRecommendations = response.recommendations.map((rec, index) => {
+          const id = rec.id || `rec-${index}`;
+          const seed = hashString(id);
           return {
             ...rec,
-            id: rec.id || `rec-${index}`,
-            tags: generateSmartTags(rec.title, rec.description), 
-            ratings: rec.ratings || (Math.random() * (5 - 4.0) + 4.0).toFixed(1), 
-            numReviews: rec.numReviews || Math.floor(Math.random() * (500 - 50) + 50) * 10,
+            id,
+            tags: generateSmartTags(rec.title, rec.description),
+            ratings: rec.ratings != null ? rec.ratings : (4 + (seed % 100) / 100).toFixed(1),
+            numReviews: rec.numReviews != null ? rec.numReviews : (50 + (seed % 450)) * 10,
           };
       });
 

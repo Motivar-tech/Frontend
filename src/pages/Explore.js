@@ -496,7 +496,6 @@ const Explore = () => {
     const fetchCourses = useCallback(async (page = 1, filters) => {
         setLoading(true);
         setError(null);
-        console.log('Fetching with Filters:', filters, 'Page:', page); // Log filters being sent
 
         try {
             // --- === ACTUAL API CALL === ---
@@ -545,7 +544,6 @@ const Explore = () => {
 
     // Handle Search from Header Component
     const handleSearch = (searchQuery) => {
-        console.log("Search triggered:", searchQuery);
         setAppliedFilters(prevFilters => ({
             ...prevFilters,
             search: searchQuery, // Update only the search term

@@ -11,6 +11,16 @@ import Spinner from "react-bootstrap/Spinner";
 import PaymentService from "../Services/PaymentService";
 import toast from "react-hot-toast";
 
+const CURRENCY_SYMBOLS = {
+  NGN: "₦",
+  USD: "$",
+  GBP: "£",
+  EUR: "€",
+  ZAR: "R",
+  KES: "KSh",
+  GHS: "GH₵",
+};
+
 const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
@@ -115,7 +125,13 @@ const MeetLearner = ({ learner, name, id, price, unit, requestID }) => {
           <Button
             onClick={() =>
               router(
-                `/sponsor-status?state=pay&learner=${name}&id=${id}&price=${price}&unit=${unit}&requestID=${requestID}`
+                `/sponsor-status?state=pay&learner=${encodeURIComponent(
+                  name
+                )}&id=${encodeURIComponent(id)}&price=${encodeURIComponent(
+                  price
+                )}&unit=${encodeURIComponent(
+                  unit
+                )}&requestID=${encodeURIComponent(requestID)}`
               )
             }
             style={{
@@ -182,25 +198,44 @@ const PayCourse = ({
   const router = useNavigate();
 
   const handlePayWithPaystack = async () => {
+    const amountValue = Number(price);
+    if (!Number.isFinite(amountValue) || amountValue <= 0) {
+      toast.error("Invalid sponsorship amount.");
+      return;
+    }
+
     setLoading(true);
+    const paymentWindow = window.open("", "_blank");
     const token = await localStorage.getItem("motivar-token");
     try {
       const payload = {
-        amount: Math.round(Number(price) * 100),
+        amount: Math.round(amountValue * 100),
         requestID: requestID,
         currency: unit,
-        description: `Sponsoring ${learner} for a ${unit}${Number(
-          price
-        ).toLocaleString("en-US", {
-          minimumFractionDigits: 0,
-        })} course.`,
+        description: `Sponsoring ${learner} for a ${unit}${amountValue.toLocaleString(
+          "en-US",
+          {
+            minimumFractionDigits: 0,
+          }
+        )} course.`,
       };
       const resp = await PaymentService.InitiatePayment(payload, token);
       setLoading(false);
 
-      window.open(resp.data.data.data.authorization_url, "_blank");
+      const paystackRef = resp?.data?.data?.data?.reference;
+      if (paystackRef) {
+        localStorage.setItem(`requestID-${paystackRef}`, requestID);
+      }
+
+      const authUrl = resp.data.data.data.authorization_url;
+      if (paymentWindow) {
+        paymentWindow.location = authUrl;
+      } else {
+        window.open(authUrl, "_blank");
+      }
     } catch (error) {
       setLoading(false);
+      if (paymentWindow) paymentWindow.close();
       toast.error(
         error?.response?.data?.message || "Error intiating payment.."
       );
@@ -240,13 +275,7 @@ const PayCourse = ({
           Now complete your
           <br />{" "}
           <b>
-            {unit === "NGN"
-              ? "₦"
-              : unit === "USD"
-              ? "$"
-              : unit === "GBP"
-              ? "£"
-              : "#"}
+            {CURRENCY_SYMBOLS[unit] || ""}
             {Number(price).toLocaleString("en-US", {
               minimumFractionDigits: 0,
             })}

@@ -72,7 +72,7 @@ export default function AppComing() {
                        <p className="lead display-5 pt-5 px-4">
                            We are still building for you!
                         </p>
-                        <h6 class="px-3 pb-2">Take our survey to join the waitlist and we will let you know immediately we are live.</h6>
+                        <h6 className="px-3 pb-2">Take our survey to join the waitlist and we will let you know immediately we are live.</h6>
                        
                        <div className="pt-2">
                             <a href="https://forms.office.com/r/XU3YRXEV2C">

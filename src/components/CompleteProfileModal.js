@@ -49,7 +49,7 @@ export default function CompleteProfileModal({ show, onComplete }) {
     if (!fullName.trim()) e.fullName = "Full name is required.";
     if (!phoneNumber) {
       e.phoneNumber = "Phone number is required.";
-    } else if (!/^\+?\d[\d\s\-]{7,}$/.test(phoneNumber)) {
+    } else if (!/^\+?\d[\d\s-]{7,}$/.test(phoneNumber)) {
       e.phoneNumber = "Enter a valid phone number (e.g. +234 XXX XXX XXXX).";
     }
     if (!country) e.country = "Please select your country.";
@@ -69,7 +69,10 @@ export default function CompleteProfileModal({ show, onComplete }) {
       return;
     }
     setAvatarFile(file);
-    setAvatarPreview(URL.createObjectURL(file));
+    setAvatarPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
   };
 
   const handleSubmit = async (e) => {

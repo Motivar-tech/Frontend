@@ -7,7 +7,6 @@ import {
   FooterContainer,
   TopSection,
   LogoAndSocials,
-  Logo,
   SocialIcons,
   LinkSections,
   LinkGroup,
