@@ -61,8 +61,11 @@ export default function MojiChatbot() {
       loadHistory();
     }
     if (open) {
-      setTimeout(() => inputRef.current?.focus(), 100);
+      const focusTimeout = setTimeout(() => inputRef.current?.focus(), 100);
+      return () => clearTimeout(focusTimeout);
     }
+    // intentionally only re-runs on open/close, not on every new message
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const loadHistory = async () => {

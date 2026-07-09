@@ -10,7 +10,6 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
-import Modal from "react-bootstrap/Modal";
 import { Link } from "react-router-dom";
 import Image_help from "../assets/images/image_help.png";
 import Image from "react-bootstrap/Image";
@@ -42,9 +41,16 @@ export default function AppHelp() {
   const [loading, setLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false );
   const checkboxRef = useRef(null);
+  const positionTimeoutRef = useRef(null);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
-  const [userRole, setUserRole] = useState(null);
+  const [userRole, setUserRole] = useState(() => localStorage.getItem("motivar-user-role"));
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      if (positionTimeoutRef.current) clearTimeout(positionTimeoutRef.current);
+    };
+  }, []);
 
   const handleAddEmailField = () => {
     setPrivateEmails([...privateEmails, ""]);
@@ -57,8 +63,9 @@ export default function AppHelp() {
   };
 
   const handleCheckboxChange = (e) => {
+    if (positionTimeoutRef.current) clearTimeout(positionTimeoutRef.current);
     if (e.target.checked) {
-      setTimeout(() => {
+      positionTimeoutRef.current = setTimeout(() => {
         if (checkboxRef.current) {
           const checkboxRect = checkboxRef.current.getBoundingClientRect();
           setModalPosition({
@@ -550,7 +557,6 @@ export default function AppHelp() {
                     onChange={(e) => {
                       handleCheckboxChange(e);
                       setIsPrivate(e.target.checked);
-                      setShowModal(e.target.checked);
                     }}
                     ref={checkboxRef} // Attach the ref to the checkbox
                   />
@@ -656,6 +662,7 @@ export default function AppHelp() {
         />
         <Button
           variant="outline-success"
+          onClick={handleAddEmailField}
           style={{
             marginLeft: "10px",
             borderColor: "#00AA87",

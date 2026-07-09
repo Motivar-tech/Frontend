@@ -53,12 +53,10 @@ export default function AppSuccess() {
             <Image fluid src={Check} alt="check"/>
                 <h1 className="mb-5">Success</h1>
                 <div className="row">
-                    {/* <div className="col-sm-12">
-                        <Button className="btn btn-md btn-secondary text-white" type="button"><Link to="/" style={{color: 'white', textDecoration: 'none'}}>GO HOME</Link></Button>
-
-                     </div> */}
                      <div className="col-sm-12 offset-md-2 col-md-8 d-grid">
-                        <Button className="btn btn-lg btn-secondary text-white ">GO HOME</Button>
+                        <Link to="/">
+                          <Button className="btn btn-lg btn-secondary text-white w-100">GO HOME</Button>
+                        </Link>
                     </div>
                 </div>
             </Col>

@@ -25,8 +25,10 @@ class GeneralDataServices {
     return response;
   }
 
-  async GetRequests() {
-    const response = await axios.get(`${ENDPOINT}/course/get`);
+  async GetRequests(token) {
+    const response = await axios.get(`${ENDPOINT}/course/get`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response;
   }
 
