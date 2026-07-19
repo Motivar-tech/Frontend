@@ -415,14 +415,14 @@ const SponsorDashboard = () => {
   // ─── View certificate ──────────────────────────────────────────────────────
   const handleViewCertificate = async (requestId) => {
     try {
-      const token = localStorage.getItem('motivar-token');
-      const res = await fetch(`${axiosInstance.defaults.baseURL}/sponsor/requests/${requestId}/certificate`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await axiosInstance.get(`/sponsor/requests/${requestId}/certificate`, {
+        responseType: 'blob',
       });
-      if (!res.ok) { toast.error('No certificate available yet.'); return; }
-      const blob = await res.blob();
-      window.open(URL.createObjectURL(blob), '_blank', 'noopener,noreferrer');
-    } catch { toast.error('Could not retrieve certificate.'); }
+      window.open(URL.createObjectURL(res.data), '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      if (err.response?.status === 404) toast.error('No certificate available yet.');
+      else toast.error('Could not retrieve certificate.');
+    }
   };
 
   // ─── Mark notification read ────────────────────────────────────────────────
@@ -555,7 +555,7 @@ const SponsorDashboard = () => {
               <FiSearch size={36} color={brand.primary} style={{ marginBottom: 12 }} />
               <h6 style={{ fontWeight: 700, color: brand.text }}>Browse Sponsorship Requests</h6>
               <p style={{ fontSize: 13, color: brand.sub, marginBottom: 16 }}>Find learners who need your support and make a lasting impact.</p>
-              <PrimaryBtn onClick={() => navigate('/help-learner')}>View Requests</PrimaryBtn>
+              <PrimaryBtn onClick={() => setActiveTab('browse')}>View Requests</PrimaryBtn>
             </Card.Body>
           </SectionCard>
         </Col>

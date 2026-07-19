@@ -12,8 +12,10 @@ const processQueue = (error, token = null) => {
 };
 
 axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("motivar-token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (!config.headers.Authorization) {
+    const token = localStorage.getItem("motivar-token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 

@@ -40,9 +40,8 @@ const handleScheduleClick = async (email, name, id, price, unit, requestId) => {
 
   window.open(url, "_blank");
 
-  const token = await localStorage.getItem("motivar-token");
   const payload = { name, id, price, unit, email, requestId};
-  await GeneralDataServices.notifyMeetingSchedule(payload, token);
+  await GeneralDataServices.notifyMeetingSchedule(payload);
 };
 
 function LearnerDetailsModal({ show, onHide, learner }) {
@@ -487,8 +486,7 @@ export default function AppHelpLearner() {
 
   const fetchRequests = async () => {
     try {
-      const token = localStorage.getItem("motivar-token");
-      const res = await GeneralDataServices.GetRequests(token);
+      const res = await GeneralDataServices.GetRequests();
       if (res) {
         setRequests(res.data.data);
       }

@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { BASE_URL } from '../utils/index';
+import axiosInstance from '../utils/axiosInstance';
 
 const ENDPOINT = BASE_URL;
 
@@ -26,7 +27,10 @@ class AuthDataServices {
   }
 
   async updateProfile(token, data) {
-    const response = await axios.patch(`${ENDPOINT}/user/profile/update`, data, {
+    // Called with a freshly issued token that may not be in localStorage yet
+    // (Step-3 sign-in flow), so the token is passed explicitly rather than
+    // relying on axiosInstance's localStorage-backed interceptor.
+    const response = await axiosInstance.patch(`/user/profile/update`, data, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -55,12 +59,7 @@ class AuthDataServices {
   }
 
   async logout(refreshToken) {
-    const token = localStorage.getItem("motivar-token");
-    await axios.post(
-      `${ENDPOINT}/user/auth/logout`,
-      { refreshToken },
-      { headers: { Authorization: `Bearer ${token}` } }
-    ).catch(() => {});
+    await axiosInstance.post(`/user/auth/logout`, { refreshToken }).catch(() => {});
     localStorage.removeItem("motivar-token");
     localStorage.removeItem("motivar-refresh-token");
     localStorage.removeItem("motivar-user-role");

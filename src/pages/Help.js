@@ -10,7 +10,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Image_help from "../assets/images/image_help.png";
 import Image from "react-bootstrap/Image";
 import SuccessTick from "../assets/images/successTick.png";  
@@ -45,12 +45,23 @@ export default function AppHelp() {
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [userRole, setUserRole] = useState(() => localStorage.getItem("motivar-user-role"));
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     return () => {
       if (positionTimeoutRef.current) clearTimeout(positionTimeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    const prefillCourse = location.state?.course;
+    if (!prefillCourse) return;
+    if (prefillCourse.courseTitle) setCourseTitle(prefillCourse.courseTitle);
+    if (prefillCourse.platform) setPlatform(prefillCourse.platform);
+    if (prefillCourse.link) setLink(prefillCourse.link);
+    if (prefillCourse.price) setPrice(String(prefillCourse.price));
+    if (prefillCourse.priceUnit) setPriceUnit(prefillCourse.priceUnit);
+  }, [location.state]);
 
   const handleAddEmailField = () => {
     setPrivateEmails([...privateEmails, ""]);
@@ -104,9 +115,8 @@ export default function AppHelp() {
       recipientEmails: privateEmails, // Pass recipient emails
     };
 
-    const token = localStorage.getItem("motivar-token");
     try {
-      const response = await GeneralDataServices.RequestHelp(payload, token);
+      const response = await GeneralDataServices.RequestHelp(payload);
       if (response) {
         setLoading(false);
         toast.success(response.data.message);
@@ -153,7 +163,7 @@ export default function AppHelp() {
     }}>
           <Container className="d-flex justify-content-between align-items-center">
             <div className="d-flex align-items-center">
-              <Link to="/" className="shadow-sm pointer d-flex align-items-center">
+              <Link to="/dashboard" className="shadow-sm pointer d-flex align-items-center">
                 <BsChevronLeft size={24} />
                 <span
                   className="ms-2"
@@ -222,7 +232,7 @@ export default function AppHelp() {
               width: "400px",
               height: "50px",
             }}
-            onClick={() => (window.location.href = "/")} // Redirects to home
+            onClick={() => (window.location.href = "/dashboard")} // Redirects to dashboard
           >
             GO HOME
           </button>
@@ -276,7 +286,7 @@ export default function AppHelp() {
     }}>
           <Container className="d-flex justify-content-between align-items-center">
             <div className="d-flex align-items-center">
-              <Link to="/" className="shadow-sm pointer d-flex align-items-center">
+              <Link to="/dashboard" className="shadow-sm pointer d-flex align-items-center">
                 <BsChevronLeft size={24} />
                 <span
                   className="ms-2"
