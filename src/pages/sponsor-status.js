@@ -206,7 +206,6 @@ const PayCourse = ({
 
     setLoading(true);
     const paymentWindow = window.open("", "_blank");
-    const token = await localStorage.getItem("motivar-token");
     try {
       const payload = {
         amount: Math.round(amountValue * 100),
@@ -219,7 +218,7 @@ const PayCourse = ({
           }
         )} course.`,
       };
-      const resp = await PaymentService.InitiatePayment(payload, token);
+      const resp = await PaymentService.InitiatePayment(payload);
       setLoading(false);
 
       const paystackRef = resp?.data?.data?.data?.reference;

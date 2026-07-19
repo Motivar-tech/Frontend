@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import LearnerDashboard from "./learnerDashboard";
 import SponsorDashboard from "./sponsorDashboard";
 import Spinner from "react-bootstrap/Spinner";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-hot-toast";
-
-import { BASE_URL } from '../utils/index';
 
 // ── Shared card style for role selection ──────────────────────────────────────
 function RoleCard({ selected, emoji, title, description, onClick }) {
@@ -72,9 +70,9 @@ const DashboardRouter = () => {
             }
 
             // No cached role — call API to determine (new users or cleared storage)
-            const response = await axios.get(`${BASE_URL}/dashboard`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            // Uses axiosInstance so an expired access token is silently refreshed
+            // (via the refresh-token rotation flow) instead of bouncing to /user-auth.
+            const response = await axiosInstance.get(`/dashboard`);
 
             // Learner controller returns flat JSON; sponsor controller wraps in {data:{}}
             const userDetails =
@@ -118,17 +116,7 @@ const DashboardRouter = () => {
         }
         setRoleLoading(true);
         try {
-            const token = localStorage.getItem("motivar-token");
-            await axios.patch(
-                `${BASE_URL}/user/profile/update`,
-                { role: selectedRole },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
+            await axiosInstance.patch("/user/profile/update", { role: selectedRole });
             localStorage.setItem("motivar-user-role", selectedRole);
             toast.success("Account type set! Welcome to Motivar.");
             // Remove any stale signup state

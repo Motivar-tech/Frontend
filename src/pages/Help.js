@@ -104,9 +104,8 @@ export default function AppHelp() {
       recipientEmails: privateEmails, // Pass recipient emails
     };
 
-    const token = localStorage.getItem("motivar-token");
     try {
-      const response = await GeneralDataServices.RequestHelp(payload, token);
+      const response = await GeneralDataServices.RequestHelp(payload);
       if (response) {
         setLoading(false);
         toast.success(response.data.message);

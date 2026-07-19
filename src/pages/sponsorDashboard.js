@@ -415,14 +415,14 @@ const SponsorDashboard = () => {
   // ─── View certificate ──────────────────────────────────────────────────────
   const handleViewCertificate = async (requestId) => {
     try {
-      const token = localStorage.getItem('motivar-token');
-      const res = await fetch(`${axiosInstance.defaults.baseURL}/sponsor/requests/${requestId}/certificate`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await axiosInstance.get(`/sponsor/requests/${requestId}/certificate`, {
+        responseType: 'blob',
       });
-      if (!res.ok) { toast.error('No certificate available yet.'); return; }
-      const blob = await res.blob();
-      window.open(URL.createObjectURL(blob), '_blank', 'noopener,noreferrer');
-    } catch { toast.error('Could not retrieve certificate.'); }
+      window.open(URL.createObjectURL(res.data), '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      if (err.response?.status === 404) toast.error('No certificate available yet.');
+      else toast.error('Could not retrieve certificate.');
+    }
   };
 
   // ─── Mark notification read ────────────────────────────────────────────────

@@ -1,40 +1,24 @@
 /* eslint-disable */
 
-import axios from "axios";
-
-import { BASE_URL } from "../utils/index";
-
-const ENDPOINT = BASE_URL;
+import axiosInstance from "../utils/axiosInstance";
 
 class PaymentService {
-  async InitiatePayment(payload, token) {
-    const response = await axios.post(
-      `${ENDPOINT}/course/initiate/pay`,
-      payload,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+  async InitiatePayment(payload) {
+    const response = await axiosInstance.post(`/course/initiate/pay`, payload);
     return response;
   }
 
-  async initiatePaymentVerification(token, reference) {
-    let response = await axios.get(
-      `${ENDPOINT}/course/verify/pay?reference=${reference}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+  async initiatePaymentVerification(reference) {
+    let response = await axiosInstance.get(
+      `/course/verify/pay?reference=${reference}`
     );
 
     return response.data;
   }
 
-  async completeSponsorship(token, requestID, ref) {
-    let response = await axios.get(
-      `${ENDPOINT}/course/approve/payment?requestId=${requestID}&ref=${ref}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+  async completeSponsorship(requestID, ref) {
+    let response = await axiosInstance.get(
+      `/course/approve/payment?requestId=${requestID}&ref=${ref}`
     );
 
     return response.data;

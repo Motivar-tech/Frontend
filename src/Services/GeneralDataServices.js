@@ -1,51 +1,40 @@
 /* eslint-disable */
 
-import axios from "axios";
-import { BASE_URL } from "../utils/index";
-
-const ENDPOINT = BASE_URL;
-//const ENDPOINT = "http://localhost:8089";
+import axiosInstance from "../utils/axiosInstance";
 
 class GeneralDataServices {
-  async RequestHelp(payload, token) {
-    const response = await axios.post(`${ENDPOINT}/course/request`, payload, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  async RequestHelp(payload) {
+    const response = await axiosInstance.post(`/course/request`, payload);
 
     return response;
   }
 
-  async MeetLearner(requestID, payload, token) {
-    const response = await axios.post(
-      `${ENDPOINT}/course/meet/${requestID}`,
-      payload,
-      { headers: { Authorization: `Bearer ${token}` } }
+  async MeetLearner(requestID, payload) {
+    const response = await axiosInstance.post(
+      `/course/meet/${requestID}`,
+      payload
     );
 
     return response;
   }
 
-  async GetRequests(token) {
-    const response = await axios.get(`${ENDPOINT}/course/get`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  async GetRequests() {
+    const response = await axiosInstance.get(`/course/get`);
     return response;
   }
 
-  async AddProof(requestID, payload, token) {
-    const response = await axios.post(
-      `${ENDPOINT}/course/add-proof/${requestID}`,
-      payload,
-      { headers: { Authorization: `Bearer ${token}` } }
+  async AddProof(requestID, payload) {
+    const response = await axiosInstance.post(
+      `/course/add-proof/${requestID}`,
+      payload
     );
     return response;
   }
 
-  async notifyMeetingSchedule(payload, token) {
-    const response = await axios.post(
-      `${ENDPOINT}/course/meet/notify`,
-      payload,
-      { headers: { Authorization: `Bearer ${token}` } }
+  async notifyMeetingSchedule(payload) {
+    const response = await axiosInstance.post(
+      `/course/meet/notify`,
+      payload
     );
 
     return response.data;

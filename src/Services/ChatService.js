@@ -1,24 +1,9 @@
-import axios from 'axios';
-import { BASE_URL } from '../utils/index';
-
-const ENDPOINT = BASE_URL;
+import axiosInstance from '../utils/axiosInstance';
 
 class ChatService {
-  getHeaders() {
-    const token = localStorage.getItem('motivar-token');
-    return {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    };
-  }
-
   async startChat() {
     try {
-      const response = await axios.post(
-        `${ENDPOINT}/chat/start`,
-        {},
-        { headers: this.getHeaders() }
-      );
+      const response = await axiosInstance.post('/chat/start', {});
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -27,10 +12,9 @@ class ChatService {
 
   async sendMessage(sessionId, message) {
     try {
-      const response = await axios.post(
-        `${ENDPOINT}/chat/${sessionId}/message`,
-        { user_msg: message },
-        { headers: this.getHeaders() }
+      const response = await axiosInstance.post(
+        `/chat/${sessionId}/message`,
+        { user_msg: message }
       );
       return response.data;
     } catch (error) {

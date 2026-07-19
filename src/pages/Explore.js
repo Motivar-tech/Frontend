@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import Container from 'react-bootstrap/Container';
 import AppFooter from "../components/Footer.js";
 import Row from 'react-bootstrap/Row';
@@ -593,8 +594,8 @@ const Explore = () => {
                 return;
             }
 
-            await axios.post(
-                `${BASE_URL}/dashboard/wishlist`,
+            await axiosInstance.post(
+                '/dashboard/wishlist',
                 {
                     courseId: course._id,
                     title: course.title,
@@ -603,8 +604,7 @@ const Explore = () => {
                     status: course.status,
                     price: course.price,
                     priceUnit: course.priceUnit,
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
+                }
             );
 
             setWishedCourses((prev) => [...prev, course._id]);

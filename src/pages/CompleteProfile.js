@@ -46,9 +46,11 @@ export default function CompleteProfile() {
       if (response) {
         toast.success("Registration completed successfully!");
         localStorage.removeItem("temp-google-data");
-        localStorage.setItem("motivar-token", response.data.data.token);
-        localStorage.setItem("motivar-user-role", response.data.data.role);
-        localStorage.setItem("motivar-user-fname", response.data.data.firstName || googleData.data.fullName);
+        const { accessToken, refreshToken, role: userRole, firstName } = response.data.data;
+        localStorage.setItem("motivar-token", accessToken);
+        localStorage.setItem("motivar-refresh-token", refreshToken);
+        localStorage.setItem("motivar-user-role", userRole);
+        localStorage.setItem("motivar-user-fname", firstName || googleData.data.fullName);
         window.location.pathname = "/dashboard";
       }
     } catch (error) {

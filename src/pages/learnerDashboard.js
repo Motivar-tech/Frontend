@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -26,7 +26,6 @@ import {
   FiCalendar, FiLink, FiEdit2, FiStar,
   FiGrid, FiExternalLink, FiTrash2, FiCamera, FiMessageSquare, FiSend,
 } from 'react-icons/fi';
-import { BASE_URL } from '../utils/index';
 import CompleteProfileModal from '../components/CompleteProfileModal';
 import MojiChatbot from '../components/MojiChatbot';
 
@@ -236,9 +235,6 @@ const StyledFooter = styled.footer`
 const inputStyle = { borderColor: brand.primary, borderRadius: 8, fontFamily: 'Poppins, sans-serif' };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-const token = () => localStorage.getItem('motivar-token');
-const authHeader = () => ({ Authorization: `Bearer ${token()}` });
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 const LearnerDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -346,7 +342,7 @@ const LearnerDashboard = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get(`${BASE_URL}/dashboard`, { headers: authHeader() });
+        const res = await axiosInstance.get('/dashboard');
         const d = res.data;
 
         setUserDetails(d.userDetails);
@@ -411,7 +407,7 @@ const LearnerDashboard = () => {
     try {
       const params = new URLSearchParams({ page, limit: 12 });
       if (search) params.append('search', search);
-      const res = await axios.get(`${BASE_URL}/explore/filter?${params}`);
+      const res = await axiosInstance.get(`/explore/filter?${params}`);
       setCatalogue(res.data.courses || []);
       setCatTotal(res.data.totalCourses || 0);
     } catch {
@@ -441,8 +437,8 @@ const LearnerDashboard = () => {
       Object.entries(profileForm).forEach(([k, v]) => { if (v) formData.append(k, v); });
       if (profilePicFile) formData.append('profilePicture', profilePicFile);
 
-      await axios.patch(`${BASE_URL}/user/profile/update`, formData, {
-        headers: { ...authHeader(), 'Content-Type': 'multipart/form-data' },
+      await axiosInstance.patch('/user/profile/update', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       toast.success('Profile updated successfully.');
@@ -461,8 +457,8 @@ const LearnerDashboard = () => {
   const handleGoalsSave = async () => {
     setGoalsSaving(true);
     try {
-      await axios.patch(
-        `${BASE_URL}/dashboard/learner-profile`,
+      await axiosInstance.patch(
+        '/dashboard/learner-profile',
         {
           primary_goal: goalsForm.primary_goal,
           interests: goalsForm.interests,
@@ -470,8 +466,7 @@ const LearnerDashboard = () => {
           target_roles: goalsForm.target_roles
             ? goalsForm.target_roles.split(',').map(s => s.trim()).filter(Boolean)
             : [],
-        },
-        { headers: { ...authHeader(), 'Content-Type': 'application/json' } }
+        }
       );
       toast.success('Goals & interests saved.');
       setLearnerProfile(p => ({
@@ -491,16 +486,15 @@ const LearnerDashboard = () => {
   const handleAvailSave = async () => {
     setAvailSaving(true);
     try {
-      await axios.patch(
-        `${BASE_URL}/dashboard/learner-profile`,
+      await axiosInstance.patch(
+        '/dashboard/learner-profile',
         {
           weekly_hours: availForm.weekly_hours ? Number(availForm.weekly_hours) : undefined,
           motivation_level: availForm.motivation_level || undefined,
           device: availForm.device || undefined,
           preferred_learning_style: availForm.preferred_learning_style || undefined,
           budget: availForm.budget || undefined,
-        },
-        { headers: { ...authHeader(), 'Content-Type': 'application/json' } }
+        }
       );
       toast.success('Availability preferences saved.');
     } catch (err) {
@@ -514,8 +508,8 @@ const LearnerDashboard = () => {
   const handleSocialSave = async () => {
     setSocialSaving(true);
     try {
-      await axios.patch(
-        `${BASE_URL}/dashboard/learner-profile`,
+      await axiosInstance.patch(
+        '/dashboard/learner-profile',
         {
           socialProfiles: socialForm,
           academicProfiles: {
@@ -524,8 +518,7 @@ const LearnerDashboard = () => {
               ? academicForm.certifications.split(',').map(s => s.trim()).filter(Boolean)
               : [],
           },
-        },
-        { headers: { ...authHeader(), 'Content-Type': 'application/json' } }
+        }
       );
       toast.success('Social & academic profiles saved.');
       setSocialProfiles(socialForm);
@@ -543,10 +536,10 @@ const LearnerDashboard = () => {
     try {
       const formData = new FormData();
       formData.append('certificate', selectedFile);
-      await axios.put(
-        `${BASE_URL}/dashboard/${selectedCourse._id}/upload-completion-certificate`,
+      await axiosInstance.put(
+        `/dashboard/${selectedCourse._id}/upload-completion-certificate`,
         formData,
-        { headers: { ...authHeader(), 'Content-Type': 'multipart/form-data' } }
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
       setDashboardCourses(prev =>
         prev.map(c => c._id === selectedCourse._id
@@ -568,11 +561,7 @@ const LearnerDashboard = () => {
   const handleEnroll = async (course) => {
     setEnrollingId(course._id);
     try {
-      await axios.post(
-        `${BASE_URL}/dashboard/enroll/${course._id}`,
-        {},
-        { headers: authHeader() }
-      );
+      await axiosInstance.post(`/dashboard/enroll/${course._id}`, {});
       toast.success(`Enrolled in "${course.title}"!`);
       setRefreshKey(k => k + 1);
     } catch (err) {
@@ -590,13 +579,13 @@ const LearnerDashboard = () => {
       if (inWishlist) {
         const item = wishlist.find(w => w.courseId === course._id || w.title === course.title);
         if (item) {
-          await axios.delete(`${BASE_URL}/dashboard/wishlist/${item._id}`, { headers: authHeader() });
+          await axiosInstance.delete(`/dashboard/wishlist/${item._id}`);
           setWishlist(prev => prev.filter(w => w._id !== item._id));
           toast.success('Removed from wishlist.');
         }
       } else {
-        const res = await axios.post(
-          `${BASE_URL}/dashboard/wishlist`,
+        const res = await axiosInstance.post(
+          '/dashboard/wishlist',
           {
             courseId: course._id,
             title: course.title,
@@ -605,8 +594,7 @@ const LearnerDashboard = () => {
             status: course.status,
             price: course.price,
             priceUnit: course.priceUnit,
-          },
-          { headers: { ...authHeader(), 'Content-Type': 'application/json' } }
+          }
         );
         setWishlist(res.data.wishlist || []);
         toast.success('Added to wishlist.');
@@ -634,11 +622,7 @@ const LearnerDashboard = () => {
   // ─── Mark course complete ─────────────────────────────────────────────────
   const handleMarkComplete = async (course) => {
     try {
-      await axios.patch(
-        `${BASE_URL}/dashboard/courses/${course._id}/complete`,
-        {},
-        { headers: authHeader() }
-      );
+      await axiosInstance.patch(`/dashboard/courses/${course._id}/complete`, {});
       setDashboardCourses(prev =>
         prev.map(c => c._id === course._id ? { ...c, status: 'completed' } : c)
       );
@@ -653,10 +637,9 @@ const LearnerDashboard = () => {
     if (!reviewScore) { toast.error('Please select a star rating.'); return; }
     setReviewSubmitting(true);
     try {
-      await axios.post(
-        `${BASE_URL}/dashboard/courses/${reviewCourse._id}/review`,
-        { score: reviewScore, review: reviewText },
-        { headers: { ...authHeader(), 'Content-Type': 'application/json' } }
+      await axiosInstance.post(
+        `/dashboard/courses/${reviewCourse._id}/review`,
+        { score: reviewScore, review: reviewText }
       );
       toast.success('Review submitted! Thank you.');
       setDashboardCourses(prev =>
@@ -682,7 +665,7 @@ const LearnerDashboard = () => {
     setDiscLoading(true);
     try {
       const id = course.courseId || course._id;
-      const res = await axios.get(`${BASE_URL}/dashboard/courses/${id}/discussion`, { headers: authHeader() });
+      const res = await axiosInstance.get(`/dashboard/courses/${id}/discussion`);
       setDiscPosts(res.data.data.posts || []);
     } catch {
       toast.error('Could not load discussion.');
@@ -697,10 +680,9 @@ const LearnerDashboard = () => {
     setDiscPosting(true);
     try {
       const id = discCourse.courseId || discCourse._id;
-      const res = await axios.post(
-        `${BASE_URL}/dashboard/courses/${id}/discussion`,
-        { message: discMessage.trim() },
-        { headers: { ...authHeader(), 'Content-Type': 'application/json' } }
+      const res = await axiosInstance.post(
+        `/dashboard/courses/${id}/discussion`,
+        { message: discMessage.trim() }
       );
       setDiscPosts(prev => [res.data.data.post, ...prev]);
       setDiscMessage('');
@@ -715,7 +697,7 @@ const LearnerDashboard = () => {
   const fetchMessages = async () => {
     setMsgLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/dashboard/messages`, { headers: authHeader() });
+      const res = await axiosInstance.get('/dashboard/messages');
       setMsgThreads(res.data.threads || []);
     } catch {
       toast.error('Failed to load messages.');
@@ -732,10 +714,9 @@ const LearnerDashboard = () => {
     if (!replyContent.trim() || !selectedThread) return;
     setReplying(true);
     try {
-      const res = await axios.post(
-        `${BASE_URL}/dashboard/messages/${selectedThread.threadId}/reply`,
-        { content: replyContent.trim() },
-        { headers: { ...authHeader(), 'Content-Type': 'application/json' } }
+      const res = await axiosInstance.post(
+        `/dashboard/messages/${selectedThread.threadId}/reply`,
+        { content: replyContent.trim() }
       );
       const newMsg = res.data.msg;
       setSelectedThread(prev => ({ ...prev, messages: [...prev.messages, newMsg] }));
@@ -886,10 +867,8 @@ const LearnerDashboard = () => {
                               variant="outline-primary"
                               onClick={async () => {
                                 try {
-                                  const res = await fetch(`${BASE_URL}/dashboard/${course._id}/view-certificate`, { headers: authHeader() });
-                                  if (!res.ok) throw new Error();
-                                  const blob = await res.blob();
-                                  window.open(URL.createObjectURL(blob), '_blank', 'noopener,noreferrer');
+                                  const res = await axiosInstance.get(`/dashboard/${course._id}/view-certificate`, { responseType: 'blob' });
+                                  window.open(URL.createObjectURL(res.data), '_blank', 'noopener,noreferrer');
                                 } catch { toast.error('Could not retrieve certificate.'); }
                               }}
                             >
@@ -1313,7 +1292,7 @@ const LearnerDashboard = () => {
                     variant="outline-danger"
                     onClick={async () => {
                       try {
-                        await axios.delete(`${BASE_URL}/dashboard/wishlist/${item._id}`, { headers: authHeader() });
+                        await axiosInstance.delete(`/dashboard/wishlist/${item._id}`);
                         setWishlist(prev => prev.filter(w => w._id !== item._id));
                         toast.success('Removed from wishlist.');
                       } catch {

@@ -6,9 +6,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import { toast } from "react-hot-toast";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import { FiUser, FiCamera } from "react-icons/fi";
-import { BASE_URL } from "../utils/index";
 
 const AfricanCountries = [
   "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi",
@@ -85,7 +84,6 @@ export default function CompleteProfileModal({ show, onComplete }) {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem("motivar-token");
       const formData = new FormData();
       formData.append("fullName", fullName);
       formData.append("phoneNumber", phoneNumber);
@@ -95,11 +93,8 @@ export default function CompleteProfileModal({ show, onComplete }) {
       if (location) formData.append("location", location);
       if (avatarFile) formData.append("profilePicture", avatarFile);
 
-      await axios.patch(`${BASE_URL}/user/profile/update`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+      await axiosInstance.patch("/user/profile/update", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       toast.success("Profile updated! Welcome to Motivar.");

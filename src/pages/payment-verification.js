@@ -82,11 +82,10 @@ const PaymentVerification = () => {
     setIsLoading(true);
     setVerifyError(null);
     try {
-      const token = localStorage.getItem("motivar-token");
-      const resp = await PaymentService.initiatePaymentVerification(token, reference);
+      const resp = await PaymentService.initiatePaymentVerification(reference);
 
       if (resp?.data?.status === "success") {
-        await PaymentService.completeSponsorship(token, requestID, reference);
+        await PaymentService.completeSponsorship(requestID, reference);
         localStorage.removeItem(`requestID-${reference}`);
         localStorage.removeItem("requestID");
         setPaymentData(resp.data);

@@ -1,24 +1,9 @@
-import axios from 'axios';
-import { BASE_URL } from '../utils/index';
-
-const ENDPOINT = BASE_URL;
+import axiosInstance from '../utils/axiosInstance';
 
 class RecService {
-  getHeaders() {
-    const token = localStorage.getItem('motivar-token');
-    return {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    };
-  }
-
   async getRecommendations() {
     try {
-      const response = await axios.post(
-        `${ENDPOINT}/recommendations`,
-        {},
-        { headers: this.getHeaders() }
-      );
+      const response = await axiosInstance.post('/recommendations', {});
       return response.data;
     } catch (error) {
       throw this.handleError(error);
