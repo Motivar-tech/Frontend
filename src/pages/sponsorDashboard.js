@@ -555,7 +555,7 @@ const SponsorDashboard = () => {
               <FiSearch size={36} color={brand.primary} style={{ marginBottom: 12 }} />
               <h6 style={{ fontWeight: 700, color: brand.text }}>Browse Sponsorship Requests</h6>
               <p style={{ fontSize: 13, color: brand.sub, marginBottom: 16 }}>Find learners who need your support and make a lasting impact.</p>
-              <PrimaryBtn onClick={() => navigate('/help-learner')}>View Requests</PrimaryBtn>
+              <PrimaryBtn onClick={() => setActiveTab('browse')}>View Requests</PrimaryBtn>
             </Card.Body>
           </SectionCard>
         </Col>

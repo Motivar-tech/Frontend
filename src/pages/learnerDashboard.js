@@ -15,7 +15,7 @@ import Alert from 'react-bootstrap/Alert';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Buffer } from 'buffer';
 import { toast } from 'react-hot-toast';
@@ -237,6 +237,7 @@ const inputStyle = { borderColor: brand.primary, borderRadius: 8, fontFamily: 'P
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 // ─── Main Component ───────────────────────────────────────────────────────────
 const LearnerDashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
 
   // Core data
@@ -1395,15 +1396,24 @@ const LearnerDashboard = () => {
                                   : alreadyEnrolled ? 'Enrolled' : 'Enroll Free'}
                               </PrimaryBtn>
                             ) : (
-                              <a href="/help" style={{ flex: 1 }}>
-                                <Button
-                                  size="sm"
-                                  variant="warning"
-                                  style={{ width: '100%', borderRadius: 8, fontSize: '0.78rem', fontWeight: 600 }}
-                                >
-                                  Get Sponsored
-                                </Button>
-                              </a>
+                              <Button
+                                size="sm"
+                                variant="warning"
+                                style={{ flex: 1, borderRadius: 8, fontSize: '0.78rem', fontWeight: 600 }}
+                                onClick={() => navigate('/help', {
+                                  state: {
+                                    course: {
+                                      courseTitle: course.title,
+                                      platform: course.platform,
+                                      link: course.url,
+                                      price: course.price,
+                                      priceUnit: course.priceUnit,
+                                    },
+                                  },
+                                })}
+                              >
+                                Get Sponsored
+                              </Button>
                             )}
                           </div>
                         </Card.Body>
@@ -1825,9 +1835,23 @@ const LearnerDashboard = () => {
                     : 'Enroll Free'}
               </PrimaryBtn>
             ) : (
-              <a href="/help">
-                <Button variant="warning" style={{ borderRadius: 50, fontWeight: 600 }}>Get Sponsored</Button>
-              </a>
+              <Button
+                variant="warning"
+                style={{ borderRadius: 50, fontWeight: 600 }}
+                onClick={() => navigate('/help', {
+                  state: {
+                    course: {
+                      courseTitle: selectedCatCourse.title,
+                      platform: selectedCatCourse.platform,
+                      link: selectedCatCourse.url,
+                      price: selectedCatCourse.price,
+                      priceUnit: selectedCatCourse.priceUnit,
+                    },
+                  },
+                })}
+              >
+                Get Sponsored
+              </Button>
             )}
           </Modal.Footer>
         </StyledModal>
