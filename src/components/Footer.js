@@ -91,7 +91,7 @@ const Footer = () => {
         </LinkSections>
       </TopSection>
 
-      <BottomBar>Copyright © 2025 Motivar Learning Technologies</BottomBar>
+      <BottomBar>Copyright © {new Date().getFullYear()} Motivar Learning Technologies</BottomBar>
     </FooterContainer>
   );
 };

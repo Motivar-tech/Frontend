@@ -17,7 +17,8 @@ import CompleteProfile from "./pages/CompleteProfile.js";
 import ChatInterface from "./pages/Chat.js";
 import RecommendationsList from "./pages/Recommendation.js";
 import ResetPassword from "./pages/ResetPassword.js";
-
+import TermsOfUse from "./pages/termsofuse.js";
+import PrivacyPolicy from "./pages/privacypolicy.js";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import { Toaster } from "react-hot-toast";
@@ -53,7 +54,12 @@ function App() {
             <Route path="/user-auth" element={<AppAuth />} />
             <Route path="/dashboard" element={<DashboardRouter />} />
             <Route path="/explore" element={<Explore />} />
-            <Route path="/payment-verification/*" element={<PaymentVerification />} />
+            <Route path="/terms-of-use" element={<TermsOfUse />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route
+              path="/payment-verification/*"
+              element={<PaymentVerification />}
+            />
             <Route
               path="/fund-learner"
               element={<PrivateRoute component={AppFundLearner} />}
