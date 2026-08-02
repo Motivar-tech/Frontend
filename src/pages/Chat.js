@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Import styled-components
 import chatService from '../Services/ChatService';
+import { readGuestChat, writeGuestChat, clearGuestChat } from '../utils/guestChat';
 import Container from 'react-bootstrap/Container';
 import Vector from "../assets/images/Vector.png";
 import { toast } from 'react-hot-toast';
+import { FiLock, FiExternalLink } from 'react-icons/fi';
 
 
 const PageWrapper = styled.div`
@@ -72,7 +74,7 @@ const styles = {
     border: '1px solid rgba(0,0,0,0.08)',
     boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
     position: 'relative',
-    zIndex: 1 
+    zIndex: 1
   },
   header: {
     backgroundColor: '#fff',
@@ -203,17 +205,114 @@ const styles = {
     cursor: 'pointer',
     boxShadow: '0 4px 12px rgba(71, 167, 139, 0.3)',
     transition: 'transform 0.1s'
+  },
+  // ── Guest-mode additions ────────────────────────────────────────────────
+  headerCta: {
+    marginLeft: 'auto',
+    backgroundColor: '#47A78B',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '20px',
+    padding: '8px 16px',
+    fontSize: '13px',
+    fontWeight: 700,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap'
+  },
+  banner: {
+    padding: '10px 20px',
+    fontSize: '13px',
+    lineHeight: 1.5,
+    borderBottom: '1px solid #f0e6c8',
+    backgroundColor: '#fffaf0',
+    color: '#7a5c00'
+  },
+  previewPanel: {
+    backgroundColor: '#fff',
+    borderTop: '1px solid #eee',
+    padding: '14px 20px',
+    maxHeight: '42%',
+    overflowY: 'auto'
+  },
+  previewTitle: {
+    fontSize: '13px',
+    fontWeight: 700,
+    color: '#333',
+    margin: '0 0 10px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px'
+  },
+  courseCard: {
+    border: '1px solid #e6f2ee',
+    backgroundColor: '#f9fefc',
+    borderRadius: '10px',
+    padding: '10px 12px',
+    marginBottom: '8px'
+  },
+  courseTitle: {
+    fontSize: '13.5px',
+    fontWeight: 700,
+    color: '#1a3a30',
+    marginBottom: '3px'
+  },
+  courseDesc: {
+    fontSize: '12px',
+    color: '#5a6a64',
+    margin: 0,
+    lineHeight: 1.5
+  },
+  lockedCard: {
+    border: '1px dashed #cfd8d4',
+    borderRadius: '10px',
+    padding: '10px 12px',
+    marginBottom: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    backgroundColor: '#f4f6f5',
+    color: '#8a9691'
+  },
+  lockedBar: {
+    height: '9px',
+    borderRadius: '5px',
+    background: 'linear-gradient(90deg, #dfe6e3, #eef2f0)',
+    filter: 'blur(1.2px)'
+  },
+  ctaBox: {
+    backgroundColor: '#f1fdf8',
+    border: '1px solid #cdeee2',
+    borderRadius: '10px',
+    padding: '12px',
+    marginTop: '4px'
+  },
+  ctaText: {
+    fontSize: '12.5px',
+    color: '#1a3a30',
+    lineHeight: 1.55,
+    margin: '0 0 10px'
+  },
+  progressTrack: {
+    height: '4px',
+    backgroundColor: '#e8efec',
+    borderRadius: '2px',
+    overflow: 'hidden'
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#47A78B',
+    transition: 'width 0.4s ease'
   }
 };
 
 const generateSuggestions = (botText) => {
-    const sentences = botText.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [botText];
+    const sentences = String(botText || '').match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [botText];
     const questionSentence = sentences.reverse().find(s => s.includes('?'));
 
     if (!questionSentence) return [];
 
     const lowerQuestion = questionSentence.toLowerCase();
-    
+
     if (/budget|cost|price|spending/.test(lowerQuestion)) {
         return ['Free', 'Low ($)', 'Medium ($$)', 'High ($$$)'];
     }
@@ -232,17 +331,36 @@ const generateSuggestions = (botText) => {
     return [];
   };
 
+// Server transcripts use { role, content }; the bubbles use { type, content }.
+const fromTranscript = (transcript) =>
+  (transcript || [])
+    .filter(m => m?.content)
+    .map(m => ({ type: m.role === 'user' ? 'user' : 'bot', content: m.content }));
+
 function ChatInterface() {
+  // Fixed for the lifetime of the page: signing in navigates away and remounts.
+  const [isGuest] = useState(() => !localStorage.getItem('motivar-token'));
+
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [sessionId, setSessionId] = useState(null);
+  const [guestToken, setGuestToken] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [suggestions, setSuggestions] = useState([]); 
+  const [suggestions, setSuggestions] = useState([]);
+
+  // Guest funnel state
+  const [preview, setPreview] = useState(null);
+  const [chatState, setChatState] = useState(null);
+  const [requiresSignup, setRequiresSignup] = useState(false);
+  const [blockedMessage, setBlockedMessage] = useState(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   const messagesEndRef = useRef(null);
   const hasInitialized = useRef(false);
   const navigate = useNavigate();
+
+  const goToSignup = useCallback(() => navigate('/user-auth?signup=1'), [navigate]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -252,6 +370,22 @@ function ChatInterface() {
     scrollToBottom();
   }, [messages]);
 
+  // Keep the guest conversation on the device: there is no server-side read
+  // endpoint for a guest transcript, and re-running /guest/start on every reload
+  // would burn through the per-IP session cap.
+  useEffect(() => {
+    if (isGuest && sessionId && guestToken) {
+      writeGuestChat({ session_id: sessionId, guest_token: guestToken, messages, state: chatState, preview });
+    }
+  }, [isGuest, sessionId, guestToken, messages, chatState, preview]);
+
+  const applyState = useCallback((state) => {
+    if (!state) return;
+    setChatState(state);
+    if (state.requires_signup) setRequiresSignup(true);
+    if (state.finished === true) setIsFinished(true);
+  }, []);
+
   const handleChatResponse = useCallback((response) => {
     if (response.redirect) {
       navigate(response.redirect);
@@ -259,31 +393,73 @@ function ChatInterface() {
     }
 
     if (response.session_id) setSessionId(response.session_id);
+    applyState(response.state);
 
-    if (response.state && response.state.finished === true) {
-      setIsFinished(true);
-      setSuggestions([]); 
-    } else {
-      let nextSuggestions = [];
-      if (Array.isArray(response.suggestions)) {
-          nextSuggestions = response.suggestions;
-      } else {
-          nextSuggestions = generateSuggestions(response.bot);
-      }
-      setSuggestions(nextSuggestions);
+    if (Object.prototype.hasOwnProperty.call(response, 'preview')) {
+      setPreview(response.preview || null);
     }
 
-    setMessages(prev => [...prev, { type: 'bot', content: response.bot }]);
-  }, [navigate]);
-  
-  const startChat = useCallback(async () => {
+    const finished = response.state?.finished === true;
+    if (finished) {
+      setSuggestions([]);
+    } else {
+      setSuggestions(
+        Array.isArray(response.suggestions) ? response.suggestions : generateSuggestions(response.bot)
+      );
+    }
+
+    // /chat/start now resumes: when a transcript comes back it already ends with
+    // `bot` (the last assistant line), so painting both would duplicate it.
+    if (Array.isArray(response.transcript) && response.transcript.length > 0) {
+      setMessages(fromTranscript(response.transcript));
+    } else if (response.bot) {
+      setMessages(prev => [...prev, { type: 'bot', content: response.bot }]);
+    }
+  }, [navigate, applyState]);
+
+  const startGuestChat = useCallback(async () => {
+    const stored = readGuestChat();
+    if (stored) {
+      // Reuse the existing session — don't start a new one on every mount.
+      setSessionId(stored.session_id);
+      setGuestToken(stored.guest_token);
+      setMessages(stored.messages || []);
+      setPreview(stored.preview || null);
+      applyState(stored.state);
+      if (!stored.messages?.length) {
+        setMessages([{ type: 'bot', content: "👋 Welcome back! Tell me where you left off." }]);
+      }
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await chatService.startGuestChat();
+      setSessionId(response.session_id);
+      setGuestToken(response.guest_token);
+      writeGuestChat({ session_id: response.session_id, guest_token: response.guest_token });
+      handleChatResponse(response);
+    } catch (error) {
+      if (error.status === 429) {
+        // Shared networks (campuses, offices, mobile carriers) trip the per-IP
+        // cap — show the server's message and stop, don't retry in a loop.
+        setBlockedMessage(error.message);
+      } else {
+        toast.error('Could not start chat. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [handleChatResponse, applyState]);
+
+  const startMemberChat = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await chatService.startChat();
       handleChatResponse(response);
     } catch (error) {
       console.error('Error starting chat:', error);
-      toast.error('Could not start chat. Please try again.');
+      toast.error(error.message || 'Could not start chat. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -291,14 +467,15 @@ function ChatInterface() {
 
   useEffect(() => {
     if (!hasInitialized.current) {
-      startChat();
       hasInitialized.current = true;
+      if (isGuest) startGuestChat();
+      else startMemberChat();
     }
     scrollToBottom();
-  }, [startChat]);
+  }, [isGuest, startGuestChat, startMemberChat]);
 
   const processSendMessage = async (messageText) => {
-      if (!messageText.trim() || !sessionId) return; // Added safety check for sessionId
+      if (!messageText.trim() || !sessionId || requiresSignup || sessionExpired) return;
 
       const optimisticMessage = { type: 'user', content: messageText };
       setMessages(prev => [...prev, optimisticMessage]);
@@ -307,13 +484,23 @@ function ChatInterface() {
       setIsLoading(true);
 
       try {
-        const response = await chatService.sendMessage(sessionId, messageText);
+        const response = isGuest
+          ? await chatService.sendGuestMessage(sessionId, messageText, guestToken)
+          : await chatService.sendMessage(sessionId, messageText);
         handleChatResponse(response);
       } catch (error) {
         console.error('Error sending message:', error);
-        toast.error('Failed to send message. Please try again.');
         setMessages(prev => prev.filter(m => m !== optimisticMessage));
         setInputMessage(messageText);
+
+        if (error.status === 404) {
+          setSessionExpired(true);
+          if (isGuest) clearGuestChat();
+        } else if (error.status === 429) {
+          toast.error(error.message);
+        } else {
+          toast.error(error.message || 'Failed to send message. Please try again.');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -332,12 +519,31 @@ function ChatInterface() {
       navigate('/recommendations');
   };
 
+  const handleRestartGuest = async () => {
+    clearGuestChat();
+    setMessages([]);
+    setPreview(null);
+    setChatState(null);
+    setRequiresSignup(false);
+    setSessionExpired(false);
+    setSessionId(null);
+    setGuestToken(null);
+    await startGuestChat();
+  };
+
+  const turnsRemaining = chatState?.turns_remaining;
+  const completeness = chatState?.completeness;
+  const showTurnNudge =
+    isGuest && !requiresSignup && typeof turnsRemaining === 'number' && turnsRemaining > 0 && turnsRemaining <= 3;
+  const lockedCount = preview?.locked_count || 0;
+  const inputDisabled = isLoading || requiresSignup || sessionExpired || !!blockedMessage || !sessionId;
+
   return (
     /* WRAPPER ADDED HERE */
     <PageWrapper>
       <Container className="d-flex justify-content-center p-0">
         <div style={styles.container} className="w-100">
-          
+
           {/* Header */}
           <div style={styles.header}>
             <RobotIcon />
@@ -348,15 +554,65 @@ function ChatInterface() {
                   <small style={{color:'#666', fontSize:'12px'}}>Online</small>
               </div>
             </div>
+            {isGuest && (
+              <button style={styles.headerCta} onClick={goToSignup}>
+                Create free account
+              </button>
+            )}
           </div>
+
+          {/* Completeness progress */}
+          {typeof completeness === 'number' && (
+            <div style={{ padding: '10px 20px 0', backgroundColor: '#F8F9FA' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#666', marginBottom: 4 }}>
+                <span>Your learning profile</span>
+                <span>{Math.round(completeness * 100)}% complete</span>
+              </div>
+              <div style={styles.progressTrack}>
+                <div style={{ ...styles.progressFill, width: `${Math.min(100, Math.round(completeness * 100))}%` }} />
+              </div>
+            </div>
+          )}
+
+          {/* Rate-limit / expiry banners */}
+          {blockedMessage && (
+            <div style={styles.banner}>{blockedMessage}</div>
+          )}
+          {sessionExpired && (
+            <div style={styles.banner}>
+              This conversation is no longer available.{' '}
+              {isGuest ? (
+                <button
+                  onClick={handleRestartGuest}
+                  style={{ background: 'none', border: 'none', padding: 0, color: '#47A78B', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  Start a new one
+                </button>
+              ) : (
+                'Please reload the page to continue.'
+              )}
+            </div>
+          )}
+          {showTurnNudge && (
+            <div style={styles.banner}>
+              You have {turnsRemaining} {turnsRemaining === 1 ? 'message' : 'messages'} left as a guest.{' '}
+              <button
+                onClick={goToSignup}
+                style={{ background: 'none', border: 'none', padding: 0, color: '#47A78B', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer' }}
+              >
+                Create a free account
+              </button>{' '}
+              to keep going and save this conversation.
+            </div>
+          )}
 
           {/* Chat Body */}
           <div style={styles.chatArea}>
             {messages.map((message, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 style={{
-                  ...styles.messageRow, 
+                  ...styles.messageRow,
                   ...(message.type === 'bot' ? styles.botRow : styles.userRow)
                 }}
               >
@@ -373,7 +629,7 @@ function ChatInterface() {
                       }}>
                           {message.type === 'bot' ? 'Motivar EduBuddy' : 'You'}
                       </div>
-                      <div 
+                      <div
                           style={{
                           ...styles.bubble,
                           ...(message.type === 'bot' ? styles.botBubble : styles.userBubble)
@@ -388,12 +644,69 @@ function ChatInterface() {
             <div ref={messagesEndRef} />
           </div>
 
+          {/* Course teaser — the conversion moment */}
+          {preview && Array.isArray(preview.courses) && preview.courses.length > 0 && (
+            <div style={styles.previewPanel}>
+              <p style={styles.previewTitle}>🎯 Matches we found for you so far</p>
+
+              {preview.courses.map((course, i) => (
+                <div key={course.url || `${course.title}-${i}`} style={styles.courseCard}>
+                  <div style={styles.courseTitle}>{course.title}</div>
+                  {course.description && (
+                    <p style={styles.courseDesc}>
+                      {course.description.length > 130 ? `${course.description.slice(0, 130)}...` : course.description}
+                    </p>
+                  )}
+                  {course.url && (
+                    <a
+                      href={course.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: 12, color: '#47A78B', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 6 }}
+                    >
+                      <FiExternalLink size={12} /> View course
+                    </a>
+                  )}
+                </div>
+              ))}
+
+              {lockedCount > 0 && (
+                <>
+                  {Array.from({ length: Math.min(lockedCount, 3) }).map((_, i) => (
+                    <div key={`locked-${i}`} style={styles.lockedCard}>
+                      <FiLock size={16} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ ...styles.lockedBar, width: '65%', marginBottom: 6 }} />
+                        <div style={{ ...styles.lockedBar, width: '90%', height: 7 }} />
+                      </div>
+                    </div>
+                  ))}
+                  <p style={{ fontSize: 12, color: '#8a9691', margin: '2px 0 10px', textAlign: 'center' }}>
+                    + {lockedCount} more {lockedCount === 1 ? 'match' : 'matches'} waiting for you
+                  </p>
+                </>
+              )}
+
+              {isGuest && (
+                <div style={styles.ctaBox}>
+                  <p style={styles.ctaText}>
+                    {preview.cta ||
+                      'Create a free account to save this conversation, unlock your full list of matches, and track your progress.'}
+                  </p>
+                  <button style={{ ...styles.finishButton, padding: '11px', fontSize: '14px' }} onClick={goToSignup}>
+                    Create a free account
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Dynamic Suggestion Chips */}
-          {(!isFinished && suggestions.length > 0) && (
+          {(!isFinished && !requiresSignup && !sessionExpired && suggestions.length > 0) && (
               <div style={styles.suggestionContainer}>
                   {suggestions.map((s, i) => (
-                      <div 
-                          key={i} 
+                      <div
+                          key={i}
                           style={styles.suggestionChip}
                           onClick={() => handleSuggestionClick(s)}
                       >
@@ -405,34 +718,38 @@ function ChatInterface() {
 
           {/* Footer Area */}
           <div style={styles.inputContainer}>
-            {!isFinished ? (
-              <form onSubmit={handleFormSubmit} style={styles.inputWrapper}>
-                  <input
-                  type="text"
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  disabled={isLoading}
-                  placeholder="Type your message..."
-                  style={styles.input}
-                  />
-                  <button 
-                  type="submit" 
-                  disabled={isLoading} 
-                  style={{
-                      ...styles.sendButton, 
-                      opacity: isLoading || !inputMessage.trim() ? 0.7 : 1
-                  }}
-                  >
-                  <SendIcon />
-                  </button>
-              </form>
-            ) : (
-              <button 
+            {requiresSignup ? (
+              <button style={styles.finishButton} onClick={goToSignup}>
+                Create a free account to continue
+              </button>
+            ) : isFinished ? (
+              <button
                   onClick={handleViewRecommendations}
                   style={styles.finishButton}
               >
                   See recommended courses
               </button>
+            ) : (
+              <form onSubmit={handleFormSubmit} style={styles.inputWrapper}>
+                  <input
+                  type="text"
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  disabled={inputDisabled}
+                  placeholder={sessionExpired || blockedMessage ? 'Chat unavailable' : 'Type your message...'}
+                  style={styles.input}
+                  />
+                  <button
+                  type="submit"
+                  disabled={inputDisabled}
+                  style={{
+                      ...styles.sendButton,
+                      opacity: inputDisabled || !inputMessage.trim() ? 0.7 : 1
+                  }}
+                  >
+                  <SendIcon />
+                  </button>
+              </form>
             )}
           </div>
 

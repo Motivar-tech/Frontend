@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import { toast } from "react-hot-toast";
 import AuthDataServices from "../Services/AuthDataServices";
+import { claimGuestChat, hasGuestChat } from "../utils/guestChat";
 import Logo from "../assets/images/Motivar.svg";
 import Image_tab from "../assets/images/image_tab.png";
 
@@ -51,7 +52,17 @@ export default function CompleteProfile() {
         localStorage.setItem("motivar-refresh-token", refreshToken);
         localStorage.setItem("motivar-user-role", userRole);
         localStorage.setItem("motivar-user-fname", firstName || googleData.data.fullName);
-        window.location.pathname = "/dashboard";
+
+        // Carry over a pre-account EduBuddy conversation, now that the role is set.
+        let target = "/dashboard";
+        if (hasGuestChat() && (userRole || role) === "learner") {
+          const claimed = await claimGuestChat();
+          if (claimed) {
+            toast.success("Your EduBuddy conversation has been saved to your account.");
+            target = "/dashboard?tab=edubuddy&claimed=1";
+          }
+        }
+        window.location.href = target;
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Registration failed. Please try again.");

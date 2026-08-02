@@ -69,10 +69,9 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/restricted" element={<Restricted />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
-            <Route
-              path="/chat"
-              element={<PrivateRoute component={ChatInterface} />}
-            />
+            {/* Public: guests get the pre-account intake chat, signed-in
+                learners get their persistent session resumed. */}
+            <Route path="/chat" element={<ChatInterface />} />
             <Route
               path="/recommendations"
               element={<PrivateRoute component={RecommendationsList} />}

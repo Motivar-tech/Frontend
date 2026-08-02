@@ -19,6 +19,19 @@ import Image_tab from "../assets/images/image_tab.png";
 
 import { toast } from "react-hot-toast";
 import AuthDataServices from "../Services/AuthDataServices.js";
+import { claimGuestChat, hasGuestChat } from "../utils/guestChat.js";
+
+// Attaches a pre-account EduBuddy conversation to the account that just signed
+// in. A claimed guest lands well below the recommender's completeness threshold,
+// so they go to the dashboard chat panel to finish intake — not to
+// /recommendations, which would 400 on them.
+const resolveLandingPath = async (userRole) => {
+  if (!hasGuestChat() || userRole !== "learner") return "/dashboard";
+  const claimed = await claimGuestChat();
+  if (!claimed) return "/dashboard";
+  toast.success("Your EduBuddy conversation has been saved to your account.");
+  return "/dashboard?tab=edubuddy&claimed=1";
+};
 
 // ── Shared styles ────────────────────────────────────────────────────────────
 const inputStyle = {
@@ -148,6 +161,13 @@ export default function AppAuth() {
     const params = new URLSearchParams(window.location.search);
     const verifiedParam = params.get("verified");
 
+    // Guests arriving from the EduBuddy signup wall want the sign-up tab.
+    // Falls through so an in-progress signup below can still restore its step.
+    if (params.get("signup") === "1" && !verifiedParam) {
+      setTabIndex(2);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+
     if (verifiedParam === "true") {
       // User clicked the verification link — restore credentials and advance to step 3
       let restoredEmail = "", restoredPassword = "";
@@ -213,7 +233,7 @@ export default function AppAuth() {
         localStorage.setItem("motivar-refresh-token", refreshToken);
         localStorage.setItem("motivar-user-role", userRole);
         localStorage.setItem("motivar-user-fname", firstName);
-        window.location.pathname = "/dashboard";
+        window.location.href = await resolveLandingPath(userRole);
       }
     } catch (error) {
       toast.error(
@@ -258,7 +278,7 @@ export default function AppAuth() {
           localStorage.setItem("motivar-refresh-token", refreshToken);
           localStorage.setItem("motivar-user-role", userRole);
           localStorage.setItem("motivar-user-fname", firstName);
-          window.location.pathname = "/dashboard";
+          window.location.href = await resolveLandingPath(userRole);
         }
       }
     } catch (error) {
@@ -357,7 +377,9 @@ export default function AppAuth() {
       localStorage.setItem("motivar-user-role", role);
       if (firstName) localStorage.setItem("motivar-user-fname", firstName);
       localStorage.removeItem("motivar-signup-state");
-      window.location.pathname = "/dashboard";
+      // Claim runs here, after the role is set — the backend rejects a claim
+      // against an account that has no learner profile yet.
+      window.location.href = await resolveLandingPath(role);
     } catch (error) {
       const msg =
         error.response?.data?.message || error.message || "Something went wrong. Please try again.";

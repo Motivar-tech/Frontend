@@ -25,9 +25,15 @@ import {
   FiUpload, FiLogOut, FiAlertCircle, FiHeart, FiTarget,
   FiCalendar, FiLink, FiEdit2, FiStar,
   FiGrid, FiExternalLink, FiTrash2, FiCamera, FiMessageSquare, FiSend,
+  FiMessageCircle, FiRefreshCw, FiGift,
 } from 'react-icons/fi';
 import CompleteProfileModal from '../components/CompleteProfileModal';
 import MojiChatbot from '../components/MojiChatbot';
+import IntakeChatPanel from '../components/IntakeChatPanel';
+import recService from '../Services/RecService';
+import { claimGuestChat, hasGuestChat } from '../utils/guestChat';
+
+const TAB_KEYS = ['overview', 'edubuddy', 'profile', 'goals', 'courses', 'messages'];
 
 // ─── Brand Colors ─────────────────────────────────────────────────────────────
 const brand = {
@@ -238,11 +244,24 @@ const inputStyle = { borderColor: brand.primary, borderRadius: 8, fontFamily: 'P
 // ─── Main Component ───────────────────────────────────────────────────────────
 const LearnerDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
+
+  // Post-signup deep links land here as /dashboard?tab=edubuddy&claimed=1
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab');
+    return TAB_KEYS.includes(tab) ? tab : 'overview';
+  });
+  const [claimNotice, setClaimNotice] = useState(() =>
+    new URLSearchParams(window.location.search).get('claimed') === '1'
+      ? 'Your EduBuddy conversation is saved. Finish the chat below to unlock your full list of course matches.'
+      : null
+  );
 
   // Core data
   const [userDetails, setUserDetails] = useState(null);
   const [dashboardCourses, setDashboardCourses] = useState([]);
+  const [courseGroups, setCourseGroups] = useState(null);
+  const [recommendationsStale, setRecommendationsStale] = useState(false);
+  const [refreshingRecs, setRefreshingRecs] = useState(false);
   const [requests, setRequests] = useState([]);
   const [learnerProfile, setLearnerProfile] = useState({});
   const [socialProfiles, setSocialProfiles] = useState({});
@@ -340,14 +359,33 @@ const LearnerDashboard = () => {
   // ─── Fetch dashboard data ─────────────────────────────────────────────────
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+      // Only the first load blocks the page; later refreshes happen quietly so
+      // they don't tear down the chat panel or the tab the learner is reading.
+      const isFirstLoad = refreshKey === 0;
+      if (isFirstLoad) setLoading(true);
       setError(null);
       try {
+        // A guest conversation can still be waiting to be attached — the claim
+        // needs a verified account with a learner profile, so an attempt made at
+        // signup time may have been rejected. This is the retry point.
+        if (isFirstLoad && hasGuestChat()) {
+          const claimed = await claimGuestChat();
+          if (claimed) {
+            const carried = claimed.carried_recommendations;
+            setClaimNotice(
+              `We saved your earlier EduBuddy conversation${carried ? ` and ${carried} course matches` : ''}. Finish the chat below to unlock your full list.`
+            );
+            setActiveTab('edubuddy');
+          }
+        }
+
         const res = await axiosInstance.get('/dashboard');
         const d = res.data;
 
         setUserDetails(d.userDetails);
         setDashboardCourses(d.dashboardCourses || []);
+        setCourseGroups(d.courseGroups || null);
+        setRecommendationsStale(!!d.recommendationsStale);
         setRequests(d.requests || []);
         setLearnerProfile(d.learnerProfile || {});
         setSocialProfiles(d.socialProfiles || {});
@@ -394,7 +432,10 @@ const LearnerDashboard = () => {
           setShowProfileModal(true);
         }
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load dashboard. Please try again.');
+        const msg = err.response?.data?.message || 'Failed to load dashboard. Please try again.';
+        // A failed background refresh keeps the page the learner is on.
+        if (isFirstLoad) setError(msg);
+        else toast.error(msg);
       } finally {
         setLoading(false);
       }
@@ -421,6 +462,44 @@ const LearnerDashboard = () => {
   useEffect(() => {
     if (activeTab === 'courses') fetchCatalogue(catSearch, catPage);
   }, [activeTab, catPage]);
+
+  // ─── Course row updates ───────────────────────────────────────────────────
+  // A course row is rendered from both the flat list and courseGroups, so
+  // optimistic updates have to land in both to avoid a stale-looking card.
+  const patchCourse = (id, patch) => {
+    const apply = list => (list || []).map(c => (c._id === id ? { ...c, ...patch } : c));
+    setDashboardCourses(prev => apply(prev));
+    setCourseGroups(prev =>
+      prev
+        ? Object.fromEntries(
+            Object.entries(prev).map(([key, value]) => [key, Array.isArray(value) ? apply(value) : value])
+          )
+        : prev
+    );
+  };
+
+  // ─── Regenerate recommendations ───────────────────────────────────────────
+  const handleRefreshRecommendations = async () => {
+    setRefreshingRecs(true);
+    try {
+      // Regeneration is an embedding call plus an LLM rerank, so this can take
+      // several seconds; `regenerated: false` means the cache was served.
+      const res = await recService.getRecommendations();
+      toast.success(
+        res?.regenerated
+          ? 'Recommendations rebuilt from your latest preferences.'
+          : 'Your recommendations are already up to date.'
+      );
+      setRefreshKey(k => k + 1);
+    } catch (err) {
+      const msg = err.message || 'Could not refresh recommendations.';
+      toast.error(msg);
+      // "Profile is incomplete" — the fix is more intake, so send them there.
+      if (/incomplete/i.test(msg)) setActiveTab('edubuddy');
+    } finally {
+      setRefreshingRecs(false);
+    }
+  };
 
   // ─── Logout ───────────────────────────────────────────────────────────────
   const handleLogout = () => {
@@ -542,12 +621,7 @@ const LearnerDashboard = () => {
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
-      setDashboardCourses(prev =>
-        prev.map(c => c._id === selectedCourse._id
-          ? { ...c, status: 'completed', completionCertificate: 'uploaded' }
-          : c
-        )
-      );
+      patchCourse(selectedCourse._id, { status: 'completed', completionCertificate: 'uploaded' });
       toast.success('Certificate uploaded successfully.');
       setShowCertModal(false);
       setSelectedFile(null);
@@ -624,9 +698,7 @@ const LearnerDashboard = () => {
   const handleMarkComplete = async (course) => {
     try {
       await axiosInstance.patch(`/dashboard/courses/${course._id}/complete`, {});
-      setDashboardCourses(prev =>
-        prev.map(c => c._id === course._id ? { ...c, status: 'completed' } : c)
-      );
+      patchCourse(course._id, { status: 'completed' });
       toast.success(`"${course.title}" marked as completed!`);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not mark course as complete.');
@@ -643,11 +715,7 @@ const LearnerDashboard = () => {
         { score: reviewScore, review: reviewText }
       );
       toast.success('Review submitted! Thank you.');
-      setDashboardCourses(prev =>
-        prev.map(c => c._id === reviewCourse._id
-          ? { ...c, rating: { score: reviewScore, review: reviewText } }
-          : c)
-      );
+      patchCourse(reviewCourse._id, { rating: { score: reviewScore, review: reviewText } });
       setShowReviewModal(false);
       setReviewScore(0);
       setReviewText('');
@@ -738,8 +806,19 @@ const LearnerDashboard = () => {
   // ─── Computed ─────────────────────────────────────────────────────────────
   const pendingCount = requests.filter(r => !r.paid).length;
   const paidCount = requests.filter(r => r.paid).length;
-  const enrolledCount = dashboardCourses.length;
-  const completedCount = dashboardCourses.filter(c => c.status === 'completed').length;
+
+  // Group courses by where they came from. `addedBy: 'enrolled'` is new — free
+  // enrollments used to be written as 'manual', and rows created before that
+  // change still are, so the two are shown together.
+  const groups = courseGroups || {};
+  const enrolledList = courseGroups
+    ? [...(groups.enrolled || []), ...(groups.manual || [])]
+    : dashboardCourses;
+  const recommendedList = groups.recommended || [];
+  const sponsoredList = groups.sponsored || [];
+
+  const enrolledCount = enrolledList.length;
+  const completedCount = enrolledList.filter(c => c.status === 'completed').length;
   const catPages = Math.ceil(catTotal / 12);
 
   const profilePicSrc = profilePicPreview
@@ -790,6 +869,115 @@ const LearnerDashboard = () => {
         ))}
       </Row>
 
+      {/* Preference-driven recommendations lead the page */}
+      <SectionCard className="mb-4">
+        <Card.Header>
+          <FiStar /> Recommended for you
+          <PrimaryBtn
+            size="sm"
+            variant="outline-primary"
+            className="ms-auto"
+            onClick={handleRefreshRecommendations}
+            disabled={refreshingRecs}
+            style={{ padding: '0.3rem 0.9rem', fontSize: '0.78rem' }}
+          >
+            {refreshingRecs
+              ? <><Spinner animation="border" size="sm" className="me-1" /> Refreshing…</>
+              : <><FiRefreshCw size="0.85em" /> Refresh</>}
+          </PrimaryBtn>
+        </Card.Header>
+
+        {/* The backend also reports stale when nothing has ever been generated,
+            so only flag it where there is actually something to refresh. */}
+        {recommendationsStale && recommendedList.length > 0 && (
+          <div style={{ background: '#fff8ec', borderBottom: '1px solid #ffe0b2', padding: '0.6rem 1.25rem', fontSize: 13, color: '#7a5c00' }}>
+            Your preferences have changed since these were generated — refresh to get a fresh match.
+          </div>
+        )}
+
+        <Card.Body className="p-3">
+          {recommendedList.length === 0 ? (
+            <div className="text-center text-muted py-4">
+              <FiTarget size={30} style={{ marginBottom: 10, opacity: 0.4 }} />
+              <p style={{ fontSize: 14, marginBottom: 12 }}>
+                No recommendations yet — tell EduBuddy about your goals and we'll match courses to them.
+              </p>
+              <PrimaryBtn size="sm" onClick={() => setActiveTab('edubuddy')}>
+                <FiMessageCircle size="0.9em" /> Talk to EduBuddy
+              </PrimaryBtn>
+            </div>
+          ) : (
+            <Row className="g-3">
+              {recommendedList.map(course => {
+                const url = course.link || course.url || '';
+                const href = url.startsWith('http') ? url : `https://${url}`;
+                return (
+                  <Col md={4} sm={6} key={course._id || course.title}>
+                    <CourseCard>
+                      <Card.Body className="d-flex flex-column">
+                        <div className="card-title">{course.title}</div>
+                        <p className="card-text mb-3" style={{ flexGrow: 1 }}>
+                          {course.description?.length > 90
+                            ? `${course.description.slice(0, 90)}...`
+                            : course.description || ''}
+                        </p>
+                        <div className="d-flex gap-2">
+                          {url && (
+                            <a href={href} target="_blank" rel="noopener noreferrer" style={{ flex: 1 }}>
+                              <PrimaryBtn size="sm" variant="outline-primary" style={{ width: '100%', fontSize: '0.78rem' }}>
+                                <FiExternalLink size="0.85em" /> View
+                              </PrimaryBtn>
+                            </a>
+                          )}
+                          {course.status !== 'completed' && (
+                            <PrimaryBtn
+                              size="sm"
+                              style={{ flex: 1, fontSize: '0.78rem' }}
+                              onClick={() => handleMarkComplete(course)}
+                            >
+                              <FiCheckCircle size="0.85em" /> Done
+                            </PrimaryBtn>
+                          )}
+                        </div>
+                      </Card.Body>
+                    </CourseCard>
+                  </Col>
+                );
+              })}
+            </Row>
+          )}
+        </Card.Body>
+      </SectionCard>
+
+      {/* Sponsored courses */}
+      {sponsoredList.length > 0 && (
+        <SectionCard className="mb-4">
+          <Card.Header><FiGift /> Sponsored for you ({sponsoredList.length})</Card.Header>
+          <ListGroup variant="flush">
+            {sponsoredList.map(course => {
+              const url = course.link || course.url || '';
+              const href = url.startsWith('http') ? url : `https://${url}`;
+              return (
+                <StyledListItem key={course._id || course.title} iconColor={brand.success}>
+                  <div className="icon-wrap"><FiGift /></div>
+                  <div className="content" style={{ flex: 1 }}>
+                    <h6>{course.title}</h6>
+                    <StyledBadge className={course.status === 'completed' ? 'bg-completed' : 'bg-uncompleted'}>
+                      {course.status === 'completed' ? 'Completed' : 'In Progress'}
+                    </StyledBadge>
+                  </div>
+                  {url && (
+                    <a href={href} target="_blank" rel="noopener noreferrer">
+                      <PrimaryBtn size="sm" variant="outline-primary"><FiExternalLink size="0.85em" /> Open</PrimaryBtn>
+                    </a>
+                  )}
+                </StyledListItem>
+              );
+            })}
+          </ListGroup>
+        </SectionCard>
+      )}
+
       {/* CTA */}
       <div className="text-center mb-4 py-3" style={{ background: brand.backgroundWhite, borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
         <p style={{ fontWeight: 600, color: brand.text, marginBottom: '0.75rem' }}>
@@ -833,7 +1021,7 @@ const LearnerDashboard = () => {
           <SectionCard>
             <Card.Header><FiBookOpen /> Your Enrolled Courses</Card.Header>
             <ListGroup variant="flush">
-              {dashboardCourses.length > 0 ? dashboardCourses.map(course => {
+              {enrolledList.length > 0 ? enrolledList.map(course => {
                 const courseUrl = course.link?.startsWith('http') ? course.link : `https://${course.link}`;
                 const done = course.status === 'completed';
                 return (
@@ -1606,6 +1794,7 @@ const LearnerDashboard = () => {
         <TabNav>
           {[
             { key: 'overview', icon: <FiGrid />, label: 'Overview' },
+            { key: 'edubuddy', icon: <FiMessageCircle />, label: 'EduBuddy' },
             { key: 'profile', icon: <FiUser />, label: 'My Profile' },
             { key: 'goals', icon: <FiTarget />, label: 'Goals & Availability' },
             { key: 'courses', icon: <FiBookOpen />, label: 'Courses & Wishlist' },
@@ -1622,6 +1811,12 @@ const LearnerDashboard = () => {
             their output against the previous tree instead of remounting the
             whole subtree (and losing input focus) on every parent re-render. */}
         {activeTab === 'overview' && OverviewTab()}
+        {activeTab === 'edubuddy' && (
+          <IntakeChatPanel
+            initialNotice={claimNotice}
+            onProfileChanged={() => setRefreshKey(k => k + 1)}
+          />
+        )}
         {activeTab === 'profile' && ProfileTab()}
         {activeTab === 'goals' && GoalsTab()}
         {activeTab === 'courses' && CoursesTab()}
