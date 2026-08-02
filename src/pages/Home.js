@@ -262,6 +262,7 @@ export default function AppHome() {
                   {/* Learner Copy */}
                   <HeroText>
                     <TypeAnimation
+                      key="learner-1"
                       sequence={[
                         "Easily find",
                         2000,
@@ -278,6 +279,7 @@ export default function AppHome() {
                     <br />
                     online courses you need<br />to&nbsp;
                     <TypeAnimation
+                      key="learner-2"
                       sequence={["succeed", 2000, "upskill", 2000]}
                       wrapper="span"
                       cursor={false}
@@ -316,6 +318,7 @@ export default function AppHome() {
                   {/* Sponsor Copy */}
                   <HeroText>
                     <TypeAnimation
+                      key="sponsor-1"
                       sequence={[
                         "Fund a Learner's Journey",
                         2000,
@@ -329,7 +332,7 @@ export default function AppHome() {
                     />
                   </HeroText>
                   <SubHeadText>
-                    Sponsor ambitious, underprivileged youths to pay for online courses
+                    Sponsor ambitious, underserved youths to pay for online courses
                     they need to succeed.
                   </SubHeadText>
                   <Link to="/help-learner">

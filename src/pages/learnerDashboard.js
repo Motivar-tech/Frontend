@@ -138,6 +138,33 @@ const TabBtn = styled.button`
   &:hover { color: ${brand.primary}; }
 `;
 
+const SubTabNav = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid ${brand.greyLight};
+  overflow-x: auto;
+  &::-webkit-scrollbar { display: none; }
+`;
+
+const SubTabBtn = styled.button`
+  background: none;
+  border: none;
+  border-bottom: 3px solid ${p => p.active ? brand.primary : 'transparent'};
+  color: ${p => p.active ? brand.primary : brand.textSub};
+  font-weight: ${p => p.active ? 700 : 500};
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  &:hover { color: ${brand.primary}; }
+`;
+
 const WelcomeHeader = styled.div`
   margin-bottom: 2rem;
   padding: 1.5rem;
@@ -283,12 +310,8 @@ const LearnerDashboard = () => {
   // Course detail modal
   const [selectedCatCourse, setSelectedCatCourse] = useState(null);
 
-  // Course catalogue state
-  const [catalogue, setCatalogue] = useState([]);
-  const [catLoading, setCatLoading] = useState(false);
-  const [catSearch, setCatSearch] = useState('');
-  const [catPage, setCatPage] = useState(1);
-  const [catTotal, setCatTotal] = useState(0);
+  // Courses sub-tab state
+  const [coursesSubTab, setCoursesSubTab] = useState('enrolled');
   const [enrollingId, setEnrollingId] = useState(null);
   const [wishlistLoading, setWishlistLoading] = useState({});
 
@@ -443,25 +466,17 @@ const LearnerDashboard = () => {
     fetchData();
   }, [refreshKey]);
 
-  // ─── Fetch course catalogue ───────────────────────────────────────────────
-  const fetchCatalogue = async (search = '', page = 1) => {
-    setCatLoading(true);
-    try {
-      const params = new URLSearchParams({ page, limit: 12 });
-      if (search) params.append('search', search);
-      const res = await axiosInstance.get(`/explore/filter?${params}`);
-      setCatalogue(res.data.courses || []);
-      setCatTotal(res.data.totalCourses || 0);
-    } catch {
-      toast.error('Could not load course catalogue.');
-    } finally {
-      setCatLoading(false);
-    }
-  };
-
+  const isInitialMount = useRef(true);
   useEffect(() => {
-    if (activeTab === 'courses') fetchCatalogue(catSearch, catPage);
-  }, [activeTab, catPage]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    if (activeTab === 'overview' || activeTab === 'profile' || activeTab === 'goals') {
+      setRefreshKey(k => k + 1);
+    }
+  }, [activeTab]);
+
 
   // ─── Course row updates ───────────────────────────────────────────────────
   // A course row is rendered from both the flat list and courseGroups, so
@@ -705,6 +720,26 @@ const LearnerDashboard = () => {
     }
   };
 
+  // ─── Delete course from dashboard ─────────────────────────────────────────
+  const handleDeleteCourse = async (course) => {
+    try {
+      await axiosInstance.delete(`/dashboard/courses/${course._id}`);
+      setDashboardCourses(prev => prev.filter(c => c._id !== course._id));
+      if (courseGroups) {
+        setCourseGroups(prev => ({
+          ...prev,
+          recommended: (prev.recommended || []).filter(c => c._id !== course._id),
+          enrolled: (prev.enrolled || []).filter(c => c._id !== course._id),
+          sponsored: (prev.sponsored || []).filter(c => c._id !== course._id),
+          manual: (prev.manual || []).filter(c => c._id !== course._id),
+        }));
+      }
+      toast.success('Course removed.');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not remove course.');
+    }
+  };
+
   // ─── Submit review ────────────────────────────────────────────────────────
   const handleSubmitReview = async () => {
     if (!reviewScore) { toast.error('Please select a star rating.'); return; }
@@ -819,7 +854,6 @@ const LearnerDashboard = () => {
 
   const enrolledCount = enrolledList.length;
   const completedCount = enrolledList.filter(c => c.status === 'completed').length;
-  const catPages = Math.ceil(catTotal / 12);
 
   const profilePicSrc = profilePicPreview
     || (userDetails?.profilePicture?.data
@@ -929,15 +963,15 @@ const LearnerDashboard = () => {
                               </PrimaryBtn>
                             </a>
                           )}
-                          {course.status !== 'completed' && (
-                            <PrimaryBtn
-                              size="sm"
-                              style={{ flex: 1, fontSize: '0.78rem' }}
-                              onClick={() => handleMarkComplete(course)}
-                            >
-                              <FiCheckCircle size="0.85em" /> Done
-                            </PrimaryBtn>
-                          )}
+                          <PrimaryBtn
+                            size="sm"
+                            variant="outline-danger"
+                            title="Delete recommendation"
+                            onClick={() => handleDeleteCourse(course)}
+                            style={{ flex: '0 0 auto', padding: '0.4rem 0.6rem' }}
+                          >
+                            <FiTrash2 size="0.85em" />
+                          </PrimaryBtn>
                         </div>
                       </Card.Body>
                     </CourseCard>
@@ -1458,151 +1492,161 @@ const LearnerDashboard = () => {
   // ── Courses Tab ──────────────────────────────────────────────────────────
   const CoursesTab = () => (
     <>
-      {/* Wishlist */}
-      {wishlist.length > 0 && (
-        <SectionCard className="mb-4">
-          <Card.Header><FiHeart /> My Wishlist ({wishlist.length})</Card.Header>
+      {/* Sub-tab Navigation */}
+      <SubTabNav>
+        {[
+          { key: 'enrolled', icon: <FiBookOpen />, label: `Enrolled (${enrolledList.length + sponsoredList.length})` },
+          { key: 'recommended', icon: <FiStar />, label: `Recommended (${recommendedList.length})` },
+          { key: 'wishlist', icon: <FiHeart />, label: `Wishlist (${wishlist.length})` },
+        ].map(({ key, icon, label }) => (
+          <SubTabBtn key={key} active={coursesSubTab === key} onClick={() => setCoursesSubTab(key)}>
+            {icon} {label}
+          </SubTabBtn>
+        ))}
+      </SubTabNav>
+
+      {/* Sub-tab Content */}
+      {coursesSubTab === 'enrolled' && (
+        <SectionCard>
+          <Card.Header><FiBookOpen /> My Enrolled & Sponsored Courses</Card.Header>
           <ListGroup variant="flush">
-            {wishlist.map(item => (
-              <StyledListItem key={item._id} iconColor={brand.primary}>
-                <div className="icon-wrap"><FiHeart /></div>
-                <div className="content" style={{ flex: 1 }}>
-                  <h6>{item.title}</h6>
-                  <p className="text-muted">
-                    {item.platform} &middot; {item.status === 'Free' ? 'Free' : `${item.priceUnit || '$'}${item.price || ''}`}
-                  </p>
-                </div>
-                <div className="d-flex gap-2 align-items-center">
-                  <a href={item.url} target="_blank" rel="noopener noreferrer">
-                    <PrimaryBtn size="sm" variant="outline-primary"><FiExternalLink size="0.85em" /> View</PrimaryBtn>
-                  </a>
-                  <PrimaryBtn
-                    size="sm"
-                    variant="outline-danger"
-                    onClick={async () => {
-                      try {
-                        await axiosInstance.delete(`/dashboard/wishlist/${item._id}`);
-                        setWishlist(prev => prev.filter(w => w._id !== item._id));
-                        toast.success('Removed from wishlist.');
-                      } catch {
-                        toast.error('Could not remove item.');
-                      }
-                    }}
-                  >
-                    <FiTrash2 size="0.85em" />
-                  </PrimaryBtn>
-                </div>
-              </StyledListItem>
-            ))}
+            {[...enrolledList, ...sponsoredList].length > 0 ? (
+              [...enrolledList, ...sponsoredList].map(course => {
+                const courseUrl = course.link?.startsWith('http') ? course.link : `https://${course.link}`;
+                const done = course.status === 'completed';
+                const isSponsored = sponsoredList.some(sc => sc.title === course.title);
+                return (
+                  <StyledListItem key={course._id || course.title} iconColor={done ? brand.success : (isSponsored ? brand.success : brand.warning)}
+                    style={{ justifyContent: 'space-between' }}>
+                    <a
+                      href={!done ? courseUrl : undefined}
+                      target={!done ? '_blank' : undefined}
+                      rel="noopener noreferrer"
+                      style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, textDecoration: 'none', color: 'inherit', cursor: !done ? 'pointer' : 'default' }}
+                      onClick={done ? e => e.preventDefault() : undefined}
+                    >
+                      <div className="icon-wrap">{isSponsored ? <FiGift /> : <FiBookOpen />}</div>
+                      <div className="content">
+                        <h6>{course.title}</h6>
+                        <p className="text-muted small">
+                          {course.description?.length > 60
+                            ? `${course.description.slice(0, 60)}...`
+                            : course.description}
+                        </p>
+                        <div className="d-flex gap-2">
+                          <StyledBadge className={done ? 'bg-completed' : 'bg-uncompleted'}>
+                            {done ? 'Completed' : 'In Progress'}
+                          </StyledBadge>
+                          {isSponsored && (
+                            <StyledBadge className="bg-paid">
+                              Sponsored
+                            </StyledBadge>
+                          )}
+                        </div>
+                      </div>
+                    </a>
+                    <div style={{ flexShrink: 0, marginLeft: '0.5rem', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {done ? (
+                        <>
+                          {course.completionCertificate && (
+                            <PrimaryBtn
+                              size="sm"
+                              variant="outline-primary"
+                              onClick={async () => {
+                                try {
+                                  const res = await axiosInstance.get(`/dashboard/${course._id}/view-certificate`, { responseType: 'blob' });
+                                  window.open(URL.createObjectURL(res.data), '_blank', 'noopener,noreferrer');
+                                } catch { toast.error('Could not retrieve certificate.'); }
+                              }}
+                            >
+                              View Cert
+                            </PrimaryBtn>
+                          )}
+                          <PrimaryBtn
+                            size="sm"
+                            variant="outline-primary"
+                            onClick={() => { setReviewCourse(course); setReviewScore(course.rating?.score || 0); setReviewText(course.rating?.review || ''); setShowReviewModal(true); }}
+                          >
+                            <FiStar size="0.85em" /> {course.rating ? 'Edit Review' : 'Rate'}
+                          </PrimaryBtn>
+                        </>
+                      ) : (
+                        <>
+                          <PrimaryBtn
+                            size="sm"
+                            variant="outline-primary"
+                            onClick={() => { setSelectedCourse(course); setShowCertModal(true); }}
+                          >
+                            <FiUpload size="0.85em" /> Upload Cert
+                          </PrimaryBtn>
+                        </>
+                      )}
+                      <PrimaryBtn
+                        size="sm"
+                        variant="outline-primary"
+                        onClick={() => loadDiscussion(course)}
+                      >
+                        <FiMessageSquare size="0.85em" /> Forum
+                      </PrimaryBtn>
+                    </div>
+                  </StyledListItem>
+                );
+              })
+            ) : (
+              <ListGroup.Item className="text-center text-muted p-4">
+                No enrolled or sponsored courses yet. Go to the <Link to="/explore">Explore</Link> page to find and request courses!
+              </ListGroup.Item>
+            )}
           </ListGroup>
         </SectionCard>
       )}
 
-      {/* Course Catalogue */}
-      <SectionCard>
-        <Card.Header><FiGrid /> Browse Course Catalogue</Card.Header>
-        <Card.Body className="p-3">
-          {/* Search */}
-          <div className="d-flex gap-2 mb-4">
-            <Form.Control
-              style={{ ...inputStyle, flex: 1 }}
-              placeholder="Search courses..."
-              value={catSearch}
-              onChange={e => setCatSearch(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') { setCatPage(1); fetchCatalogue(catSearch, 1); } }}
-            />
-            <PrimaryBtn onClick={() => { setCatPage(1); fetchCatalogue(catSearch, 1); }}>
-              Search
-            </PrimaryBtn>
-          </div>
-
-          {catLoading ? (
-            <div className="text-center py-5">
-              <Spinner animation="border" style={{ color: brand.primary }} />
-              <p className="mt-2 text-muted">Loading courses...</p>
-            </div>
-          ) : catalogue.length === 0 ? (
-            <div className="text-center py-5 text-muted">
-              <FiBookOpen size={36} style={{ marginBottom: '1rem', opacity: 0.4 }} />
-              <p>No courses found. Try a different search.</p>
-            </div>
-          ) : (
-            <>
+      {coursesSubTab === 'recommended' && (
+        <SectionCard>
+          <Card.Header><FiStar /> Recommended Courses</Card.Header>
+          <Card.Body className="p-3">
+            {recommendedList.length === 0 ? (
+              <div className="text-center text-muted py-4">
+                <FiTarget size={30} style={{ marginBottom: 10, opacity: 0.4 }} />
+                <p style={{ fontSize: 14 }}>
+                  No recommendations yet — tell EduBuddy about your goals and we'll match courses to them.
+                </p>
+                <PrimaryBtn size="sm" onClick={() => setActiveTab('edubuddy')}>
+                  <FiMessageCircle size="0.9em" /> Talk to EduBuddy
+                </PrimaryBtn>
+              </div>
+            ) : (
               <Row className="g-3">
-                {catalogue.map(course => {
-                  const inWishlist = wishlist.some(w => w.courseId === course._id || w.title === course.title);
-                  const alreadyEnrolled = dashboardCourses.some(dc => dc.title === course.title);
-                  const isFree = course.status === 'Free';
+                {recommendedList.map(course => {
+                  const url = course.link || course.url || '';
+                  const href = url.startsWith('http') ? url : `https://${url}`;
                   return (
-                    <Col md={4} sm={6} key={course._id}>
+                    <Col md={4} sm={6} key={course._id || course.title}>
                       <CourseCard>
-                        <Card.Body>
-                          <div className="d-flex justify-content-between align-items-start mb-2">
-                            <Badge bg={isFree ? 'success' : 'warning'} style={{ borderRadius: 50 }}>
-                              {isFree ? 'Free' : `${course.priceUnit || '$'}${course.price || ''}`}
-                            </Badge>
-                            <button
-                              onClick={() => handleWishlistToggle(course)}
-                              disabled={wishlistLoading[course._id]}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: inWishlist ? brand.danger : brand.greyMid }}
-                              title={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-                            >
-                              {wishlistLoading[course._id]
-                                ? <Spinner animation="border" size="sm" />
-                                : <FiHeart size={18} fill={inWishlist ? brand.danger : 'none'} />
-                              }
-                            </button>
-                          </div>
+                        <Card.Body className="d-flex flex-column">
                           <div className="card-title">{course.title}</div>
-                          <p className="card-text mb-2">
-                            {course.description?.length > 80
-                              ? `${course.description.slice(0, 80)}...`
+                          <p className="card-text mb-3" style={{ flexGrow: 1 }}>
+                            {course.description?.length > 90
+                              ? `${course.description.slice(0, 90)}...`
                               : course.description || ''}
                           </p>
-                          <div className="d-flex flex-wrap gap-1 mb-3">
-                            {course.platform && <Badge bg="secondary" style={{ borderRadius: 50, fontSize: '0.7rem' }}>{course.platform}</Badge>}
-                            {course.level && <Badge bg="light" text="dark" style={{ borderRadius: 50, fontSize: '0.7rem' }}>{course.level}</Badge>}
-                          </div>
                           <div className="d-flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="light"
-                              style={{ flex: 1, borderRadius: 8, fontSize: '0.78rem' }}
-                              onClick={() => setSelectedCatCourse(course)}
-                            >
-                              Details
-                            </Button>
-                            {isFree ? (
-                              <PrimaryBtn
-                                size="sm"
-                                style={{ flex: 1, fontSize: '0.78rem' }}
-                                disabled={alreadyEnrolled || enrollingId === course._id}
-                                onClick={() => !alreadyEnrolled && handleEnroll(course)}
-                              >
-                                {enrollingId === course._id
-                                  ? <Spinner animation="border" size="sm" />
-                                  : alreadyEnrolled ? 'Enrolled' : 'Enroll Free'}
-                              </PrimaryBtn>
-                            ) : (
-                              <Button
-                                size="sm"
-                                variant="warning"
-                                style={{ flex: 1, borderRadius: 8, fontSize: '0.78rem', fontWeight: 600 }}
-                                onClick={() => navigate('/help', {
-                                  state: {
-                                    course: {
-                                      courseTitle: course.title,
-                                      platform: course.platform,
-                                      link: course.url,
-                                      price: course.price,
-                                      priceUnit: course.priceUnit,
-                                    },
-                                  },
-                                })}
-                              >
-                                Get Sponsored
-                              </Button>
+                            {url && (
+                              <a href={href} target="_blank" rel="noopener noreferrer" style={{ flex: 1 }}>
+                                <PrimaryBtn size="sm" variant="outline-primary" style={{ width: '100%', fontSize: '0.78rem' }}>
+                                  <FiExternalLink size="0.85em" /> View
+                                </PrimaryBtn>
+                              </a>
                             )}
+                            <PrimaryBtn
+                              size="sm"
+                              variant="outline-danger"
+                              title="Delete recommendation"
+                              onClick={() => handleDeleteCourse(course)}
+                              style={{ flex: '0 0 auto', padding: '0.4rem 0.6rem' }}
+                            >
+                              <FiTrash2 size="0.85em" />
+                            </PrimaryBtn>
                           </div>
                         </Card.Body>
                       </CourseCard>
@@ -1610,35 +1654,55 @@ const LearnerDashboard = () => {
                   );
                 })}
               </Row>
+            )}
+          </Card.Body>
+        </SectionCard>
+      )}
 
-              {/* Pagination */}
-              {catPages > 1 && (
-                <div className="d-flex justify-content-center gap-2 mt-4">
-                  <PrimaryBtn
-                    size="sm"
-                    variant="outline-primary"
-                    disabled={catPage <= 1}
-                    onClick={() => setCatPage(p => p - 1)}
-                  >
-                    Previous
-                  </PrimaryBtn>
-                  <span className="align-self-center text-muted" style={{ fontSize: '0.85rem' }}>
-                    Page {catPage} of {catPages}
-                  </span>
-                  <PrimaryBtn
-                    size="sm"
-                    variant="outline-primary"
-                    disabled={catPage >= catPages}
-                    onClick={() => setCatPage(p => p + 1)}
-                  >
-                    Next
-                  </PrimaryBtn>
-                </div>
-              )}
-            </>
-          )}
-        </Card.Body>
-      </SectionCard>
+      {coursesSubTab === 'wishlist' && (
+        <SectionCard>
+          <Card.Header><FiHeart /> My Wishlist</Card.Header>
+          <ListGroup variant="flush">
+            {wishlist.length > 0 ? (
+              wishlist.map(item => (
+                <StyledListItem key={item._id} iconColor={brand.primary}>
+                  <div className="icon-wrap"><FiHeart /></div>
+                  <div className="content" style={{ flex: 1 }}>
+                    <h6>{item.title}</h6>
+                    <p className="text-muted">
+                      {item.platform} &middot; {item.status === 'Free' ? 'Free' : `${item.priceUnit || '$'}${item.price || ''}`}
+                    </p>
+                  </div>
+                  <div className="d-flex gap-2 align-items-center">
+                    <a href={item.url} target="_blank" rel="noopener noreferrer">
+                      <PrimaryBtn size="sm" variant="outline-primary"><FiExternalLink size="0.85em" /> View</PrimaryBtn>
+                    </a>
+                    <PrimaryBtn
+                      size="sm"
+                      variant="outline-danger"
+                      onClick={async () => {
+                        try {
+                          await axiosInstance.delete(`/dashboard/wishlist/${item._id}`);
+                          setWishlist(prev => prev.filter(w => w._id !== item._id));
+                          toast.success('Removed from wishlist.');
+                        } catch {
+                          toast.error('Could not remove item.');
+                        }
+                      }}
+                    >
+                      <FiTrash2 size="0.85em" />
+                    </PrimaryBtn>
+                  </div>
+                </StyledListItem>
+              ))
+            ) : (
+              <ListGroup.Item className="text-center text-muted p-4">
+                Your wishlist is empty. Explore and save courses to your wishlist!
+              </ListGroup.Item>
+            )}
+          </ListGroup>
+        </SectionCard>
+      )}
     </>
   );
 
